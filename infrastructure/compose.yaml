@@ -1,0 +1,45 @@
+name: ems
+
+services:
+  server:
+    build:
+      context: ../server
+      dockerfile: Dockerfile
+    volumes:
+      - ../server:/app # bind mount → hot-reload
+      - /app/.venv # anonymous volume → isolates the virtual environment from the host machine
+    ports:
+      - "8000:8000"
+    environment:
+      # Python
+      - PYTHONUNBUFFERED=1
+      # Postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=db
+      # Timezone
+      - TZ=Europe/Prague
+    command: uv run uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
