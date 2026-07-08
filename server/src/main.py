@@ -6,7 +6,10 @@ from typing import Any
 from fastapi import FastAPI
 from sqlalchemy import text
 
+from src.api.router import api_router
 from src.core.database import engine
+from src.core.exceptions import AppError
+from src.core.handlers import app_error_handler
 from src.core.logger import setup_logging
 
 setup_logging()
@@ -39,6 +42,6 @@ app = FastAPI(
 )
 
 
-@app.get("/health")
-async def health_check() -> dict[str, str]:
-    return {"status": "healthy"}
+app.include_router(api_router, prefix="/api/v1")
+
+app.add_exception_handler(AppError, app_error_handler)
