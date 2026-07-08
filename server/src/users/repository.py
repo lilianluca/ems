@@ -16,5 +16,4 @@ class UserRepository:
         user = User(email=email, hashed_password=hashed_password)
         self.db.add(user)
         await self.db.flush()
-        await self.db.refresh(user)
         return user
