@@ -1,7 +1,6 @@
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import Any
 
 from fastapi import FastAPI
 from sqlalchemy import text
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[dict[str, Any]]:
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     logger.info("🚀 Starting up the application...")
 
     try:
@@ -44,4 +43,4 @@ app = FastAPI(
 
 app.include_router(api_router, prefix="/api/v1")
 
-app.add_exception_handler(AppError, app_error_handler)
+app.add_exception_handler(AppError, app_error_handler)  # type: ignore[arg-type]
