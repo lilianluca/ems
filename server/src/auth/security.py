@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 from datetime import UTC, datetime, timedelta
 
 import bcrypt
@@ -27,3 +29,13 @@ def create_access_token(subject: str) -> str:
 def decode_access_token(token: str) -> dict:
     """Decode and validate a JWT access token. Raises jwt.PyJWTError on failure."""
     return jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+
+
+def generate_refresh_token() -> str:
+    """Generate a cryptographically secure random refresh token."""
+    return secrets.token_urlsafe(64)
+
+
+def hash_token(token: str) -> str:
+    """Hash a token for storage (SHA-256 is sufficient for high-entropy random tokens)."""
+    return hashlib.sha256(token.encode()).hexdigest()

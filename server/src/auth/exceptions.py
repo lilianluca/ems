@@ -21,3 +21,14 @@ class InvalidTokenError(UnauthorizedError):
         code: str = "invalid_token",
     ) -> None:
         super().__init__(message, code=code)
+
+
+class InvalidRefreshTokenError(UnauthorizedError):
+    """Exception raised when the provided refresh token is invalid."""
+
+    def __init__(
+        self,
+        message: str = "Invalid refresh token",
+        code: str = "invalid_refresh_token",
+    ) -> None:
+        super().__init__(message, code=code)
