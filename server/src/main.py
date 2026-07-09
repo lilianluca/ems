@@ -43,4 +43,4 @@ app = FastAPI(
 
 app.include_router(api_router, prefix="/api/v1")
 
-app.add_exception_handler(AppError, app_error_handler)  # type: ignore[arg-type]
+app.add_exception_handler(AppError, app_error_handler)  # type: ignore

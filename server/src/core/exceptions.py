@@ -28,7 +28,20 @@ class ConflictError(AppError):
 
 
 class ForbiddenError(AppError):
-    """Exception raised when access to a resource is forbidden."""
+    """
+    Exception raised when access to a resource is forbidden
+    Use when the user is authenticated but does not have permission to access the resource.
+    """
 
     def __init__(self, message: str = "Access denied", code: str = "forbidden") -> None:
         super().__init__(message, code=code, status_code=status.HTTP_403_FORBIDDEN)
+
+
+class UnauthorizedError(AppError):
+    """
+    Exception raised when access to a resource is unauthorized
+    Use when the user is not authenticated or the provided credentials are invalid.
+    """
+
+    def __init__(self, message: str = "Unauthorized access", code: str = "unauthorized") -> None:
+        super().__init__(message, code=code, status_code=status.HTTP_401_UNAUTHORIZED)

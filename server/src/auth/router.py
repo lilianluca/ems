@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 
-from src.auth.dependencies import AuthServiceDep
-from src.auth.schemas import RegisterRequest
+from src.auth.dependencies import AuthServiceDep, CurrentUserDep, OAuth2FormDep
+from src.auth.schemas import RegisterRequest, TokenResponse
 from src.users.models import User
 from src.users.schemas import UserRead
 
@@ -17,3 +17,16 @@ async def register(payload: RegisterRequest, auth_service: AuthServiceDep) -> Us
         first_name=payload.first_name,
         last_name=payload.last_name,
     )
+
+
+@router.post("/login", response_model=TokenResponse)
+async def login(form_data: OAuth2FormDep, auth_service: AuthServiceDep) -> TokenResponse:
+    """Authenticate user and return a JWT access token."""
+    access_token = await auth_service.login(email=form_data.username, password=form_data.password)
+    return TokenResponse(access_token=access_token)
+
+
+@router.get("/me", response_model=UserRead)
+async def get_me(current_user: CurrentUserDep) -> User:
+    """Get the current authenticated user's information."""
+    return current_user
