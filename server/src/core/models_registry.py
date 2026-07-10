@@ -1,5 +1,5 @@
-"""
-This module is used to register all the models in the application.
+"""Register all the models in the application.
+
 It is imported in the main application file to ensure that all models
 are registered before the application starts.
 """

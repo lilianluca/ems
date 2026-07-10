@@ -2,6 +2,7 @@ import logging
 
 
 def setup_logging() -> None:
+    """Configure logging for the application."""
     log_level = logging.INFO
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 

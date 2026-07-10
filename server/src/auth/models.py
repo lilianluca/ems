@@ -8,6 +8,8 @@ from src.core.database import Base
 
 
 class RefreshToken(Base):
+    """SQLAlchemy model representing a refresh token in the system."""
+
     __tablename__ = "refresh_tokens"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

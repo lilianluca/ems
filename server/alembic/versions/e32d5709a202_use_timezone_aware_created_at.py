@@ -1,4 +1,4 @@
-"""use timezone-aware created_at
+"""use timezone-aware created_at.
 
 Revision ID: e32d5709a202
 Revises: 94ebc7bc64ee

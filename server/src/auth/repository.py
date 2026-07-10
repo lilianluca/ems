@@ -7,6 +7,8 @@ from src.auth.models import RefreshToken
 
 
 class AuthRepository:
+    """Repository class for managing authentication-related entities in the database."""
+
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 

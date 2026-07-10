@@ -25,6 +25,8 @@ logger = logging.getLogger(__name__)
 
 
 class AuthService:
+    """Service class for managing authentication-related operations."""
+
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
         self.user_repo = UserRepository(db)
@@ -81,6 +83,7 @@ class AuthService:
         return tokens
 
     async def refresh(self, refresh_token: str) -> TokenResponse:
+        """Refresh the JWT access token using a valid refresh token."""
         logger.info("Attempting to refresh access token.")
         token_hash = hash_token(refresh_token)
         stored = await self.auth_repo.get_by_token_hash(token_hash)
@@ -107,6 +110,7 @@ class AuthService:
         return tokens
 
     async def logout(self, refresh_token: str) -> None:
+        """Invalidate the refresh token, effectively logging the user out."""
         logger.info("Attempting to revoke refresh token.")
         token_hash = hash_token(refresh_token)
         stored = await self.auth_repo.get_by_token_hash(token_hash)

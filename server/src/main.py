@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Lifespan context manager for the FastAPI application."""
     logger.info("🚀 Starting up the application...")
 
     try:

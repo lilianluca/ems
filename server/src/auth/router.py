@@ -27,11 +27,13 @@ async def login(form_data: OAuth2FormDep, auth_service: AuthServiceDep) -> Token
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh(payload: RefreshRequest, auth_service: AuthServiceDep) -> TokenResponse:
+    """Refresh the JWT access token using a valid refresh token."""
     return await auth_service.refresh(payload.refresh_token)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(payload: RefreshRequest, auth_service: AuthServiceDep) -> None:
+    """Invalidate the refresh token, effectively logging the user out."""
     await auth_service.logout(payload.refresh_token)
 
 

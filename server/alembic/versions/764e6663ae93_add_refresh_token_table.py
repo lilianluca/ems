@@ -1,4 +1,4 @@
-"""add refresh token table
+"""add refresh token table.
 
 Revision ID: 764e6663ae93
 Revises: e32d5709a202

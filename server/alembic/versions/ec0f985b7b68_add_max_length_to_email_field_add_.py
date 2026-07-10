@@ -1,4 +1,4 @@
-"""Add max length to email field, add hashed_password and created_at fields
+"""Add max length to email field, add hashed_password and created_at fields.
 
 Revision ID: ec0f985b7b68
 Revises: b73ca7d56fb2

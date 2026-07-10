@@ -1,4 +1,4 @@
-"""add first_name and last_name to users
+"""add first_name and last_name to users.
 
 Revision ID: 94ebc7bc64ee
 Revises: ec0f985b7b68

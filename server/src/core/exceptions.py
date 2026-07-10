@@ -28,8 +28,8 @@ class ConflictError(AppError):
 
 
 class ForbiddenError(AppError):
-    """
-    Exception raised when access to a resource is forbidden
+    """Exception raised when access to a resource is forbidden.
+
     Use when the user is authenticated but does not have permission to access the resource.
     """
 
@@ -38,8 +38,8 @@ class ForbiddenError(AppError):
 
 
 class UnauthorizedError(AppError):
-    """
-    Exception raised when access to a resource is unauthorized
+    """Exception raised when access to a resource is unauthorized.
+
     Use when the user is not authenticated or the provided credentials are invalid.
     """
 

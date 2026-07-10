@@ -9,6 +9,8 @@ from src.users.enums import UserRole
 
 
 class User(Base):
+    """SQLAlchemy model representing a user in the system."""
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

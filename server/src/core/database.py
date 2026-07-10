@@ -10,9 +10,12 @@ SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 
 class Base(DeclarativeBase):
+    """Base class for all SQLAlchemy models."""
+
     pass
 
 
 async def get_db() -> AsyncIterator[AsyncSession]:
+    """Dependency to get a database session."""
     async with SessionLocal() as session:
         yield session

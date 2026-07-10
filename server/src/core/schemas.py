@@ -3,8 +3,8 @@ from pydantic.alias_generators import to_camel
 
 
 class APIBaseModel(BaseModel):
-    """
-    The base model for all API input and output.
+    """The base model for all API input and output.
+
     It handles the conversion between camelCase (JSON) and snake_case (Python).
     """
 
