@@ -5,6 +5,9 @@ services:
     build:
       context: ../server
       dockerfile: Dockerfile
+      args:
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
     volumes:
       - ../server:/app # bind mount → hot-reload
       - /app/.venv # anonymous volume → isolates the virtual environment from the host machine

@@ -1,3 +1,4 @@
+from collections.abc import Awaitable, Callable
 from typing import Annotated
 
 from fastapi import Depends
@@ -6,9 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.service import AuthService
 from src.core.database import get_db
+from src.core.exceptions import ForbiddenError
+from src.users.enums import UserRole
 from src.users.models import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
+
 OAuth2FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
@@ -29,3 +33,17 @@ async def get_current_user(
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
+
+
+def require_role(*allowed_roles: UserRole) -> Callable[[User], Awaitable[User]]:
+    """Dependency factory — restricts endpoint access to specific roles."""
+
+    async def _check_role(current_user: CurrentUserDep) -> User:
+        if current_user.role not in allowed_roles:
+            raise ForbiddenError()
+        return current_user
+
+    return _check_role
+
+
+RequireAdmin = Annotated[User, Depends(require_role(UserRole.ADMIN))]
