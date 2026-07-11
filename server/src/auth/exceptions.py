@@ -8,7 +8,7 @@ class InvalidCredentialsError(UnauthorizedError):
         self,
         message: str = "Invalid credentials",
         code: str = "invalid_credentials",
-    ) -> None:
+    ):
         super().__init__(message, code=code)
 
 
@@ -19,7 +19,7 @@ class InvalidTokenError(UnauthorizedError):
         self,
         message: str = "Invalid token",
         code: str = "invalid_token",
-    ) -> None:
+    ):
         super().__init__(message, code=code)
 
 
@@ -30,5 +30,5 @@ class InvalidRefreshTokenError(UnauthorizedError):
         self,
         message: str = "Invalid refresh token",
         code: str = "invalid_refresh_token",
-    ) -> None:
+    ):
         super().__init__(message, code=code)

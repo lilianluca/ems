@@ -9,7 +9,7 @@ from src.auth.models import RefreshToken
 class AuthRepository:
     """Repository class for managing authentication-related entities in the database."""
 
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(self, db: AsyncSession):
         self.db = db
 
     async def create_refresh_token(

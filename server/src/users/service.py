@@ -1,14 +1,18 @@
+import logging
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.users.exceptions import UserNotFoundError
 from src.users.models import User
 from src.users.repository import UserRepository
 
+logger = logging.getLogger(__name__)
+
 
 class UserService:
     """Service class for managing user-related operations."""
 
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.user_repo = UserRepository(db)
 
@@ -16,6 +20,7 @@ class UserService:
         """Fetch a user by their ID, raising an error if not found."""
         user = await self.user_repo.get_by_id(user_id)
         if user is None:
+            logger.warning(f"User with ID {user_id} not found.")
             raise UserNotFoundError(user_id)
         return user
 

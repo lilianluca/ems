@@ -7,7 +7,7 @@ from src.users.models import User
 class UserRepository:
     """Repository class for managing User entities in the database."""
 
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(self, db: AsyncSession):
         self.db = db
 
     async def get_by_email(self, email: str) -> User | None:
