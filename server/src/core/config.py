@@ -14,11 +14,19 @@ class Settings(BaseSettings):
     postgres_host: str = "db"
     postgres_port: int = 5432
 
+    # --- InfluxDB ---
+    influxdb_host: str = "http://influxdb:8181"
+    influxdb_token: str
+    influxdb_database: str
+
     # --- JWT ---
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7
+
+    # --- OTE ---
+    ote_api_base_url: str = "https://spotovaelektrina.cz/api/v1/price"
 
     @computed_field
     @property
