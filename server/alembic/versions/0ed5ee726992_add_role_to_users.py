@@ -1,4 +1,4 @@
-"""add role to users.
+"""Add role to users.
 
 Revision ID: 0ed5ee726992
 Revises: 764e6663ae93

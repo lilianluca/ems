@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 class AuthService:
     """Service class for managing authentication-related operations."""
 
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.user_repo = UserRepository(db)
         self.auth_repo = AuthRepository(db)
