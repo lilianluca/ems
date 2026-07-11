@@ -9,6 +9,8 @@ dependencies = [
     "asyncpg>=0.31.0",
     "bcrypt>=5.0.0",
     "fastapi>=0.139.0",
+    "httpx>=0.28.1",
+    "influxdb3-python>=0.20.0",
     "pydantic-settings>=2.14.2",
     "pydantic[email]>=2.13.4",
     "pyjwt>=2.13.0",
@@ -51,6 +53,8 @@ ignore = [
     "D104",   # missing docstring in public package
     "D105",   # missing docstring in magic method
     "D107",   # missing docstring in __init__
+    "D203",   # incompatible with D211 (no blank line before class docstring), which we use
+    "D213",   # incompatible with D212 (summary on first line), which we use
     "ANN204", # missing type annotation for special method
 ]
 fixable = ["ALL"]
