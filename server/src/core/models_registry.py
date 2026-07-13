@@ -9,3 +9,4 @@ from src.devices.models import *  # noqa: F403
 from src.ote.models import *  # noqa: F403
 from src.sites.models import *  # noqa: F403
 from src.users.models import *  # noqa: F403
+from src.weather.models import *  # noqa: F403
