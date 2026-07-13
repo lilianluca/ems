@@ -63,6 +63,81 @@ services:
     volumes:
       - influxdb_data:/var/lib/influxdb3
 
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  celery-worker:
+    build:
+      context: ../server
+      dockerfile: Dockerfile
+      args:
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
+    volumes:
+      - ../server:/app
+      - /app/.venv
+    environment:
+      # Python
+      - PYTHONUNBUFFERED=1
+      # Postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=db
+      # InfluxDB
+      - INFLUXDB_HOST=http://influxdb:8181
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_DATABASE=ems
+      # JWT
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      # Celery
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: uv run celery -A src.core.celery_app worker --pool=threads --concurrency=4 --loglevel=info
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+
+  celery-beat:
+    build:
+      context: ../server
+      dockerfile: Dockerfile
+      args:
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
+    volumes:
+      - ../server:/app
+      - /app/.venv
+    environment:
+      # Python
+      - PYTHONUNBUFFERED=1
+      # Postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=db
+      # JWT
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      # Celery
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: uv run celery -A src.core.celery_app beat --loglevel=info
+    depends_on:
+      redis:
+        condition: service_healthy
+
 volumes:
   db_data:
   influxdb_data:
+  redis_data:
