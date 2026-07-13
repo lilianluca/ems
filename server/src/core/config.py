@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     # --- OTE ---
     ote_api_base_url: str = "https://spotovaelektrina.cz/api/v1/price"
 
+    # --- Celery ---
+    celery_broker_url: str = "redis://redis:6379/0"
+    celery_result_backend: str = "redis://redis:6379/0"
+
     @computed_field
     @property
     def database_url(self) -> str:
