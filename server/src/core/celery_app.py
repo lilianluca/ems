@@ -7,7 +7,7 @@ celery_app = Celery(
     "ems",
     broker=settings.celery_broker_url,
     backend=settings.celery_result_backend,
-    include=["src.ote.tasks"],
+    include=["src.ote.tasks", "src.weather.tasks"],
 )
 
 celery_app.conf.update(
@@ -21,6 +21,10 @@ celery_app.conf.update(
 celery_app.conf.beat_schedule = {
     "fetch-ote-prices": {
         "task": "ote.fetch_prices",
-        "schedule": crontab(minute="*/30"),
+        "schedule": crontab(minute="*/30"),  # Fetch OTE prices every 30 minutes
+    },
+    "fetch-weather-forecasts": {
+        "task": "weather.fetch_forecasts",
+        "schedule": crontab(minute=0),  # Fetch weather forecasts every hour
     },
 }
