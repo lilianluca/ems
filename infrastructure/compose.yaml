@@ -94,7 +94,7 @@ services:
       # InfluxDB
       - INFLUXDB_HOST=http://influxdb:8181
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
-      - INFLUXDB_DATABASE=ems
+      - INFLUXDB_DATABASE=${INFLUXDB_DATABASE}
       # JWT
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       # Celery
@@ -127,6 +127,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=db
+      # InfluxDB
+      - INFLUXDB_HOST=http://influxdb:8181
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_DATABASE=${INFLUXDB_DATABASE}
       # JWT
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       # Celery

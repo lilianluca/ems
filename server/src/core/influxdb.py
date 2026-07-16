@@ -1,5 +1,6 @@
 import asyncio
 
+import pandas as pd
 from influxdb_client_3 import InfluxDBClient3, Point
 
 from src.core.config import settings
@@ -27,3 +28,12 @@ async def write_points(points: list[Point]) -> None:
     """
     client = get_influx_client()
     await asyncio.to_thread(client.write, points)
+
+
+async def query_to_dataframe(
+    query: str, query_parameters: dict[str, object] | None = None
+) -> pd.DataFrame:
+    """Execute a SQL query against InfluxDB and return results as a pandas DataFrame."""
+    client = get_influx_client()
+    table = await asyncio.to_thread(client.query, query, query_parameters=query_parameters)
+    return table.to_pandas()  # type: ignore

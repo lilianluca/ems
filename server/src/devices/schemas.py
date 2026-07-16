@@ -12,6 +12,7 @@ class PVDeviceCreate(APIBaseModel):
 
     name: str = Field(min_length=1, max_length=255)
     installed_power_kwp: float = Field(gt=0)
+    inverter_power_kw: float = Field(gt=0)
     tilt_degrees: float = Field(ge=0, le=90)
     azimuth_degrees: float = Field(ge=0, lt=360)
 
@@ -33,6 +34,7 @@ class PVDeviceRead(ORMBaseModel):
     name: str
     type: Literal[DeviceType.PV]
     installed_power_kwp: float
+    inverter_power_kw: float
     tilt_degrees: float
     azimuth_degrees: float
     created_at: datetime
@@ -43,6 +45,7 @@ class PVDeviceUpdate(APIBaseModel):
 
     name: str | None = Field(default=None, min_length=1, max_length=255)
     installed_power_kwp: float | None = Field(default=None, gt=0)
+    inverter_power_kw: float | None = Field(default=None, gt=0)
     tilt_degrees: float | None = Field(default=None, ge=0, le=90)
     azimuth_degrees: float | None = Field(default=None, ge=0, lt=360)
 

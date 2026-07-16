@@ -32,6 +32,7 @@ async def create_pv_device(
         site_id=site_id,
         name=payload.name,
         installed_power_kwp=payload.installed_power_kwp,
+        inverter_power_kw=payload.inverter_power_kw,
         tilt_degrees=payload.tilt_degrees,
         azimuth_degrees=payload.azimuth_degrees,
     )
@@ -50,6 +51,7 @@ async def update_pv_device(
         device_id=device_id,
         name=payload.name,
         installed_power_kwp=payload.installed_power_kwp,
+        inverter_power_kw=payload.inverter_power_kw,
         tilt_degrees=payload.tilt_degrees,
         azimuth_degrees=payload.azimuth_degrees,
     )
