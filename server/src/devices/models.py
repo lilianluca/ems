@@ -45,6 +45,7 @@ class PVDevice(Device):
 
     id: Mapped[int] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"), primary_key=True)
     installed_power_kwp: Mapped[float] = mapped_column(Float, nullable=False)
+    inverter_power_kw: Mapped[float] = mapped_column(Float, nullable=False)
     tilt_degrees: Mapped[float] = mapped_column(Float, nullable=False)
     azimuth_degrees: Mapped[float] = mapped_column(Float, nullable=False)
 

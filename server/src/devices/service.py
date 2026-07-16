@@ -24,6 +24,7 @@ class DeviceService:
         site_id: int,
         name: str,
         installed_power_kwp: float,
+        inverter_power_kw: float,
         tilt_degrees: float,
         azimuth_degrees: float,
     ) -> PVDevice:
@@ -34,6 +35,7 @@ class DeviceService:
             site_id=site_id,
             name=name,
             installed_power_kwp=installed_power_kwp,
+            inverter_power_kw=inverter_power_kw,
             tilt_degrees=tilt_degrees,
             azimuth_degrees=azimuth_degrees,
         )
@@ -102,6 +104,7 @@ class DeviceService:
         device_id: int,
         name: str | None,
         installed_power_kwp: float | None,
+        inverter_power_kw: float | None,
         tilt_degrees: float | None,
         azimuth_degrees: float | None,
     ) -> PVDevice:
@@ -113,6 +116,8 @@ class DeviceService:
             device.name = name
         if installed_power_kwp is not None:
             device.installed_power_kwp = installed_power_kwp
+        if inverter_power_kw is not None:
+            device.inverter_power_kw = inverter_power_kw
         if tilt_degrees is not None:
             device.tilt_degrees = tilt_degrees
         if azimuth_degrees is not None:
