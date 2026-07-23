@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import Field
 
-from src.core.schemas import APIBaseModel, ORMBaseModel
+from src.core.schemas import APIBaseModel
 from src.sites.enums import SiteRole
 
 
@@ -14,7 +14,7 @@ class SiteCreate(APIBaseModel):
     longitude: float = Field(ge=-180, le=180)  # Longitude must be between -180 and 180 degrees.
 
 
-class SiteRead(ORMBaseModel):
+class SiteRead(APIBaseModel):
     """Schema for reading site information."""
 
     id: int
@@ -24,7 +24,7 @@ class SiteRead(ORMBaseModel):
     created_at: datetime
 
 
-class SiteMembershipRead(ORMBaseModel):
+class SiteMembershipRead(APIBaseModel):
     """Schema for reading site membership information."""
 
     id: int

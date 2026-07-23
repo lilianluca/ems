@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
-from src.core.schemas import APIBaseModel, ORMBaseModel
+from src.core.schemas import APIBaseModel
 from src.devices.enums import DeviceType
 
 
@@ -26,7 +26,7 @@ class BatteryDeviceCreate(APIBaseModel):
     max_discharge_power_kw: float = Field(gt=0)
 
 
-class PVDeviceRead(ORMBaseModel):
+class PVDeviceRead(APIBaseModel):
     """Photovoltaic (solar panel) device read schema."""
 
     id: int
@@ -50,7 +50,7 @@ class PVDeviceUpdate(APIBaseModel):
     azimuth_degrees: float | None = Field(default=None, ge=0, lt=360)
 
 
-class BatteryDeviceRead(ORMBaseModel):
+class BatteryDeviceRead(APIBaseModel):
     """Battery energy storage device read schema."""
 
     id: int

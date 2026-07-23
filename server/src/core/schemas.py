@@ -12,13 +12,3 @@ class APIBaseModel(BaseModel):
         alias_generator=to_camel,
         populate_by_name=True,
     )
-
-
-class ORMBaseModel(BaseModel):
-    """Base model for all ORM models."""
-
-    model_config = ConfigDict(
-        alias_generator=to_camel,
-        populate_by_name=True,
-        from_attributes=True,
-    )
