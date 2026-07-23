@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from src.appliances.enums import ApplianceBehavior
-from src.core.schemas import APIBaseModel, ORMBaseModel
+from src.core.schemas import APIBaseModel
 
 # --- Config Schemas ---
 
@@ -69,7 +69,7 @@ class ApplianceCreate(APIBaseModel):
     config: ApplianceConfig
 
 
-class ApplianceRead(ORMBaseModel):
+class ApplianceRead(APIBaseModel):
     """Schema for reading an appliance from the database."""
 
     id: int

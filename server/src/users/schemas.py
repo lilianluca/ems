@@ -2,11 +2,11 @@ from datetime import datetime
 
 from pydantic import EmailStr
 
-from src.core.schemas import APIBaseModel, ORMBaseModel
+from src.core.schemas import APIBaseModel
 from src.users.enums import UserRole
 
 
-class UserRead(ORMBaseModel):
+class UserRead(APIBaseModel):
     """Pydantic model for reading user data."""
 
     id: int
