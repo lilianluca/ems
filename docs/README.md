@@ -6,5 +6,4 @@ Osobní poznámky a studijní dokumentace k vývoji Energy Management Systemu.
 
 ### Energetika (doména)
 
-- [Základy FVE](energetika/fve-zaklady.md) – fyzika FV článku, tok energie,
-  modely slunečního záření, teploty a výkonu
+- [Základy FVE](energetika/fve-zaklady.md) – modely slunečního záření, teploty a výkonu
