@@ -3,11 +3,21 @@ from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.influxdb import query_to_dataframe, write_points
-from src.devices.exceptions import DeviceNotFoundError
+from src.devices.exceptions import BatteryNotFoundError, DeviceNotFoundError
 from src.devices.repository import DeviceRepository
-from src.simulation.exceptions import NoWeatherDataError
+from src.simulation.battery_model import BatteryParams, simulate
+from src.simulation.exceptions import (
+    NoForecastDataError,
+    NoOverlappingForecastError,
+    NoWeatherDataError,
+)
 from src.simulation.pv_model import simulate_pv_generation
-from src.simulation.schemas import PVGenerationPoint, PVSimulationResult
+from src.simulation.schemas import (
+    BatterySimulationPoint,
+    BatterySimulationResult,
+    PVGenerationPoint,
+    PVSimulationResult,
+)
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -57,6 +67,91 @@ class SimulationService:
             points=points,
             total_energy_kwh=total_energy,
         )
+
+    async def simulate_battery_baseline(self, site_id: int) -> BatterySimulationResult:
+        """Simulate SoC trajectory with no grid charging."""
+        df, params = await self._simulate_baseline_frame(site_id)
+
+        return BatterySimulationResult(
+            site_id=site_id,
+            points=[
+                BatterySimulationPoint(
+                    time=ts,
+                    soc_kwh=round(row.soc_kwh, 4),
+                    soc_percent=round(row.soc_percent, 2),
+                    grid_import_kwh=round(row.grid_import_kwh, 4),
+                    grid_export_kwh=round(row.grid_export_kwh, 4),
+                )
+                for ts, row in df.iterrows()
+            ],
+            total_grid_import_kwh=round(df["grid_import_kwh"].sum(), 4),
+            total_grid_export_kwh=round(df["grid_export_kwh"].sum(), 4),
+            hours_below_min_soc=int((df["soc_kwh"] <= params.min_soc_kwh + 1e-9).sum()),
+        )
+
+    async def _simulate_baseline_frame(self, site_id: int) -> tuple[pd.DataFrame, BatteryParams]:
+        """Core baseline simulation — reused by the rule-based optimizer."""
+        battery = await self.device_repo.get_battery_for_site(site_id)
+        if battery is None:
+            raise BatteryNotFoundError(site_id)
+
+        pv_kw = await self._load_pv_forecast(site_id)
+        load_kw = await self._load_load_forecast(site_id)
+
+        common = pv_kw.index.intersection(load_kw.index).sort_values()
+        if common.empty:
+            raise NoOverlappingForecastError(site_id)
+
+        params = BatteryParams(
+            capacity_kwh=battery.capacity_kwh,
+            max_charge_power_kw=battery.max_charge_power_kw,
+            max_discharge_power_kw=battery.max_discharge_power_kw,
+            charge_efficiency=battery.charge_efficiency,
+            discharge_efficiency=battery.discharge_efficiency,
+            min_soc_kwh=battery.capacity_kwh * battery.min_soc_percent / 100,
+        )
+
+        df = simulate(
+            soc0_kwh=battery.current_soc_kwh,
+            pv_kw=pv_kw.loc[common],
+            load_kw=load_kw.loc[common],
+            grid_charge_kwh=None,
+            params=params,
+        )
+        return df, params
+
+    async def _load_pv_forecast(self, site_id: int) -> pd.Series:
+        """Load total PV generation forecast for a site (summed across devices)."""
+        query = """
+            SELECT time, SUM(power_kw) AS value
+            FROM pv_generation_forecast
+            WHERE site_id = $site_id
+            GROUP BY time
+            ORDER BY time
+        """
+        df = await query_to_dataframe(query, query_parameters={"site_id": str(site_id)})
+
+        if df.empty:
+            raise NoForecastDataError("pv_generation_forecast", site_id)
+
+        df["time"] = pd.to_datetime(df["time"], utc=True)
+        return df.set_index("time")["value"]
+
+    async def _load_load_forecast(self, site_id: int) -> pd.Series:
+        """Load expected household consumption forecast for a site."""
+        query = """
+            SELECT time, load_kw AS value
+            FROM load_forecast
+            WHERE site_id = $site_id
+            ORDER BY time
+        """
+        df = await query_to_dataframe(query, query_parameters={"site_id": str(site_id)})
+
+        if df.empty:
+            raise NoForecastDataError("load_forecast", site_id)
+
+        df["time"] = pd.to_datetime(df["time"], utc=True)
+        return df.set_index("time")["value"]
 
     async def _load_weather(self, site_id: int) -> pd.DataFrame:
         query = """

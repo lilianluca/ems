@@ -61,6 +61,10 @@ class DeviceRepository:
         capacity_kwh: float,
         max_charge_power_kw: float,
         max_discharge_power_kw: float,
+        charge_efficiency: float,
+        discharge_efficiency: float,
+        min_soc_percent: float,
+        current_soc_kwh: float,
     ) -> BatteryDevice:
         """Create a new battery energy storage device."""
         device = BatteryDevice(
@@ -69,10 +73,24 @@ class DeviceRepository:
             capacity_kwh=capacity_kwh,
             max_charge_power_kw=max_charge_power_kw,
             max_discharge_power_kw=max_discharge_power_kw,
+            charge_efficiency=charge_efficiency,
+            discharge_efficiency=discharge_efficiency,
+            min_soc_percent=min_soc_percent,
+            current_soc_kwh=current_soc_kwh,
         )
         self.db.add(device)
         await self.db.flush()
         return device
+
+    async def get_battery_for_site(self, site_id: int) -> BatteryDevice | None:
+        """Return the site's battery (assumes at most one per site for now)."""
+        result = await self.db.execute(
+            select(BatteryDevice)
+            .where(BatteryDevice.site_id == site_id)
+            .order_by(BatteryDevice.id)
+            .limit(1)
+        )
+        return result.scalar_one_or_none()
 
     async def delete(self, device: Device) -> None:
         """Delete a device from the database."""

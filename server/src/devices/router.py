@@ -65,13 +65,7 @@ async def create_battery_device(
     device_service: DeviceServiceDep,
 ) -> BatteryDevice:
     """Create a new battery energy storage device for a specific site."""
-    return await device_service.create_battery_device(
-        site_id=site_id,
-        name=payload.name,
-        capacity_kwh=payload.capacity_kwh,
-        max_charge_power_kw=payload.max_charge_power_kw,
-        max_discharge_power_kw=payload.max_discharge_power_kw,
-    )
+    return await device_service.create_battery_device(site_id=site_id, data=payload)
 
 
 @router.patch("/battery/{device_id}", response_model=BatteryDeviceRead)
@@ -83,13 +77,7 @@ async def update_battery_device(
     device_service: DeviceServiceDep,
 ) -> BatteryDevice:
     """Update an existing battery energy storage device for a specific site."""
-    return await device_service.update_battery_device(
-        device_id=device_id,
-        name=payload.name,
-        capacity_kwh=payload.capacity_kwh,
-        max_charge_power_kw=payload.max_charge_power_kw,
-        max_discharge_power_kw=payload.max_discharge_power_kw,
-    )
+    return await device_service.update_battery_device(device_id, payload)
 
 
 @router.get("", response_model=list[DeviceRead])

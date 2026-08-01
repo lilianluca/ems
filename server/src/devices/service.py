@@ -2,9 +2,14 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.devices.exceptions import DeviceNotFoundError, DeviceTypeMismatchError
+from src.devices.exceptions import (
+    DeviceNotFoundError,
+    DeviceTypeMismatchError,
+    InvalidBatteryStateError,
+)
 from src.devices.models import BatteryDevice, Device, PVDevice
 from src.devices.repository import DeviceRepository
+from src.devices.schemas import BatteryDeviceCreate, BatteryDeviceUpdate
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -43,27 +48,24 @@ class DeviceService:
         logger.info(f"PV device '{name}' with ID {device.id} created for site with ID {site_id}.")
         return device
 
-    async def create_battery_device(
-        self,
-        site_id: int,
-        name: str,
-        capacity_kwh: float,
-        max_charge_power_kw: float,
-        max_discharge_power_kw: float,
-    ) -> BatteryDevice:
+    async def create_battery_device(self, site_id: int, data: BatteryDeviceCreate) -> BatteryDevice:
         """Create a new battery energy storage device."""
-        logger.info(f"Creating battery device '{name}' for site with ID {site_id}.")
+        logger.info(f"Creating battery device '{data.name}' for site with ID {site_id}.")
         await self._ensure_site_exists(site_id)
         device = await self.device_repo.create_battery_device(
             site_id=site_id,
-            name=name,
-            capacity_kwh=capacity_kwh,
-            max_charge_power_kw=max_charge_power_kw,
-            max_discharge_power_kw=max_discharge_power_kw,
+            name=data.name,
+            capacity_kwh=data.capacity_kwh,
+            max_charge_power_kw=data.max_charge_power_kw,
+            max_discharge_power_kw=data.max_discharge_power_kw,
+            charge_efficiency=data.charge_efficiency,
+            discharge_efficiency=data.discharge_efficiency,
+            min_soc_percent=data.min_soc_percent,
+            current_soc_kwh=data.current_soc_kwh,
         )
         await self.db.commit()
         logger.info(
-            f"Battery device '{name}' with ID {device.id} created for site with ID {site_id}."
+            f"Battery device '{data.name}' with ID {device.id} created for site with ID {site_id}."
         )
         return device
 
@@ -131,23 +133,21 @@ class DeviceService:
     async def update_battery_device(
         self,
         device_id: int,
-        name: str | None,
-        capacity_kwh: float | None,
-        max_charge_power_kw: float | None,
-        max_discharge_power_kw: float | None,
+        data: BatteryDeviceUpdate,
     ) -> BatteryDevice:
         """Update a battery energy storage device."""
         logger.info(f"Updating battery device with ID {device_id}.")
         device = await self.get_battery_device(device_id)
 
-        if name is not None:
-            device.name = name
-        if capacity_kwh is not None:
-            device.capacity_kwh = capacity_kwh
-        if max_charge_power_kw is not None:
-            device.max_charge_power_kw = max_charge_power_kw
-        if max_discharge_power_kw is not None:
-            device.max_discharge_power_kw = max_discharge_power_kw
+        for field, value in data.model_dump(exclude_unset=True).items():
+            setattr(device, field, value)
+
+        capacity = device.capacity_kwh
+        if device.current_soc_kwh > capacity:
+            raise InvalidBatteryStateError(
+                f"current_soc_kwh ({device.current_soc_kwh}) cannot exceed "
+                f"capacity_kwh ({device.capacity_kwh})"
+            )
 
         await self.db.commit()
         await self.db.refresh(device)

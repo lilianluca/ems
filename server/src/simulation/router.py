@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from src.simulation.dependencies import SimulationServiceDep
-from src.simulation.schemas import PVSimulationResult
+from src.simulation.schemas import BatterySimulationResult, PVSimulationResult
 from src.sites.dependencies import require_site_role
 from src.sites.enums import SiteRole
 from src.users.models import User
@@ -22,3 +22,15 @@ async def simulate_pv(
 ) -> PVSimulationResult:
     """Simulate PV generation for a specific device at a site."""
     return await simulation_service.simulate_pv_device(device_id)
+
+
+@router.get("/battery/baseline", response_model=BatterySimulationResult)
+async def simulate_battery_baseline(
+    site_id: int,
+    _member: Annotated[
+        User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER, SiteRole.VIEWER))
+    ],
+    simulation_service: SimulationServiceDep,
+) -> BatterySimulationResult:
+    """Simulate battery SoC over the forecast horizon without any grid charging."""
+    return await simulation_service.simulate_battery_baseline(site_id)

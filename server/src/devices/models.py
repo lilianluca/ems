@@ -63,6 +63,10 @@ class BatteryDevice(Device):
     capacity_kwh: Mapped[float] = mapped_column(Float, nullable=False)
     max_charge_power_kw: Mapped[float] = mapped_column(Float, nullable=False)
     max_discharge_power_kw: Mapped[float] = mapped_column(Float, nullable=False)
+    charge_efficiency: Mapped[float] = mapped_column(Float, nullable=False)
+    discharge_efficiency: Mapped[float] = mapped_column(Float, nullable=False)
+    min_soc_percent: Mapped[float] = mapped_column(Float, nullable=False)
+    current_soc_kwh: Mapped[float] = mapped_column(Float, nullable=False)
 
     __mapper_args__ = {  # noqa: RUF012
         "polymorphic_identity": DeviceType.BATTERY,
