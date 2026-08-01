@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function App() {
   return (
-    <div className='flex min-h-svh items-center justify-center bg-background'>
-      <Card className='w-80'>
+    <div className="bg-background flex min-h-svh items-center justify-center">
+      <Card className="w-80">
         <CardHeader>
-          <CardTitle className='text-2xl font-bold'>EMS</CardTitle>
+          <CardTitle className="text-2xl font-bold">EMS</CardTitle>
         </CardHeader>
         <CardContent>
           <Button>Funguje</Button>
