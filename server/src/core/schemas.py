@@ -12,3 +12,17 @@ class APIBaseModel(BaseModel):
         alias_generator=to_camel,
         populate_by_name=True,
     )
+
+
+class ErrorDetail(APIBaseModel):
+    """The error detail model for API responses."""
+
+    message: str
+    code: str
+    fields: dict[str, list[str]] | None = None
+
+
+class ErrorResponse(APIBaseModel):
+    """The error response model for API responses."""
+
+    error: ErrorDetail
