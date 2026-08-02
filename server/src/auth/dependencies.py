@@ -1,19 +1,19 @@
 from collections.abc import Awaitable, Callable
 from typing import Annotated
 
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Cookie, Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.cookies import REFRESH_COOKIE_NAME
+from src.auth.exceptions import InvalidTokenError
 from src.auth.service import AuthService
 from src.core.database import get_db
 from src.core.exceptions import ForbiddenError
 from src.users.enums import UserRole
 from src.users.models import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
-
-OAuth2FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_auth_service(db: AsyncSession = Depends(get_db)) -> AuthService:
@@ -25,11 +25,16 @@ AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 
 
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     auth_service: AuthServiceDep,
 ) -> User:
     """Dependency to get the current authenticated user."""
-    return await auth_service.get_current_user(token)
+    if credentials is None:
+        raise InvalidTokenError(
+            message="Missing authentication credentials.",
+            code="missing_token",
+        )
+    return await auth_service.get_current_user(credentials.credentials)
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
@@ -47,3 +52,5 @@ def require_role(*allowed_roles: UserRole) -> Callable[[User], Awaitable[User]]:
 
 
 RequireAdmin = Annotated[User, Depends(require_role(UserRole.ADMIN))]
+
+RefreshCookieDep = Annotated[str | None, Cookie(alias=REFRESH_COOKIE_NAME)]

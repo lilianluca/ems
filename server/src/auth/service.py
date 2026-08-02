@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.exceptions import InvalidCredentialsError, InvalidRefreshTokenError, InvalidTokenError
 from src.auth.repository import AuthRepository
-from src.auth.schemas import TokenResponse
+from src.auth.schemas import TokenPair
 from src.auth.security import (
     create_access_token,
     decode_access_token,
@@ -64,8 +64,8 @@ class AuthService:
         logger.info(f"User registered successfully with email: {email}")
         return user
 
-    async def login(self, email: str, password: str) -> TokenResponse:
-        """Authenticate user and return a JWT access token."""
+    async def login(self, email: str, password: str) -> TokenPair:
+        """Authenticate user and issue an access/refresh token pair."""
         logger.info(f"Attempting to login user with email: {email}")
 
         user = await self.user_repo.get_by_email(email)
@@ -82,8 +82,8 @@ class AuthService:
         logger.info(f"Successful login for user: {user.id} ({email})")
         return tokens
 
-    async def refresh(self, refresh_token: str) -> TokenResponse:
-        """Refresh the JWT access token using a valid refresh token."""
+    async def refresh(self, refresh_token: str) -> TokenPair:
+        """Rotate the refresh token and issue a new access token."""
         logger.info("Attempting to refresh access token.")
         token_hash = hash_token(refresh_token)
         stored = await self.auth_repo.get_by_token_hash(token_hash)
@@ -143,7 +143,7 @@ class AuthService:
         logger.debug(f"Resolved current user: {user.id}")
         return user
 
-    async def _issue_token_pair(self, user_id: int) -> TokenResponse:
+    async def _issue_token_pair(self, user_id: int) -> TokenPair:
         logger.info(f"Issuing token pair for user: {user_id}")
         access_token = create_access_token(subject=str(user_id))
         refresh_token = generate_refresh_token()
@@ -156,4 +156,4 @@ class AuthService:
         )
 
         logger.debug(f"Token pair issued successfully for user: {user_id}")
-        return TokenResponse(access_token=access_token, refresh_token=refresh_token)
+        return TokenPair(access_token=access_token, refresh_token=refresh_token)
