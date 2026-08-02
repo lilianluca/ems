@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import pluginQuery from '@tanstack/eslint-plugin-query';
+import pluginRouter from '@tanstack/eslint-plugin-router';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
@@ -27,6 +28,7 @@ export default defineConfig([
       reactRefresh.configs.vite,
       jsxA11y.flatConfigs.recommended,
       ...pluginQuery.configs['flat/recommended'],
+      ...pluginRouter.configs['flat/recommended'],
       prettier, // must stay last so it can disable formatting rules
     ],
     languageOptions: {
@@ -78,5 +80,15 @@ export default defineConfig([
   {
     files: ['**/*.config.{js,ts}'],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+
+  // File-based routes export `Route` next to their component, and TanStack
+  // Router uses `throw redirect()` as control flow rather than as an error.
+  {
+    files: ['src/routes/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      '@typescript-eslint/only-throw-error': 'off',
+    },
   },
 ]);
