@@ -3,18 +3,12 @@ name: Server CI
 on:
   push:
     branches: [main]
-    paths:
-      - "server/**"
-      - ".github/workflows/server-ci.yaml"
   pull_request:
     branches: [main]
-    paths:
-      - "server/**"
-      - ".github/workflows/server-ci.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -25,7 +19,7 @@ defaults:
 
 jobs:
   lint:
-    name: Lint & format
+    name: Server · Lint & format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,7 +41,7 @@ jobs:
         run: uv run ruff format --check .
 
   tests:
-    name: Tests
+    name: Server · Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -64,4 +58,5 @@ jobs:
 
       - name: Run tests
         run: |
+          # Exit code 5 means "no tests collected" — remove once tests exist
           uv run pytest || [ $? -eq 5 ]
