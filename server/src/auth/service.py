@@ -2,7 +2,6 @@ import logging
 from datetime import UTC, datetime, timedelta
 
 import jwt
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.exceptions import InvalidCredentialsError, InvalidRefreshTokenError, InvalidTokenError
@@ -12,13 +11,11 @@ from src.auth.security import (
     create_access_token,
     decode_access_token,
     generate_refresh_token,
-    hash_password,
     hash_token,
     verify_password,
 )
 from src.core.config import settings
 from src.core.error_codes import ErrorCode
-from src.core.exceptions import ConflictError
 from src.users.models import User
 from src.users.repository import UserRepository
 
@@ -32,38 +29,6 @@ class AuthService:
         self.db = db
         self.user_repo = UserRepository(db)
         self.auth_repo = AuthRepository(db)
-
-    async def register(self, email: str, password: str, first_name: str, last_name: str) -> User:
-        """Register a new user with the given email and password."""
-        logger.info(f"Attempting to register user with email: {email}")
-
-        existing = await self.user_repo.get_by_email(email)
-        if existing:
-            logger.warning(f"Registration failed: User with email {email} already exists.")
-            raise ConflictError(
-                "A user with this email already exists.",
-                code=ErrorCode.USER_ALREADY_EXISTS,
-            )
-
-        hashed_password = hash_password(password)
-        try:
-            user = await self.user_repo.create(
-                email=email,
-                hashed_password=hashed_password,
-                first_name=first_name,
-                last_name=last_name,
-            )
-            await self.db.commit()
-        except IntegrityError as e:
-            logger.warning(f"Registration failed: User with email {email} already exists.")
-            await self.db.rollback()
-            raise ConflictError(
-                "A user with this email already exists.",
-                code=ErrorCode.USER_ALREADY_EXISTS,
-            ) from e
-
-        logger.info(f"User registered successfully with email: {email}")
-        return user
 
     async def login(self, email: str, password: str) -> TokenPair:
         """Authenticate user and issue an access/refresh token pair."""

@@ -73,6 +73,17 @@ export default defineConfig([
         'error',
         { paths: [{ name: 'moment', message: 'Use date-fns instead.' }] },
       ],
+
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
     },
   },
 

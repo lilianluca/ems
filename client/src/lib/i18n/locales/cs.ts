@@ -61,6 +61,7 @@ export const cs = {
     login_title: 'Přihlášení',
     login_description: 'Zadejte své přihlašovací údaje.',
     email: 'E-mail',
+    email_placeholder: 'jmeno@firma.cz',
     password: 'Heslo',
     submit: 'Přihlásit se',
     submitting: 'Přihlašuji…',

@@ -61,6 +61,7 @@ export const en = {
     login_title: 'Sign in',
     login_description: 'Enter your credentials.',
     email: 'Email',
+    email_placeholder: 'name@company.com',
     password: 'Password',
     submit: 'Sign in',
     submitting: 'Signing in…',

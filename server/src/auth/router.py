@@ -3,28 +3,13 @@ from fastapi import APIRouter, Response, status
 from src.auth.cookies import clear_refresh_cookie, set_refresh_cookie
 from src.auth.dependencies import AuthServiceDep, CurrentUserDep, RefreshCookieDep
 from src.auth.exceptions import InvalidRefreshTokenError
-from src.auth.schemas import LoginRequest, RegisterRequest, TokenResponse
+from src.auth.schemas import LoginRequest, TokenResponse
+from src.core.error_codes import ErrorCode
 from src.core.responses import errors
 from src.users.models import User
 from src.users.schemas import UserRead
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-
-@router.post(
-    "/register",
-    response_model=UserRead,
-    status_code=status.HTTP_201_CREATED,
-    responses=errors(409, 422),
-)
-async def register(payload: RegisterRequest, auth_service: AuthServiceDep) -> User:
-    """Register a new user with the given email and password."""
-    return await auth_service.register(
-        email=payload.email,
-        password=payload.password,
-        first_name=payload.first_name,
-        last_name=payload.last_name,
-    )
 
 
 @router.post("/login", response_model=TokenResponse, responses=errors(401, 422))
@@ -49,7 +34,7 @@ async def refresh(
     if refresh_token is None:
         raise InvalidRefreshTokenError(
             message="Missing refresh token.",
-            code="missing_refresh_token",
+            code=ErrorCode.MISSING_REFRESH_TOKEN,
         )
 
     tokens = await auth_service.refresh(refresh_token)
