@@ -1,8 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
+import { LoginForm } from '@/features/auth/components/login-form';
+
 const searchSchema = z.object({
-  redirect: z.string().optional(),
+  redirect: z
+    .string()
+    .refine((value) => value.startsWith('/') && !value.startsWith('//'), {
+      message: 'Only internal paths are allowed.',
+    })
+    .optional(),
 });
 
 export const Route = createFileRoute('/_public/login')({
@@ -13,9 +20,5 @@ export const Route = createFileRoute('/_public/login')({
 function LoginPage() {
   const { redirect } = Route.useSearch();
 
-  return (
-    <p className="text-muted-foreground text-sm">
-      Login form goes here. Redirect target: {redirect ?? 'none'}
-    </p>
-  );
+  return <LoginForm redirectTo={redirect} />;
 }

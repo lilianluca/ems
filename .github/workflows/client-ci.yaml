@@ -19,7 +19,7 @@ defaults:
 
 jobs:
   lint:
-    name: Client · Lint & format
+    name: Client - Lint & format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,7 +42,7 @@ jobs:
         run: npm run format:check
 
   tests:
-    name: Client · Tests
+    name: Client - Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -70,7 +70,7 @@ jobs:
           retention-days: 7
 
   build:
-    name: Client · Typecheck & build
+    name: Client - Typecheck & build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

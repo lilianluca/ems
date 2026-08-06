@@ -35,7 +35,7 @@ export interface paths {
         put?: never;
         /**
          * Login
-         * @description Authenticate user and return a JWT access token.
+         * @description Authenticate a user, returning an access token and setting a refresh cookie.
          */
         post: operations["auth-login-post"];
         delete?: never;
@@ -55,7 +55,7 @@ export interface paths {
         put?: never;
         /**
          * Refresh
-         * @description Refresh the JWT access token using a valid refresh token.
+         * @description Rotate the refresh cookie and issue a new access token.
          */
         post: operations["auth-refresh-post"];
         delete?: never;
@@ -75,7 +75,7 @@ export interface paths {
         put?: never;
         /**
          * Logout
-         * @description Invalidate the refresh token, effectively logging the user out.
+         * @description Revoke the refresh token and clear the cookie.
          */
         post: operations["auth-logout-post"];
         delete?: never;
@@ -659,30 +659,6 @@ export interface components {
             /** Maxdischargepowerkw */
             maxDischargePowerKw?: number | null;
         };
-        /** Body_auth-login-post */
-        "Body_auth-login-post": {
-            /** Grant Type */
-            grant_type?: string | null;
-            /** Username */
-            username: string;
-            /**
-             * Password
-             * Format: password
-             */
-            password: string;
-            /**
-             * Scope
-             * @default
-             */
-            scope: string;
-            /** Client Id */
-            client_id?: string | null;
-            /**
-             * Client Secret
-             * Format: password
-             */
-            client_secret?: string | null;
-        };
         /**
          * ConstantConfig
          * @description Schema for appliances with constant behavior.
@@ -714,14 +690,22 @@ export interface components {
             standbyMinutesMax: number;
         };
         /**
+         * ErrorCode
+         * @description Machine-readable error identifiers shared with API clients.
+         *
+         *     Values are part of the public API contract: renaming one is a breaking
+         *     change for the frontend, which uses them as translation keys.
+         * @enum {string}
+         */
+        ErrorCode: "invalid_credentials" | "inactive_user" | "invalid_token" | "missing_token" | "invalid_refresh_token" | "missing_refresh_token" | "device_not_found" | "device_type_mismatch" | "ote_fetch_error" | "ote_fetch_too_soon" | "site_not_found" | "membership_not_found" | "insufficient_site_permissions" | "user_already_member" | "user_already_exists" | "user_not_found" | "weather_fetch_error" | "weather_fetch_too_soon" | "not_found" | "forbidden" | "unauthorized" | "conflict" | "validation_error" | "internal_error";
+        /**
          * ErrorDetail
          * @description The error detail model for API responses.
          */
         ErrorDetail: {
             /** Message */
             message: string;
-            /** Code */
-            code: string;
+            code: components["schemas"]["ErrorCode"];
             /** Fields */
             fields?: {
                 [key: string]: string[];
@@ -738,6 +722,19 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * LoginRequest
+         * @description Credentials for the login endpoint.
+         */
+        LoginRequest: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Password */
+            password: string;
         };
         /**
          * OTEFetchPricesResponse
@@ -853,14 +850,6 @@ export interface components {
             points: components["schemas"]["PVGenerationPoint"][];
             /** Total Energy Kwh */
             total_energy_kwh: number;
-        };
-        /**
-         * RefreshRequest
-         * @description Pydantic model for refresh token request.
-         */
-        RefreshRequest: {
-            /** Refresh Token */
-            refresh_token: string;
         };
         /**
          * RegisterRequest
@@ -1007,18 +996,16 @@ export interface components {
         };
         /**
          * TokenResponse
-         * @description Pydantic model for token response.
+         * @description Access token returned in the response body.
+         *
+         *     The refresh token is deliberately absent: it is delivered as an httpOnly
+         *     cookie so that client-side JavaScript can never read it.
          */
         TokenResponse: {
-            /** Access Token */
-            access_token: string;
-            /** Refresh Token */
-            refresh_token: string;
-            /**
-             * Token Type
-             * @default bearer
-             */
-            token_type: string;
+            /** Accesstoken */
+            accessToken: string;
+            /** Expiresin */
+            expiresIn: number;
         };
         /**
          * UserListResponse
@@ -1138,7 +1125,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/x-www-form-urlencoded": components["schemas"]["Body_auth-login-post"];
+                "application/json": components["schemas"]["LoginRequest"];
             };
         };
         responses: {
@@ -1176,13 +1163,11 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RefreshRequest"];
+            cookie?: {
+                refresh_token?: string | null;
             };
         };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -1202,13 +1187,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Validation error */
+            /** @description Validation Error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1218,13 +1203,11 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RefreshRequest"];
+            cookie?: {
+                refresh_token?: string | null;
             };
         };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             204: {
@@ -1233,13 +1216,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Validation error */
+            /** @description Validation Error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

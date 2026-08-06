@@ -1,11 +1,24 @@
+from enum import StrEnum
+
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Environment(StrEnum):
+    """Deployment environment the application is running in."""
+
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables or .env file."""
 
     model_config = SettingsConfigDict(env_file=".env")
+
+    # --- Application ---
+    environment: Environment = Environment.PRODUCTION
 
     # --- Postgres ---
     postgres_user: str
@@ -31,6 +44,12 @@ class Settings(BaseSettings):
     # --- Celery ---
     celery_broker_url: str = "redis://redis:6379/0"
     celery_result_backend: str = "redis://redis:6379/0"
+
+    @computed_field
+    @property
+    def is_development(self) -> bool:
+        """True when running locally with relaxed security settings."""
+        return self.environment is Environment.DEVELOPMENT
 
     @computed_field
     @property
