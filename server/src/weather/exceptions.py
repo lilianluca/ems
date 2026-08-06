@@ -1,5 +1,6 @@
 from fastapi import status
 
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import AppError
 
 
@@ -9,7 +10,7 @@ class WeatherFetchError(AppError):
     def __init__(self, detail: str):
         super().__init__(
             f"Failed to fetch weather forecast: {detail}",
-            code="weather_fetch_error",
+            code=ErrorCode.WEATHER_FETCH_ERROR,
             status_code=status.HTTP_502_BAD_GATEWAY,
         )
 
@@ -20,7 +21,7 @@ class WeatherFetchTooSoonError(AppError):
     def __init__(self, retry_after_seconds: int):
         super().__init__(
             f"Weather forecast was fetched recently. Try again in {retry_after_seconds} seconds.",
-            code="weather_fetch_too_soon",
+            code=ErrorCode.WEATHER_FETCH_TOO_SOON,
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
         )
         self.retry_after_seconds = retry_after_seconds

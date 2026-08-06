@@ -690,14 +690,22 @@ export interface components {
             standbyMinutesMax: number;
         };
         /**
+         * ErrorCode
+         * @description Machine-readable error identifiers shared with API clients.
+         *
+         *     Values are part of the public API contract: renaming one is a breaking
+         *     change for the frontend, which uses them as translation keys.
+         * @enum {string}
+         */
+        ErrorCode: "invalid_credentials" | "inactive_user" | "invalid_token" | "missing_token" | "invalid_refresh_token" | "missing_refresh_token" | "device_not_found" | "device_type_mismatch" | "ote_fetch_error" | "ote_fetch_too_soon" | "site_not_found" | "membership_not_found" | "insufficient_site_permissions" | "user_already_member" | "user_already_exists" | "user_not_found" | "weather_fetch_error" | "weather_fetch_too_soon" | "not_found" | "forbidden" | "unauthorized" | "conflict" | "validation_error" | "internal_error";
+        /**
          * ErrorDetail
          * @description The error detail model for API responses.
          */
         ErrorDetail: {
             /** Message */
             message: string;
-            /** Code */
-            code: string;
+            code: components["schemas"]["ErrorCode"];
             /** Fields */
             fields?: {
                 [key: string]: string[];

@@ -1,6 +1,8 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 
+from src.core.error_codes import ErrorCode
+
 
 class APIBaseModel(BaseModel):
     """The base model for all API input and output.
@@ -18,7 +20,7 @@ class ErrorDetail(APIBaseModel):
     """The error detail model for API responses."""
 
     message: str
-    code: str
+    code: ErrorCode
     fields: dict[str, list[str]] | None = None
 
 

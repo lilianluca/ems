@@ -17,6 +17,7 @@ from src.auth.security import (
     verify_password,
 )
 from src.core.config import settings
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import ConflictError
 from src.users.models import User
 from src.users.repository import UserRepository
@@ -41,7 +42,7 @@ class AuthService:
             logger.warning(f"Registration failed: User with email {email} already exists.")
             raise ConflictError(
                 "A user with this email already exists.",
-                code="user_already_exists",
+                code=ErrorCode.USER_ALREADY_EXISTS,
             )
 
         hashed_password = hash_password(password)
@@ -58,7 +59,7 @@ class AuthService:
             await self.db.rollback()
             raise ConflictError(
                 "A user with this email already exists.",
-                code="user_already_exists",
+                code=ErrorCode.USER_ALREADY_EXISTS,
             ) from e
 
         logger.info(f"User registered successfully with email: {email}")
@@ -75,7 +76,10 @@ class AuthService:
 
         if not user.is_active:
             logger.warning(f"Login failed for email: {email}. User account is inactive.")
-            raise InvalidCredentialsError(message="User account is inactive.", code="inactive_user")
+            raise InvalidCredentialsError(
+                message="User account is inactive.",
+                code=ErrorCode.INACTIVE_USER,
+            )
 
         tokens = await self._issue_token_pair(user.id)
         await self.db.commit()
