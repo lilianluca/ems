@@ -66,4 +66,21 @@ export const en = {
     submit: 'Sign in',
     submitting: 'Signing in…',
   },
+
+  nav: {
+    dashboard: 'Dashboard',
+    measurements: 'Measurements',
+    forecasts: 'Forecasts',
+    optimization: 'Optimization',
+    devices: 'Devices',
+    settings: 'Settings',
+    users: 'Users',
+    sites: 'Sites',
+    select_site: 'Select Site',
+    manage_sites: 'Manage Sites',
+    group_monitoring: 'Monitoring',
+    group_configuration: 'Configuration',
+    group_administration: 'Administration',
+    logout: 'Logout',
+  },
 } as const;

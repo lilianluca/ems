@@ -4,26 +4,6 @@
  */
 
 export interface paths {
-    "/api/v1/auth/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Register
-         * @description Register a new user with the given email and password.
-         */
-        post: operations["auth-register-post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -104,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/": {
+    "/api/v1/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -852,23 +832,6 @@ export interface components {
             total_energy_kwh: number;
         };
         /**
-         * RegisterRequest
-         * @description Pydantic model for user registration request.
-         */
-        RegisterRequest: {
-            /**
-             * Email
-             * Format: email
-             */
-            email: string;
-            /** Password */
-            password: string;
-            /** Firstname */
-            firstName: string;
-            /** Lastname */
-            lastName: string;
-        };
-        /**
          * ScheduledConfig
          * @description Schema for appliances with scheduled behavior.
          */
@@ -1074,48 +1037,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    "auth-register-post": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RegisterRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserRead"];
-                };
-            };
-            /** @description Resource already exists */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Validation error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
     "auth-login-post": {
         parameters: {
             query?: never;
@@ -1380,6 +1301,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SiteRead"][];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
