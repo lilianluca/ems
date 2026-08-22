@@ -1,3 +1,4 @@
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import UnauthorizedError
 
 
@@ -7,7 +8,7 @@ class InvalidCredentialsError(UnauthorizedError):
     def __init__(
         self,
         message: str = "Invalid credentials",
-        code: str = "invalid_credentials",
+        code: ErrorCode = ErrorCode.INVALID_CREDENTIALS,
     ):
         super().__init__(message, code=code)
 
@@ -18,7 +19,7 @@ class InvalidTokenError(UnauthorizedError):
     def __init__(
         self,
         message: str = "Invalid token",
-        code: str = "invalid_token",
+        code: ErrorCode = ErrorCode.INVALID_TOKEN,
     ):
         super().__init__(message, code=code)
 
@@ -29,6 +30,6 @@ class InvalidRefreshTokenError(UnauthorizedError):
     def __init__(
         self,
         message: str = "Invalid refresh token",
-        code: str = "invalid_refresh_token",
+        code: ErrorCode = ErrorCode.INVALID_REFRESH_TOKEN,
     ):
         super().__init__(message, code=code)

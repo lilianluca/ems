@@ -2,22 +2,20 @@ import logging
 from datetime import UTC, datetime, timedelta
 
 import jwt
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.exceptions import InvalidCredentialsError, InvalidRefreshTokenError, InvalidTokenError
 from src.auth.repository import AuthRepository
-from src.auth.schemas import TokenResponse
+from src.auth.schemas import TokenPair
 from src.auth.security import (
     create_access_token,
     decode_access_token,
     generate_refresh_token,
-    hash_password,
     hash_token,
     verify_password,
 )
 from src.core.config import settings
-from src.core.exceptions import ConflictError
+from src.core.error_codes import ErrorCode
 from src.users.models import User
 from src.users.repository import UserRepository
 
@@ -32,40 +30,8 @@ class AuthService:
         self.user_repo = UserRepository(db)
         self.auth_repo = AuthRepository(db)
 
-    async def register(self, email: str, password: str, first_name: str, last_name: str) -> User:
-        """Register a new user with the given email and password."""
-        logger.info(f"Attempting to register user with email: {email}")
-
-        existing = await self.user_repo.get_by_email(email)
-        if existing:
-            logger.warning(f"Registration failed: User with email {email} already exists.")
-            raise ConflictError(
-                "A user with this email already exists.",
-                code="user_already_exists",
-            )
-
-        hashed_password = hash_password(password)
-        try:
-            user = await self.user_repo.create(
-                email=email,
-                hashed_password=hashed_password,
-                first_name=first_name,
-                last_name=last_name,
-            )
-            await self.db.commit()
-        except IntegrityError as e:
-            logger.warning(f"Registration failed: User with email {email} already exists.")
-            await self.db.rollback()
-            raise ConflictError(
-                "A user with this email already exists.",
-                code="user_already_exists",
-            ) from e
-
-        logger.info(f"User registered successfully with email: {email}")
-        return user
-
-    async def login(self, email: str, password: str) -> TokenResponse:
-        """Authenticate user and return a JWT access token."""
+    async def login(self, email: str, password: str) -> TokenPair:
+        """Authenticate user and issue an access/refresh token pair."""
         logger.info(f"Attempting to login user with email: {email}")
 
         user = await self.user_repo.get_by_email(email)
@@ -75,15 +41,18 @@ class AuthService:
 
         if not user.is_active:
             logger.warning(f"Login failed for email: {email}. User account is inactive.")
-            raise InvalidCredentialsError(message="User account is inactive.", code="inactive_user")
+            raise InvalidCredentialsError(
+                message="User account is inactive.",
+                code=ErrorCode.INACTIVE_USER,
+            )
 
         tokens = await self._issue_token_pair(user.id)
         await self.db.commit()
         logger.info(f"Successful login for user: {user.id} ({email})")
         return tokens
 
-    async def refresh(self, refresh_token: str) -> TokenResponse:
-        """Refresh the JWT access token using a valid refresh token."""
+    async def refresh(self, refresh_token: str) -> TokenPair:
+        """Rotate the refresh token and issue a new access token."""
         logger.info("Attempting to refresh access token.")
         token_hash = hash_token(refresh_token)
         stored = await self.auth_repo.get_by_token_hash(token_hash)
@@ -143,7 +112,7 @@ class AuthService:
         logger.debug(f"Resolved current user: {user.id}")
         return user
 
-    async def _issue_token_pair(self, user_id: int) -> TokenResponse:
+    async def _issue_token_pair(self, user_id: int) -> TokenPair:
         logger.info(f"Issuing token pair for user: {user_id}")
         access_token = create_access_token(subject=str(user_id))
         refresh_token = generate_refresh_token()
@@ -156,4 +125,4 @@ class AuthService:
         )
 
         logger.debug(f"Token pair issued successfully for user: {user_id}")
-        return TokenResponse(access_token=access_token, refresh_token=refresh_token)
+        return TokenPair(access_token=access_token, refresh_token=refresh_token)

@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Query
 
 from src.auth.dependencies import RequireAdmin
+from src.core.responses import errors
 from src.users.dependencies import UserServiceDep
 from src.users.schemas import UserListResponse, UserRead
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/", response_model=UserListResponse)
+@router.get("", response_model=UserListResponse, responses=errors(401, 403, 422))
 async def list_users(
     _admin: RequireAdmin,
     user_service: UserServiceDep,
@@ -24,7 +25,7 @@ async def list_users(
     )
 
 
-@router.get("/{user_id}", response_model=UserRead)
+@router.get("/{user_id}", response_model=UserRead, responses=errors(401, 403, 404, 422))
 async def get_user(
     user_id: int,
     _admin: RequireAdmin,

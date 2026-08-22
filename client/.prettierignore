@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+
+# Generated files
+src/routeTree.gen.ts
+src/api/schema.d.ts
+
+# Lockfile — npm owns the formatting
+package-lock.json
