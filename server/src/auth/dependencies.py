@@ -9,6 +9,7 @@ from src.auth.cookies import REFRESH_COOKIE_NAME
 from src.auth.exceptions import InvalidTokenError
 from src.auth.service import AuthService
 from src.core.database import get_db
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import ForbiddenError
 from src.users.enums import UserRole
 from src.users.models import User
@@ -32,7 +33,7 @@ async def get_current_user(
     if credentials is None:
         raise InvalidTokenError(
             message="Missing authentication credentials.",
-            code="missing_token",
+            code=ErrorCode.MISSING_TOKEN,
         )
     return await auth_service.get_current_user(credentials.credentials)
 
