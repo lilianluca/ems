@@ -66,4 +66,29 @@ export const cs = {
     submit: 'Přihlásit se',
     submitting: 'Přihlašuji…',
   },
+
+  nav: {
+    dashboard: 'Přehled',
+    measurements: 'Měření',
+    forecasts: 'Predikce',
+    optimization: 'Optimalizace',
+    devices: 'Zařízení',
+    settings: 'Nastavení',
+    users: 'Uživatelé',
+    sites: 'Lokality',
+    select_site: 'Vyberte lokalitu',
+    manage_sites: 'Správa lokalit',
+    group_monitoring: 'Monitoring',
+    group_configuration: 'Konfigurace',
+    group_administration: 'Správa',
+    logout: 'Odhlásit se',
+    language: 'Jazyk',
+    theme: 'Vzhled',
+  },
+
+  theme: {
+    light: 'Světlý',
+    dark: 'Tmavý',
+    system: 'Systémový',
+  },
 } as const;
