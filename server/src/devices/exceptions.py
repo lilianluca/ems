@@ -1,5 +1,6 @@
 from fastapi import status
 
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import AppError, ConflictError, NotFoundError
 
 
@@ -13,7 +14,7 @@ class DeviceNotFoundError(NotFoundError):
             message = "Device not found."
         super().__init__(
             message=message,
-            code="device_not_found",
+            code=ErrorCode.DEVICE_NOT_FOUND,
         )
 
 
@@ -30,7 +31,7 @@ class DeviceTypeMismatchError(ConflictError):
     def __init__(self, device_id: int, expected_type: str):
         super().__init__(
             message=f"Device {device_id} is not of type '{expected_type}'",
-            code="device_type_mismatch",
+            code=ErrorCode.DEVICE_TYPE_MISMATCH,
         )
 
 
@@ -40,6 +41,6 @@ class InvalidBatteryStateError(AppError):
     def __init__(self, message: str) -> None:
         super().__init__(
             message,
-            code="invalid_battery_state",
+            code=ErrorCode.INVALID_BATTERY_STATE,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )

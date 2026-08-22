@@ -14,6 +14,8 @@ services:
     ports:
       - "8000:8000"
     environment:
+      # Application
+      - ENVIRONMENT=${ENVIRONMENT}
       # Python
       - PYTHONUNBUFFERED=1
       # Postgres
@@ -33,6 +35,22 @@ services:
         condition: service_healthy
       influxdb:
         condition: service_started
+
+  client:
+    build:
+      context: ../client
+      dockerfile: Dockerfile
+      target: dev
+      args:
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
+    volumes:
+      - ../client:/app # bind mount → hot-reload
+      - /app/node_modules # anonymous volume → keeps container's node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
 
   db:
     image: postgres:18-alpine
@@ -84,6 +102,8 @@ services:
       - ../server:/app
       - /app/.venv
     environment:
+      # Application
+      - ENVIRONMENT=${ENVIRONMENT}
       # Python
       - PYTHONUNBUFFERED=1
       # Postgres
@@ -120,6 +140,8 @@ services:
       - ../server:/app
       - /app/.venv
     environment:
+      # Application
+      - ENVIRONMENT=${ENVIRONMENT}
       # Python
       - PYTHONUNBUFFERED=1
       # Postgres

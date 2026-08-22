@@ -1,3 +1,4 @@
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import NotFoundError
 
 
@@ -7,5 +8,5 @@ class UserNotFoundError(NotFoundError):
     def __init__(self, user_id: int):
         super().__init__(
             message=f"User with ID {user_id} not found",
-            code="user_not_found",
+            code=ErrorCode.USER_NOT_FOUND,
         )

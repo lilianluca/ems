@@ -1,3 +1,9 @@
-.vscode/
+# VS Code — commit shared project config, ignore the rest
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 
+# Environment files
 .env
+.env.*
+!.env.example
