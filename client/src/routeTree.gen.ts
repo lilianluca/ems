@@ -12,8 +12,17 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AuthenticatedSitesIndexRouteImport } from './routes/_authenticated/sites/index'
+import { Route as AuthenticatedSitesSiteIdRouteRouteImport } from './routes/_authenticated/sites/$siteId/route'
+import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated/sites/$siteId/index'
+import { Route as AuthenticatedSitesSiteIdDashboardRouteImport } from './routes/_authenticated/sites/$siteId/dashboard'
+import { Route as AuthenticatedSitesSiteIdDevicesRouteImport } from './routes/_authenticated/sites/$siteId/devices'
+import { Route as AuthenticatedSitesSiteIdForecastsRouteImport } from './routes/_authenticated/sites/$siteId/forecasts'
+import { Route as AuthenticatedSitesSiteIdMeasurementsRouteImport } from './routes/_authenticated/sites/$siteId/measurements'
+import { Route as AuthenticatedSitesSiteIdOptimizationRouteImport } from './routes/_authenticated/sites/$siteId/optimization'
+import { Route as AuthenticatedSitesSiteIdSettingsRouteImport } from './routes/_authenticated/sites/$siteId/settings'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -28,47 +37,158 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRoute,
 } as any)
+const AuthenticatedSitesIndexRoute = AuthenticatedSitesIndexRouteImport.update({
+  id: '/sites/',
+  path: '/sites/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSitesSiteIdRouteRoute =
+  AuthenticatedSitesSiteIdRouteRouteImport.update({
+    id: '/sites/$siteId',
+    path: '/sites/$siteId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSitesSiteIdIndexRoute =
+  AuthenticatedSitesSiteIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDashboardRoute =
+  AuthenticatedSitesSiteIdDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesRoute =
+  AuthenticatedSitesSiteIdDevicesRouteImport.update({
+    id: '/devices',
+    path: '/devices',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdForecastsRoute =
+  AuthenticatedSitesSiteIdForecastsRouteImport.update({
+    id: '/forecasts',
+    path: '/forecasts',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdMeasurementsRoute =
+  AuthenticatedSitesSiteIdMeasurementsRouteImport.update({
+    id: '/measurements',
+    path: '/measurements',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdOptimizationRoute =
+  AuthenticatedSitesSiteIdOptimizationRouteImport.update({
+    id: '/optimization',
+    path: '/optimization',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdSettingsRoute =
+  AuthenticatedSitesSiteIdSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
   '/login': typeof PublicLoginRoute
+  '/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
+  '/sites/': typeof AuthenticatedSitesIndexRoute
+  '/users/': typeof AuthenticatedUsersIndexRoute
+  '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
+  '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
+  '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
+  '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
+  '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
+  '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
+  '/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
   '/login': typeof PublicLoginRoute
+  '/sites': typeof AuthenticatedSitesIndexRoute
+  '/users': typeof AuthenticatedUsersIndexRoute
+  '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
+  '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
+  '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
+  '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
+  '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
+  '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
+  '/sites/$siteId': typeof AuthenticatedSitesSiteIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_public/login': typeof PublicLoginRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
+  '/_authenticated/sites/': typeof AuthenticatedSitesIndexRoute
+  '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
+  '/_authenticated/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
+  '/_authenticated/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
+  '/_authenticated/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
+  '/_authenticated/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
+  '/_authenticated/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
+  '/_authenticated/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/sites/$siteId'
+    | '/sites/'
+    | '/users/'
+    | '/sites/$siteId/dashboard'
+    | '/sites/$siteId/devices'
+    | '/sites/$siteId/forecasts'
+    | '/sites/$siteId/measurements'
+    | '/sites/$siteId/optimization'
+    | '/sites/$siteId/settings'
+    | '/sites/$siteId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login'
+  to:
+    | '/'
+    | '/login'
+    | '/sites'
+    | '/users'
+    | '/sites/$siteId/dashboard'
+    | '/sites/$siteId/devices'
+    | '/sites/$siteId/forecasts'
+    | '/sites/$siteId/measurements'
+    | '/sites/$siteId/optimization'
+    | '/sites/$siteId/settings'
+    | '/sites/$siteId'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_public'
-    | '/_authenticated/dashboard'
     | '/_public/login'
     | '/_authenticated/'
+    | '/_authenticated/sites/$siteId'
+    | '/_authenticated/sites/'
+    | '/_authenticated/users/'
+    | '/_authenticated/sites/$siteId/dashboard'
+    | '/_authenticated/sites/$siteId/devices'
+    | '/_authenticated/sites/$siteId/forecasts'
+    | '/_authenticated/sites/$siteId/measurements'
+    | '/_authenticated/sites/$siteId/optimization'
+    | '/_authenticated/sites/$siteId/settings'
+    | '/_authenticated/sites/$siteId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -99,13 +219,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_public/login': {
       id: '/_public/login'
       path: '/login'
@@ -113,17 +226,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicLoginRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_authenticated/sites/': {
+      id: '/_authenticated/sites/'
+      path: '/sites'
+      fullPath: '/sites/'
+      preLoaderRoute: typeof AuthenticatedSitesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/sites/$siteId': {
+      id: '/_authenticated/sites/$siteId'
+      path: '/sites/$siteId'
+      fullPath: '/sites/$siteId'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdRouteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/users/': {
+      id: '/_authenticated/users/'
+      path: '/users'
+      fullPath: '/users/'
+      preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/sites/$siteId/': {
+      id: '/_authenticated/sites/$siteId/'
+      path: '/'
+      fullPath: '/sites/$siteId/'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdIndexRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/dashboard': {
+      id: '/_authenticated/sites/$siteId/dashboard'
+      path: '/dashboard'
+      fullPath: '/sites/$siteId/dashboard'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDashboardRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices': {
+      id: '/_authenticated/sites/$siteId/devices'
+      path: '/devices'
+      fullPath: '/sites/$siteId/devices'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/forecasts': {
+      id: '/_authenticated/sites/$siteId/forecasts'
+      path: '/forecasts'
+      fullPath: '/sites/$siteId/forecasts'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdForecastsRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/measurements': {
+      id: '/_authenticated/sites/$siteId/measurements'
+      path: '/measurements'
+      fullPath: '/sites/$siteId/measurements'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdMeasurementsRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/optimization': {
+      id: '/_authenticated/sites/$siteId/optimization'
+      path: '/optimization'
+      fullPath: '/sites/$siteId/optimization'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdOptimizationRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/settings': {
+      id: '/_authenticated/sites/$siteId/settings'
+      path: '/settings'
+      fullPath: '/sites/$siteId/settings'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdSettingsRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
   }
 }
 
+interface AuthenticatedSitesSiteIdRouteRouteChildren {
+  AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
+  AuthenticatedSitesSiteIdDevicesRoute: typeof AuthenticatedSitesSiteIdDevicesRoute
+  AuthenticatedSitesSiteIdForecastsRoute: typeof AuthenticatedSitesSiteIdForecastsRoute
+  AuthenticatedSitesSiteIdMeasurementsRoute: typeof AuthenticatedSitesSiteIdMeasurementsRoute
+  AuthenticatedSitesSiteIdOptimizationRoute: typeof AuthenticatedSitesSiteIdOptimizationRoute
+  AuthenticatedSitesSiteIdSettingsRoute: typeof AuthenticatedSitesSiteIdSettingsRoute
+  AuthenticatedSitesSiteIdIndexRoute: typeof AuthenticatedSitesSiteIdIndexRoute
+}
+
+const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteRouteChildren =
+  {
+    AuthenticatedSitesSiteIdDashboardRoute:
+      AuthenticatedSitesSiteIdDashboardRoute,
+    AuthenticatedSitesSiteIdDevicesRoute: AuthenticatedSitesSiteIdDevicesRoute,
+    AuthenticatedSitesSiteIdForecastsRoute:
+      AuthenticatedSitesSiteIdForecastsRoute,
+    AuthenticatedSitesSiteIdMeasurementsRoute:
+      AuthenticatedSitesSiteIdMeasurementsRoute,
+    AuthenticatedSitesSiteIdOptimizationRoute:
+      AuthenticatedSitesSiteIdOptimizationRoute,
+    AuthenticatedSitesSiteIdSettingsRoute:
+      AuthenticatedSitesSiteIdSettingsRoute,
+    AuthenticatedSitesSiteIdIndexRoute: AuthenticatedSitesSiteIdIndexRoute,
+  }
+
+const AuthenticatedSitesSiteIdRouteRouteWithChildren =
+  AuthenticatedSitesSiteIdRouteRoute._addFileChildren(
+    AuthenticatedSitesSiteIdRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedSitesSiteIdRouteRoute: typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
+  AuthenticatedSitesIndexRoute: typeof AuthenticatedSitesIndexRoute
+  AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedSitesSiteIdRouteRoute:
+    AuthenticatedSitesSiteIdRouteRouteWithChildren,
+  AuthenticatedSitesIndexRoute: AuthenticatedSitesIndexRoute,
+  AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
