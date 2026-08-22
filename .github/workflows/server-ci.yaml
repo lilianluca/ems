@@ -19,7 +19,7 @@ defaults:
 
 jobs:
   lint:
-    name: Server · Lint & format
+    name: Server - Lint & format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,7 +41,7 @@ jobs:
         run: uv run ruff format --check .
 
   tests:
-    name: Server · Tests
+    name: Server - Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

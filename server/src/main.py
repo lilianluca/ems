@@ -10,7 +10,7 @@ from sqlalchemy import text
 from src.api.router import api_router
 from src.core.database import engine
 from src.core.exceptions import AppError
-from src.core.handlers import app_error_handler, validation_error_handler
+from src.core.handlers import app_error_handler, unhandled_error_handler, validation_error_handler
 from src.core.logger import setup_logging
 
 setup_logging()
@@ -56,3 +56,4 @@ app.include_router(api_router, prefix="/api/v1")
 
 app.add_exception_handler(AppError, app_error_handler)  # type: ignore
 app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]
+app.add_exception_handler(Exception, unhandled_error_handler)  # type: ignore

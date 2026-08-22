@@ -1,3 +1,4 @@
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import ConflictError, ForbiddenError, NotFoundError
 
 
@@ -7,7 +8,7 @@ class SiteNotFoundError(NotFoundError):
     def __init__(self, site_id: int):
         super().__init__(
             message=f"Site with ID {site_id} not found",
-            code="site_not_found",
+            code=ErrorCode.SITE_NOT_FOUND,
         )
 
 
@@ -17,7 +18,7 @@ class MembershipNotFoundError(NotFoundError):
     def __init__(self, membership_id: int):
         super().__init__(
             message=f"Membership with ID {membership_id} not found",
-            code="membership_not_found",
+            code=ErrorCode.MEMBERSHIP_NOT_FOUND,
         )
 
 
@@ -27,7 +28,7 @@ class InsufficientSitePermissionsError(ForbiddenError):
     def __init__(self):
         super().__init__(
             message="You do not have sufficient permissions for this site",
-            code="insufficient_site_permissions",
+            code=ErrorCode.INSUFFICIENT_SITE_PERMISSIONS,
         )
 
 
@@ -37,5 +38,5 @@ class UserAlreadyMemberError(ConflictError):
     def __init__(self, user_id: int, site_id: int):
         super().__init__(
             message=f"User with ID {user_id} is already a member of site with ID {site_id}",
-            code="user_already_member",
+            code=ErrorCode.USER_ALREADY_MEMBER,
         )

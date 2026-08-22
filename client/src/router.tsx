@@ -1,16 +1,13 @@
 import { createRouter } from '@tanstack/react-router';
 
 import { queryClient } from '@/api/query-client';
+import { isAuthenticated } from '@/features/auth/store';
 
 import { routeTree } from './routeTree.gen';
 
 export const router = createRouter({
   routeTree,
-  context: {
-    queryClient,
-    // Placeholder until the auth store exists.
-    isAuthenticated: () => true,
-  },
+  context: { queryClient, isAuthenticated },
   defaultPreload: 'intent',
   scrollRestoration: true,
 });

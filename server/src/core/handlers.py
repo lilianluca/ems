@@ -1,9 +1,14 @@
+import logging
+
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from src.core.error_codes import ErrorCode
 from src.core.exceptions import AppError
 from src.core.schemas import ErrorDetail, ErrorResponse
+
+logger = logging.getLogger(__name__)
 
 # Pydantic prefixes every location with the part of the request it came from.
 _LOCATION_PREFIXES = frozenset({"body", "query", "path", "header", "cookie"})
@@ -36,7 +41,7 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     payload = ErrorResponse(
         error=ErrorDetail(
             message="Request validation failed.",
-            code="validation_error",
+            code=ErrorCode.VALIDATION_ERROR,
             fields=fields,
         )
     )
@@ -44,3 +49,15 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=payload.model_dump(by_alias=True),
     )
+
+
+async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
+    """Convert unexpected exceptions into the unified error shape."""
+    logger.exception("Unhandled exception during request to %s", request.url.path)
+    payload = ErrorResponse(
+        error=ErrorDetail(
+            message="An unexpected error occurred.",
+            code=ErrorCode.INTERNAL_ERROR,
+        )
+    )
+    return JSONResponse(status_code=500, content=payload.model_dump(by_alias=True))

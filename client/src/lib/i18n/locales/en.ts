@@ -1,0 +1,94 @@
+import type { ErrorCode } from '@/api/errors';
+
+/** Every error code must have a translation — missing keys fail the build. */
+const errors: Record<ErrorCode, string> = {
+  // --- Auth ---
+  invalid_credentials: 'Invalid email or password.',
+  inactive_user: 'Account is deactivated. Please contact an administrator.',
+  invalid_token: 'Session has expired. Please log in again.',
+  missing_token: 'Session has expired. Please log in again.',
+  invalid_refresh_token: 'Session has expired. Please log in again.',
+  missing_refresh_token: 'Session has expired. Please log in again.',
+
+  // --- Devices ---
+  device_not_found: 'Device not found.',
+  device_type_mismatch: 'Device type does not match the expected type.',
+
+  // --- OTE ---
+  ote_fetch_error: 'Failed to fetch data from OTE. Please try again later.',
+  ote_fetch_too_soon: 'Data from OTE cannot be fetched this frequently. Please try again later.',
+
+  // --- Sites ---
+  site_not_found: 'Site not found.',
+  membership_not_found: 'User is not a member of this site.',
+  insufficient_site_permissions: 'You do not have permission for this action.',
+  user_already_member: 'User is already a member of this site.',
+
+  // --- Users ---
+  user_already_exists: 'A user with this email already exists.',
+  user_not_found: 'User not found.',
+
+  // --- Weather ---
+  weather_fetch_error: 'Failed to fetch weather data. Please try again later.',
+  weather_fetch_too_soon: 'Weather data cannot be fetched this frequently. Please try again later.',
+
+  // --- Generic ---
+  not_found: 'Requested record not found.',
+  forbidden: 'You do not have permission for this action.',
+  unauthorized: 'You do not have permission for this action.',
+  conflict: 'Operation cannot be performed, record conflicts with existing one.',
+  validation_error: 'Please check the entered data.',
+  internal_error: 'An unexpected error occurred on the server.',
+};
+
+export const en = {
+  errors,
+  // Errors that have no server code.
+  client: {
+    network_error: 'Failed to connect to the server.',
+  },
+
+  validation: {
+    email_required: 'E-mail is required.',
+    email_invalid: 'Enter a valid email address.',
+    password_required: 'Password is required.',
+    password_too_short: 'Password must be at least 8 characters.',
+    first_name_required: 'First name is required.',
+    last_name_required: 'Last name is required.',
+  },
+
+  auth: {
+    login_title: 'Sign in',
+    login_description: 'Enter your credentials.',
+    email: 'Email',
+    email_placeholder: 'name@company.com',
+    password: 'Password',
+    submit: 'Sign in',
+    submitting: 'Signing in…',
+  },
+
+  nav: {
+    dashboard: 'Dashboard',
+    measurements: 'Measurements',
+    forecasts: 'Forecasts',
+    optimization: 'Optimization',
+    devices: 'Devices',
+    settings: 'Settings',
+    users: 'Users',
+    sites: 'Sites',
+    select_site: 'Select Site',
+    manage_sites: 'Manage Sites',
+    group_monitoring: 'Monitoring',
+    group_configuration: 'Configuration',
+    group_administration: 'Administration',
+    logout: 'Logout',
+    language: 'Language',
+    theme: 'Theme',
+  },
+
+  theme: {
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+  },
+} as const;

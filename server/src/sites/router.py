@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 
 from src.auth.dependencies import CurrentUserDep, RequireAdmin
+from src.core.responses import errors
 from src.sites.dependencies import SiteServiceDep, require_site_role
 from src.sites.enums import SiteRole
 from src.sites.models import Site, SiteMembership
@@ -33,7 +34,7 @@ async def create_site(
     )
 
 
-@router.get("", response_model=list[SiteRead])
+@router.get("", response_model=list[SiteRead], responses=errors(401))
 async def list_my_sites(current_user: CurrentUserDep, site_service: SiteServiceDep) -> list[Site]:
     """List all sites that the current user is a member of."""
     return await site_service.list_sites_for_user(current_user.id)
