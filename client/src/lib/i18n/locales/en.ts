@@ -82,5 +82,13 @@ export const en = {
     group_configuration: 'Configuration',
     group_administration: 'Administration',
     logout: 'Logout',
+    language: 'Language',
+    theme: 'Theme',
+  },
+
+  theme: {
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
   },
 } as const;

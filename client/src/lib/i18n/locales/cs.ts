@@ -82,5 +82,13 @@ export const cs = {
     group_configuration: 'Konfigurace',
     group_administration: 'Správa',
     logout: 'Odhlásit se',
+    language: 'Jazyk',
+    theme: 'Vzhled',
+  },
+
+  theme: {
+    light: 'Světlý',
+    dark: 'Tmavý',
+    system: 'Systémový',
   },
 } as const;
