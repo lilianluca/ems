@@ -5,6 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>client</title>
+
+    <!-- Runs before first paint so the theme does not flash. Mirrors src/lib/theme.ts. -->
+    <script>
+      try {
+        const stored = localStorage.getItem('theme');
+        const system = matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || ((!stored || stored === 'system') && system)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch {}
+    </script>
   </head>
 
   <body>
