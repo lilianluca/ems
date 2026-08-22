@@ -3,7 +3,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 export const Route = createFileRoute('/_public')({
   beforeLoad: ({ context }) => {
     if (context.isAuthenticated()) {
-      throw redirect({ to: '/dashboard' });
+      throw redirect({ to: '/sites' });
     }
   },
   component: PublicLayout,
