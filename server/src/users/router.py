@@ -8,7 +8,7 @@ from src.users.schemas import UserListResponse, UserRead
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/", response_model=UserListResponse, responses=errors(401, 403, 422))
+@router.get("", response_model=UserListResponse, responses=errors(401, 403, 422))
 async def list_users(
     _admin: RequireAdmin,
     user_service: UserServiceDep,
