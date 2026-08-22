@@ -38,7 +38,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
 
     login.mutate(values, {
       onSuccess: () => {
-        void navigate({ to: redirectTo ?? '/dashboard' });
+        void navigate({ to: redirectTo ?? '/' });
       },
       onError: (error) => {
         setError('root', { message: translateError(error) });
