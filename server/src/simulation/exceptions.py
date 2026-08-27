@@ -20,3 +20,10 @@ class NoOverlappingForecastError(NotFoundError):
 
     def __init__(self, site_id: int) -> None:
         super().__init__(f"PV and load forecasts for site {site_id} have no overlapping time range")
+
+
+class NoSpotPriceDataError(NotFoundError):
+    """Exception raised when no spot price data is available."""
+
+    def __init__(self) -> None:
+        super().__init__("No spot price data available")

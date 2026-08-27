@@ -5,10 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.influxdb import query_to_dataframe, write_points
 from src.devices.exceptions import BatteryNotFoundError, DeviceNotFoundError
 from src.devices.repository import DeviceRepository
-from src.simulation.battery_model import BatteryParams, simulate
+from src.simulation.battery_model import BatteryParams, compute_cost, simulate
 from src.simulation.exceptions import (
     NoForecastDataError,
     NoOverlappingForecastError,
+    NoSpotPriceDataError,
     NoWeatherDataError,
 )
 from src.simulation.pv_model import simulate_pv_generation
@@ -19,6 +20,7 @@ from src.simulation.schemas import (
     PVSimulationResult,
 )
 from src.sites.exceptions import SiteNotFoundError
+from src.sites.models import Site
 from src.sites.repository import SiteRepository
 
 
@@ -69,8 +71,8 @@ class SimulationService:
         )
 
     async def simulate_battery_baseline(self, site_id: int) -> BatterySimulationResult:
-        """Simulate SoC trajectory with no grid charging."""
-        df, params = await self._simulate_baseline_frame(site_id)
+        """Simulate SoC trajectory with no grid charging, priced against spot."""
+        df, params, _ = await self._simulate_baseline_frame(site_id)
 
         return BatterySimulationResult(
             site_id=site_id,
@@ -81,24 +83,36 @@ class SimulationService:
                     soc_percent=round(row.soc_percent, 2),
                     grid_import_kwh=round(row.grid_import_kwh, 4),
                     grid_export_kwh=round(row.grid_export_kwh, 4),
+                    price_czk_per_kwh=round(row.price_czk_per_kwh, 4),
+                    net_cost_czk=round(row.net_cost_czk, 2),
                 )
                 for ts, row in df.iterrows()
             ],
             total_grid_import_kwh=round(df["grid_import_kwh"].sum(), 4),
             total_grid_export_kwh=round(df["grid_export_kwh"].sum(), 4),
+            total_import_cost_czk=round(df["import_cost_czk"].sum(), 2),
+            total_export_revenue_czk=round(df["export_revenue_czk"].sum(), 2),
+            total_net_cost_czk=round(df["net_cost_czk"].sum(), 2),
             hours_below_min_soc=int((df["soc_kwh"] <= params.min_soc_kwh + 1e-9).sum()),
         )
 
-    async def _simulate_baseline_frame(self, site_id: int) -> tuple[pd.DataFrame, BatteryParams]:
+    async def _simulate_baseline_frame(
+        self, site_id: int
+    ) -> tuple[pd.DataFrame, BatteryParams, Site]:
         """Core baseline simulation — reused by the rule-based optimizer."""
+        site = await self.site_repo.get_by_id(site_id)
+        if site is None:
+            raise SiteNotFoundError(site_id)
+
         battery = await self.device_repo.get_battery_for_site(site_id)
         if battery is None:
             raise BatteryNotFoundError(site_id)
 
         pv_kw = await self._load_pv_forecast(site_id)
         load_kw = await self._load_load_forecast(site_id)
+        price = await self._load_spot_prices()
 
-        common = pv_kw.index.intersection(load_kw.index).sort_values()
+        common = pv_kw.index.intersection(load_kw.index).intersection(price.index).sort_values()
         if common.empty:
             raise NoOverlappingForecastError(site_id)
 
@@ -118,7 +132,36 @@ class SimulationService:
             grid_charge_kwh=None,
             params=params,
         )
-        return df, params
+
+        df = compute_cost(
+            df,
+            price_czk_per_kwh=price.loc[common],
+            import_surcharge_czk_per_kwh=site.import_surcharge_czk_per_kwh,
+            export_price_ratio=site.export_price_ratio,
+        )
+
+        return df, params, site
+
+    async def _load_spot_prices(self) -> pd.Series:
+        """Load OTE spot prices resampled to hourly means, in CZK/kWh."""
+        query = """
+            SELECT time, price_czk_mwh
+            FROM ote_spot_price
+            ORDER BY time
+        """
+        df = await query_to_dataframe(query)
+
+        if df.empty:
+            raise NoSpotPriceDataError()
+
+        df["time"] = pd.to_datetime(df["time"], utc=True)
+        series = df.set_index("time")["price_czk_mwh"]
+
+        # OTE publikuje čtvrthodinově, model běží hodinově
+        hourly = series.resample("1h").mean()
+
+        # Kč/MWh → Kč/kWh
+        return hourly / 1000
 
     async def _load_pv_forecast(self, site_id: int) -> pd.Series:
         """Load total PV generation forecast for a site (summed across devices)."""

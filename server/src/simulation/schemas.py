@@ -27,6 +27,8 @@ class BatterySimulationPoint(APIBaseModel):
     soc_percent: float
     grid_import_kwh: float
     grid_export_kwh: float
+    price_czk_per_kwh: float
+    net_cost_czk: float
 
 
 class BatterySimulationResult(APIBaseModel):
@@ -36,4 +38,7 @@ class BatterySimulationResult(APIBaseModel):
     points: list[BatterySimulationPoint]
     total_grid_import_kwh: float
     total_grid_export_kwh: float
+    total_import_cost_czk: float
+    total_export_revenue_czk: float
+    total_net_cost_czk: float
     hours_below_min_soc: int

@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.sites.enums import SiteRole
+from src.sites.enums import RiskProfile, SiteRole
 from src.sites.exceptions import MembershipNotFoundError, SiteNotFoundError, UserAlreadyMemberError
 from src.sites.models import Site, SiteMembership
 from src.sites.repository import SiteRepository
@@ -23,13 +23,23 @@ class SiteService:
         name: str,
         latitude: float,
         longitude: float,
+        import_surcharge_czk_per_kwh: float,
+        export_price_ratio: float,
+        risk_profile: RiskProfile,
         owner_id: int,
     ) -> Site:
         """Create a new site and assign the owner."""
         logger.info(
             f"Creating site '{name}' at ({latitude}, {longitude}) with owner ID {owner_id}."
         )
-        site = await self.site_repo.create(name=name, latitude=latitude, longitude=longitude)
+        site = await self.site_repo.create(
+            name=name,
+            latitude=latitude,
+            longitude=longitude,
+            import_surcharge_czk_per_kwh=import_surcharge_czk_per_kwh,
+            export_price_ratio=export_price_ratio,
+            risk_profile=risk_profile,
+        )
         await self.site_repo.create_membership(
             user_id=owner_id, site_id=site.id, role=SiteRole.OWNER
         )
@@ -60,6 +70,9 @@ class SiteService:
         name: str | None,
         latitude: float | None,
         longitude: float | None,
+        import_surcharge_czk_per_kwh: float | None,
+        export_price_ratio: float | None,
+        risk_profile: RiskProfile | None,
     ) -> Site:
         """Update site details, ensuring the site exists."""
         logger.info(f"Updating site with ID {site_id}.")
@@ -71,6 +84,12 @@ class SiteService:
             site.latitude = latitude
         if longitude is not None:
             site.longitude = longitude
+        if import_surcharge_czk_per_kwh is not None:
+            site.import_surcharge_czk_per_kwh = import_surcharge_czk_per_kwh
+        if export_price_ratio is not None:
+            site.export_price_ratio = export_price_ratio
+        if risk_profile is not None:
+            site.risk_profile = risk_profile
 
         await self.db.commit()
         await self.db.refresh(site)

@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey, String, UniqueConstraint
+from sqlalchemy import CheckConstraint, DateTime, Enum, Float, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from src.core.database import Base
-from src.sites.enums import SiteRole
+from src.sites.enums import RiskProfile, SiteRole
 
 
 class Site(Base):
@@ -21,6 +21,17 @@ class Site(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     latitude: Mapped[float] = mapped_column(nullable=True)
     longitude: Mapped[float] = mapped_column(nullable=True)
+    import_surcharge_czk_per_kwh: Mapped[float] = mapped_column(Float, nullable=False)
+    export_price_ratio: Mapped[float] = mapped_column(Float, nullable=False)
+    risk_profile: Mapped[RiskProfile] = mapped_column(
+        Enum(
+            RiskProfile,
+            name="risk_profile",
+            native_enum=True,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
+        nullable=False,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

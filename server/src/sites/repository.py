@@ -1,7 +1,7 @@
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.sites.enums import SiteRole
+from src.sites.enums import RiskProfile, SiteRole
 from src.sites.models import Site, SiteMembership
 
 
@@ -16,9 +16,24 @@ class SiteRepository:
         result = await self.db.execute(select(Site).where(Site.id == site_id))
         return result.scalar_one_or_none()
 
-    async def create(self, name: str, latitude: float, longitude: float) -> Site:
+    async def create(
+        self,
+        name: str,
+        latitude: float,
+        longitude: float,
+        import_surcharge_czk_per_kwh: float,
+        export_price_ratio: float,
+        risk_profile: RiskProfile,
+    ) -> Site:
         """Create a new site."""
-        site = Site(name=name, latitude=latitude, longitude=longitude)
+        site = Site(
+            name=name,
+            latitude=latitude,
+            longitude=longitude,
+            import_surcharge_czk_per_kwh=import_surcharge_czk_per_kwh,
+            export_price_ratio=export_price_ratio,
+            risk_profile=risk_profile,
+        )
         self.db.add(site)
         await self.db.flush()
         return site

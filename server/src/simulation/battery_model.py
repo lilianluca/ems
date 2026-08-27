@@ -114,3 +114,22 @@ def simulate(
         )
 
     return pd.DataFrame(rows).set_index("time")
+
+
+def compute_cost(
+    df: pd.DataFrame,
+    price_czk_per_kwh: pd.Series,
+    import_surcharge_czk_per_kwh: float,
+    export_price_ratio: float,
+) -> pd.DataFrame:
+    """Add per-step cost columns to a simulation result frame."""
+    out = df.copy()
+    out["price_czk_per_kwh"] = price_czk_per_kwh
+
+    out["import_cost_czk"] = out["grid_import_kwh"] * (
+        price_czk_per_kwh + import_surcharge_czk_per_kwh
+    )
+    out["export_revenue_czk"] = out["grid_export_kwh"] * price_czk_per_kwh * export_price_ratio
+    out["net_cost_czk"] = out["import_cost_czk"] - out["export_revenue_czk"]
+
+    return out

@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import Field
 
 from src.core.schemas import APIBaseModel
-from src.sites.enums import SiteRole
+from src.sites.enums import RiskProfile, SiteRole
 
 
 class SiteCreate(APIBaseModel):
@@ -12,6 +12,9 @@ class SiteCreate(APIBaseModel):
     name: str = Field(min_length=1, max_length=255)
     latitude: float = Field(ge=-90, le=90)  # Latitude must be between -90 and 90 degrees.
     longitude: float = Field(ge=-180, le=180)  # Longitude must be between -180 and 180 degrees.
+    import_surcharge_czk_per_kwh: float = Field(ge=0)
+    export_price_ratio: float = Field(ge=0, le=1)
+    risk_profile: RiskProfile
 
 
 class SiteRead(APIBaseModel):
@@ -22,6 +25,9 @@ class SiteRead(APIBaseModel):
     latitude: float
     longitude: float
     created_at: datetime
+    import_surcharge_czk_per_kwh: float
+    export_price_ratio: float
+    risk_profile: RiskProfile
 
 
 class SiteMembershipRead(APIBaseModel):
@@ -49,6 +55,9 @@ class SiteUpdate(APIBaseModel):
     latitude: float | None = Field(default=None, ge=-90, le=90)
     # Longitude must be between -180 and 180 degrees.
     longitude: float | None = Field(default=None, ge=-180, le=180)
+    import_surcharge_czk_per_kwh: float | None = Field(default=None, ge=0)
+    export_price_ratio: float | None = Field(default=None, ge=0, le=1)
+    risk_profile: RiskProfile | None = Field(default=None)
 
 
 class SiteMembershipUpdate(APIBaseModel):

@@ -30,6 +30,9 @@ async def create_site(
         name=payload.name,
         latitude=payload.latitude,
         longitude=payload.longitude,
+        import_surcharge_czk_per_kwh=payload.import_surcharge_czk_per_kwh,
+        export_price_ratio=payload.export_price_ratio,
+        risk_profile=payload.risk_profile,
         owner_id=current_user.id,
     )
 
@@ -82,6 +85,9 @@ async def update_site(
         name=payload.name,
         latitude=payload.latitude,
         longitude=payload.longitude,
+        import_surcharge_czk_per_kwh=payload.import_surcharge_czk_per_kwh,
+        export_price_ratio=payload.export_price_ratio,
+        risk_profile=payload.risk_profile,
     )
 
 

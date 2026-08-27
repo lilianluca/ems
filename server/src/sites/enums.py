@@ -7,3 +7,11 @@ class SiteRole(enum.StrEnum):
     OWNER = "owner"  # Full access to the site, including managing users and settings.
     MANAGER = "manager"  # Can manage devices, configurations but cannot remove the site or members.
     VIEWER = "viewer"  # Can view site data but cannot make changes.
+
+
+class RiskProfile(enum.StrEnum):
+    """Enumeration of risk profiles."""
+
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
