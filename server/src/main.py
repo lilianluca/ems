@@ -63,6 +63,7 @@ async def health() -> dict[str, str]:
     """
     return {"status": "ok"}
 
+
 app.add_exception_handler(AppError, app_error_handler)  # type: ignore
 app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]
 app.add_exception_handler(Exception, unhandled_error_handler)  # type: ignore
