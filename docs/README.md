@@ -12,6 +12,16 @@ Osobní poznámky a studijní dokumentace k vývoji Energy Management Systemu.
 
 - `influxdb3@dc9d4f677ac1:/$ influxdb3 query --database ems "SHOW TABLES" --token $token`
 
+### Alembic
+
+#### Vytvoření migračního skriptu
+
+- `uv run alembic revision --autogenerate -m "Your message."`
+
+### Aplikace migrace
+
+- `uv run alembic upgrade head`
+
 Poznámky:
 
 - Brát aktuální počasí v simulaci PV
