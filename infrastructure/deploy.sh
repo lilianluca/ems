@@ -8,6 +8,11 @@ set -euo pipefail
 export IMAGE_TAG
 cd /srv/ems
 
+# Because the script arrives on stdin, anything that consumes stdin can truncate
+# it. Fail loudly instead of exiting 0 halfway through.
+completed=0
+trap '[ "$completed" -eq 1 ] || { echo "ERROR: deploy script ended before completing" >&2; exit 1; }' EXIT
+
 compose() {
     docker compose -f compose.prod.yaml "$@"
 }
@@ -19,7 +24,10 @@ echo "==> Pulling images for tag ${IMAGE_TAG}"
 compose pull --quiet
 
 echo "==> Applying database migrations"
-compose run --rm migrate
+# This script is piped into `bash -s` over SSH, so stdin *is* the script.
+# `compose run` attaches stdin to the container by default, which would swallow
+# the rest of this file — hence -T and the explicit </dev/null.
+compose run --rm -T migrate < /dev/null
 
 echo "==> Starting stack"
 compose up -d --remove-orphans
@@ -29,3 +37,5 @@ docker image prune --force
 
 echo "==> Done"
 compose ps
+
+completed=1
