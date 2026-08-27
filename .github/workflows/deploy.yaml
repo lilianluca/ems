@@ -1,0 +1,116 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Existing image tag to roll back to (leave empty to build HEAD)"
+        required: false
+        type: string
+
+# Never let two deploys overlap, and never cancel one halfway through.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/lilianluca/ems
+
+jobs:
+  build:
+    name: Build & push images
+    runs-on: ubuntu-latest
+    # Skipped when rolling back to an image that already exists.
+    if: ${{ !inputs.image_tag }}
+    strategy:
+      matrix:
+        include:
+          - component: server
+            context: server
+            target: ""
+          - component: client
+            context: client
+            target: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push ${{ matrix.component }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          target: ${{ matrix.target }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-${{ matrix.component }}:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}-${{ matrix.component }}:latest
+          cache-from: type=gha,scope=${{ matrix.component }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.component }}
+
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: build
+    # Runs after a successful build, or straight away on a rollback dispatch.
+    if: ${{ always() && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
+    environment: production
+    env:
+      DEPLOY_USER: deploy
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Sync compose file
+        run: |
+          scp -o BatchMode=yes infrastructure/compose.prod.yaml \
+            "$DEPLOY_USER@$DEPLOY_HOST:/srv/ems/compose.prod.yaml"
+
+      - name: Run deployment
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "IMAGE_TAG='$IMAGE_TAG'"
+            echo "GHCR_USER='$GHCR_USER'"
+            echo "GHCR_TOKEN='$GHCR_TOKEN'"
+            cat infrastructure/deploy.sh
+          } | ssh -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" bash -s
+
+      - name: Smoke test
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS --max-time 5 https://ems.lilianluca.com/api/v1/health; then
+              echo "Healthy after ${attempt} attempt(s)"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Service did not become healthy in time"
+          exit 1
