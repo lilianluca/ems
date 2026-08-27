@@ -1,0 +1,189 @@
+name: ems
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-app-env: &app-env 
+  # Application
+  ENVIRONMENT: production
+  # Python
+  PYTHONUNBUFFERED: "1"
+  # Postgres
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_DB: ${POSTGRES_DB}
+  POSTGRES_HOST: db
+  # InfluxDB
+  INFLUXDB_HOST: http://influxdb:8181
+  INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
+  INFLUXDB_DATABASE: ${INFLUXDB_DATABASE}
+  # JWT
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+  # Celery
+  CELERY_BROKER_URL: redis://redis:6379/0
+  CELERY_RESULT_BACKEND: redis://redis:6379/0
+
+services:
+  client:
+    image: ghcr.io/lilianluca/ems-client:${IMAGE_TAG:-latest}
+    # Explicit name: every project on `edge` shares one DNS namespace,
+    # and the Caddyfile proxies to this hostname.
+    container_name: ems-client
+    restart: unless-stopped
+    logging: *logging
+    networks:
+      - edge
+      - internal
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  server:
+    image: ghcr.io/lilianluca/ems-server:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    logging: *logging
+    environment: *app-env
+    networks:
+      - internal
+    command:
+      - uv
+      - run
+      - uvicorn
+      - src.main:app
+      - --host=0.0.0.0
+      - --port=8000
+      # Trust the two proxy hops (Caddy → client nginx) so request.url.scheme
+      # is https and the client IP is the real one.
+      - --proxy-headers
+      - "--forwarded-allow-ips=*"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/api/v1/health")
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+
+  # One-shot: `docker compose -f compose.prod.yaml run --rm migrate`.
+  # In a `tools` profile so it never starts as part of `up`.
+  migrate:
+    image: ghcr.io/lilianluca/ems-server:${IMAGE_TAG:-latest}
+    profiles:
+      - tools
+    restart: "no"
+    logging: *logging
+    environment: *app-env
+    networks:
+      - internal
+    command: ["uv", "run", "alembic", "upgrade", "head"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    logging: *logging
+    networks:
+      - internal
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  influxdb:
+    image: influxdb:3-core
+    restart: unless-stopped
+    logging: *logging
+    networks:
+      - internal
+    command:
+      - influxdb3
+      - serve
+      - --node-id=ems-node
+      - --object-store=file
+      - --data-dir=/var/lib/influxdb3/data
+    volumes:
+      - influxdb_data:/var/lib/influxdb3
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    logging: *logging
+    networks:
+      - internal
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery-worker:
+    image: ghcr.io/lilianluca/ems-server:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    logging: *logging
+    environment: *app-env
+    networks:
+      - internal
+    command: uv run celery -A src.core.celery_app worker --pool=threads --concurrency=4 --loglevel=info
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+
+  celery-beat:
+    image: ghcr.io/lilianluca/ems-server:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    logging: *logging
+    environment: *app-env
+    networks:
+      - internal
+    # The schedule file is intentionally not persisted: every entry is a crontab
+    # schedule, so a restart simply re-arms them at the next matching minute.
+    command: uv run celery -A src.core.celery_app beat -s /tmp/celerybeat-schedule --loglevel=info
+    depends_on:
+      redis:
+        condition: service_healthy
+
+networks:
+  # Shared with the Caddy proxy and every other project on the host.
+  edge:
+    external: true
+  # Private to this stack — nothing here is reachable from the internet.
+  internal:
+
+volumes:
+  db_data:
+  influxdb_data:
+  redis_data:

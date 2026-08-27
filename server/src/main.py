@@ -54,6 +54,16 @@ app = FastAPI(
 
 app.include_router(api_router, prefix="/api/v1")
 
+
+@app.get("/api/v1/health", include_in_schema=False)
+async def health() -> dict[str, str]:
+    """Liveness probe for the container healthcheck and the deployment smoke test.
+
+    Kept out of the OpenAPI schema so it does not end up in the generated client.
+    """
+    return {"status": "ok"}
+
+
 app.add_exception_handler(AppError, app_error_handler)  # type: ignore
 app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]
 app.add_exception_handler(Exception, unhandled_error_handler)  # type: ignore
