@@ -105,6 +105,10 @@ services:
     logging: *logging
     networks:
       - internal
+    # Bound to the host loopback, never 0.0.0.0 — unreachable from the internet,
+    # reachable through an SSH tunnel for pgAdmin/psql from a laptop.
+    ports:
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
