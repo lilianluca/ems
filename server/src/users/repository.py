@@ -1,6 +1,7 @@
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.users.enums import UserRole
 from src.users.models import User
 
 
@@ -36,6 +37,7 @@ class UserRepository:
         hashed_password: str,
         first_name: str,
         last_name: str,
+        role: UserRole = UserRole.USER,
     ) -> User:
         """Create a new user in the database."""
         user = User(
@@ -43,6 +45,7 @@ class UserRepository:
             hashed_password=hashed_password,
             first_name=first_name,
             last_name=last_name,
+            role=role,
         )
         self.db.add(user)
         await self.db.flush()
