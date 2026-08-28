@@ -1,12 +1,14 @@
 name: Deploy
 
+# Deploys are deliberate: pushing a version tag ships it. Merges to main — including
+# Dependabot and documentation changes — only run CI.
 on:
   push:
-    branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
     inputs:
       image_tag:
-        description: "Existing image tag to roll back to (leave empty to build HEAD)"
+        description: "Existing image tag to redeploy, e.g. v0.1.0 (leave empty to build the current ref)"
         required: false
         type: string
 
@@ -24,11 +26,48 @@ env:
   IMAGE_PREFIX: ghcr.io/lilianluca/ems
 
 jobs:
+  # Decides what to deploy, in one place, so the other jobs stay readable:
+  #   tag push        → the version tag, e.g. v0.1.0
+  #   manual, blank   → the commit SHA of the selected ref
+  #   manual, filled  → that existing tag, and skip the build
+  resolve:
+    name: Resolve target
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.target.outputs.image_tag }}
+      build: ${{ steps.target.outputs.build }}
+    steps:
+      - name: Determine image tag
+        id: target
+        env:
+          # Via env rather than inline ${{ }} so the value cannot be interpreted
+          # as shell by the runner.
+          REQUESTED_TAG: ${{ inputs.image_tag }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ -n "$REQUESTED_TAG" ]; then
+            image_tag="$REQUESTED_TAG"
+            build=false
+          elif [ "$REF_TYPE" = "tag" ]; then
+            image_tag="$REF_NAME"
+            build=true
+          else
+            image_tag="$COMMIT_SHA"
+            build=true
+          fi
+          echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "Deploying tag '$image_tag' (build: $build)" >> "$GITHUB_STEP_SUMMARY"
+
   build:
     name: Build & push images
     runs-on: ubuntu-latest
-    # Skipped when rolling back to an image that already exists.
-    if: ${{ !inputs.image_tag }}
+    needs: resolve
+    # Skipped when redeploying an image that already exists.
+    if: ${{ needs.resolve.outputs.build == 'true' }}
     strategy:
       matrix:
         include:
@@ -58,7 +97,10 @@ jobs:
           context: ${{ matrix.context }}
           target: ${{ matrix.target }}
           push: true
+          # The version tag is what gets deployed and is readable in `docker ps`;
+          # the SHA tag guarantees every build is addressable even without one.
           tags: |
+            ${{ env.IMAGE_PREFIX }}-${{ matrix.component }}:${{ needs.resolve.outputs.image_tag }}
             ${{ env.IMAGE_PREFIX }}-${{ matrix.component }}:${{ github.sha }}
             ${{ env.IMAGE_PREFIX }}-${{ matrix.component }}:latest
           cache-from: type=gha,scope=${{ matrix.component }}
@@ -67,14 +109,14 @@ jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
-    needs: build
+    needs: [resolve, build]
     # Runs after a successful build, or straight away on a rollback dispatch.
-    if: ${{ always() && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
+    if: ${{ always() && needs.resolve.result == 'success' && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
     environment: production
     env:
       DEPLOY_USER: deploy
       DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-      IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+      IMAGE_TAG: ${{ needs.resolve.outputs.image_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
