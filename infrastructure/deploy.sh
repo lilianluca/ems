@@ -32,6 +32,16 @@ compose run --rm -T migrate < /dev/null
 echo "==> Starting stack"
 compose up -d --remove-orphans
 
+# Compose reads .env from the project directory, so recording the tag here makes
+# manual `docker compose` commands on the host default to the deployed version
+# instead of :latest. The shell environment still wins during CI runs.
+echo "==> Recording deployed tag"
+if grep -q '^IMAGE_TAG=' .env; then
+    sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${IMAGE_TAG}|" .env
+else
+    printf 'IMAGE_TAG=%s\n' "$IMAGE_TAG" >> .env
+fi
+
 echo "==> Reclaiming disk from superseded images"
 docker image prune --force
 
