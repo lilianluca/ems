@@ -118,11 +118,7 @@ export interface paths {
         get: operations["sites-get_site-get"];
         put?: never;
         post?: never;
-        /**
-         * Delete Site
-         * @description Delete a site by its ID, ensuring the current user is the owner.
-         */
-        delete: operations["sites-delete_site-delete"];
+        delete?: never;
         options?: never;
         head?: never;
         /**
@@ -479,6 +475,30 @@ export interface paths {
          */
         post: operations["admin-sites-create_site-post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/sites/{site_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Site
+         * @description Delete a site along with its memberships.
+         *
+         *     Creating and deleting a site are both operations on the asset itself, so
+         *     they live together here; a site owner administers a site but does not
+         *     decide whether it exists.
+         */
+        delete: operations["admin-sites-delete_site-delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1250,35 +1270,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SiteRead"];
                 };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    "sites-delete_site-delete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                site_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -2213,6 +2204,62 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    "admin-sites-delete_site-delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

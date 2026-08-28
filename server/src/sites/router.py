@@ -53,16 +53,6 @@ async def update_site(
     )
 
 
-@router.delete("/{site_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_site(
-    site_id: int,
-    _owner: Annotated[User, Depends(require_site_role(SiteRole.OWNER))],
-    site_service: SiteServiceDep,
-) -> None:
-    """Delete a site by its ID, ensuring the current user is the owner."""
-    await site_service.delete_site(site_id)
-
-
 @router.post(
     "/{site_id}/members", response_model=SiteMembershipRead, status_code=status.HTTP_201_CREATED
 )

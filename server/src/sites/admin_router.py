@@ -20,6 +20,17 @@ async def create_site(payload: SiteCreate, site_service: SiteServiceDep) -> Site
     )
 
 
+@router.delete("/{site_id}", status_code=status.HTTP_204_NO_CONTENT, responses=errors(404, 422))
+async def delete_site(site_id: int, site_service: SiteServiceDep) -> None:
+    """Delete a site along with its memberships.
+
+    Creating and deleting a site are both operations on the asset itself, so
+    they live together here; a site owner administers a site but does not
+    decide whether it exists.
+    """
+    await site_service.delete_site(site_id)
+
+
 @router.get("", response_model=SiteListResponse, responses=errors(422))
 async def list_sites(
     site_service: SiteServiceDep,
