@@ -52,6 +52,11 @@ def require_role(*allowed_roles: UserRole) -> Callable[[User], Awaitable[User]]:
     return _check_role
 
 
-RequireAdmin = Annotated[User, Depends(require_role(UserRole.ADMIN))]
+# The Depends instance is shared so the admin check is defined exactly once:
+# use `require_admin` in APIRouter(dependencies=[...]), `RequireAdmin` as a
+# parameter annotation on a single endpoint.
+require_admin = Depends(require_role(UserRole.ADMIN))
+
+RequireAdmin = Annotated[User, require_admin]
 
 RefreshCookieDep = Annotated[str | None, Cookie(alias=REFRESH_COOKIE_NAME)]
