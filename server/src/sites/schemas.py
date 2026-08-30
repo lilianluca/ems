@@ -12,6 +12,9 @@ class SiteCreate(APIBaseModel):
     name: str = Field(min_length=1, max_length=255)
     latitude: float = Field(ge=-90, le=90)  # Latitude must be between -90 and 90 degrees.
     longitude: float = Field(ge=-180, le=180)  # Longitude must be between -180 and 180 degrees.
+    # The user who will own the site — sites are provisioned on a customer's behalf,
+    # so the owner is chosen explicitly rather than taken from the caller.
+    owner_id: int
 
 
 class SiteRead(APIBaseModel):

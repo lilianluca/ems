@@ -1,5 +1,15 @@
 from src.core.error_codes import ErrorCode
-from src.core.exceptions import NotFoundError
+from src.core.exceptions import ConflictError, NotFoundError
+
+
+class UserAlreadyExistsError(ConflictError):
+    """Exception raised when creating a user whose email is already registered."""
+
+    def __init__(self, email: str):
+        super().__init__(
+            message=f"User with email {email} already exists",
+            code=ErrorCode.USER_ALREADY_EXISTS,
+        )
 
 
 class UserNotFoundError(NotFoundError):

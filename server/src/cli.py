@@ -21,8 +21,7 @@ from src.core.database import SessionLocal, engine
 from src.core.logger import setup_logging
 from src.users.enums import UserRole
 from src.users.repository import UserRepository
-
-MIN_PASSWORD_LENGTH = 12
+from src.users.schemas import MAX_PASSWORD_BYTES, MIN_PASSWORD_LENGTH
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -60,6 +59,9 @@ async def create_admin(email: str, first_name: str, last_name: str, promote: boo
             return 1
         if len(password) < MIN_PASSWORD_LENGTH:
             logger.error(f"Password must be at least {MIN_PASSWORD_LENGTH} characters.")
+            return 1
+        if len(password.encode()) > MAX_PASSWORD_BYTES:
+            logger.error(f"Password must be at most {MAX_PASSWORD_BYTES} bytes.")
             return 1
 
         user = await user_repo.create(
