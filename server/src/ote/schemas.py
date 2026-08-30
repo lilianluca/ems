@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import Field
 
 from src.core.schemas import APIBaseModel
@@ -20,6 +22,19 @@ class OTEPricesResponse(APIBaseModel):
 
     hours_today: list[OTEQuarterHourPrice] = Field(alias="hoursToday")
     hours_tomorrow: list[OTEQuarterHourPrice] = Field(alias="hoursTomorrow")
+
+
+class OTEPriceRead(APIBaseModel):
+    """A single quarter-hour block of the day-ahead spot price.
+
+    `starts_at` is the instant the block begins, in UTC. The price holds constant
+    for the whole block, which is why the frontend draws it as a step.
+    """
+
+    starts_at: datetime
+    price_czk_mwh: float
+    price_eur_mwh: float
+    level: str
 
 
 class OTEFetchPricesResponse(APIBaseModel):

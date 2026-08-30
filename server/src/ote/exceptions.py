@@ -15,6 +15,17 @@ class OTEFetchError(AppError):
         )
 
 
+class OTEInvalidRangeError(AppError):
+    """Exception raised when the requested price range is empty or too wide."""
+
+    def __init__(self, detail: str):
+        super().__init__(
+            detail,
+            code=ErrorCode.VALIDATION_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        )
+
+
 class OTEFetchTooSoonError(AppError):
     """Exception raised when OTE prices are fetched too soon after the last fetch."""
 
