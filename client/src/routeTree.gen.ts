@@ -12,10 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AuthenticatedSitesIndexRouteImport } from './routes/_authenticated/sites/index'
 import { Route as AuthenticatedSitesSiteIdRouteRouteImport } from './routes/_authenticated/sites/$siteId/route'
-import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedAdminSitesIndexRouteImport } from './routes/_authenticated/admin/sites/index'
+import { Route as AuthenticatedAdminSitesNewRouteImport } from './routes/_authenticated/admin/sites/new'
+import { Route as AuthenticatedAdminUsersIndexRouteImport } from './routes/_authenticated/admin/users/index'
+import { Route as AuthenticatedAdminUsersNewRouteImport } from './routes/_authenticated/admin/users/new'
 import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated/sites/$siteId/index'
 import { Route as AuthenticatedSitesSiteIdDashboardRouteImport } from './routes/_authenticated/sites/$siteId/dashboard'
 import { Route as AuthenticatedSitesSiteIdDevicesRouteImport } from './routes/_authenticated/sites/$siteId/devices'
@@ -37,6 +41,11 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -53,11 +62,30 @@ const AuthenticatedSitesSiteIdRouteRoute =
     path: '/sites/$siteId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
+const AuthenticatedAdminSitesIndexRoute =
+  AuthenticatedAdminSitesIndexRouteImport.update({
+    id: '/sites/',
+    path: '/sites/',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminSitesNewRoute =
+  AuthenticatedAdminSitesNewRouteImport.update({
+    id: '/sites/new',
+    path: '/sites/new',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminUsersIndexRoute =
+  AuthenticatedAdminUsersIndexRouteImport.update({
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminUsersNewRoute =
+  AuthenticatedAdminUsersNewRouteImport.update({
+    id: '/users/new',
+    path: '/users/new',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedSitesSiteIdIndexRoute =
   AuthenticatedSitesSiteIdIndexRouteImport.update({
     id: '/',
@@ -103,91 +131,115 @@ const AuthenticatedSitesSiteIdSettingsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
   '/sites/': typeof AuthenticatedSitesIndexRoute
-  '/users/': typeof AuthenticatedUsersIndexRoute
+  '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
+  '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
   '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
   '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
   '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
   '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
   '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
+  '/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
+  '/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/sites': typeof AuthenticatedSitesIndexRoute
-  '/users': typeof AuthenticatedUsersIndexRoute
+  '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
+  '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
   '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
   '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
   '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
   '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
   '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
+  '/admin/sites': typeof AuthenticatedAdminSitesIndexRoute
+  '/admin/users': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
   '/_authenticated/sites/': typeof AuthenticatedSitesIndexRoute
-  '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
+  '/_authenticated/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/_authenticated/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
   '/_authenticated/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
   '/_authenticated/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
   '/_authenticated/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
   '/_authenticated/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
   '/_authenticated/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
+  '/_authenticated/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
+  '/_authenticated/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/_authenticated/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/login'
     | '/sites/$siteId'
     | '/sites/'
-    | '/users/'
+    | '/admin/sites/new'
+    | '/admin/users/new'
     | '/sites/$siteId/dashboard'
     | '/sites/$siteId/devices'
     | '/sites/$siteId/forecasts'
     | '/sites/$siteId/measurements'
     | '/sites/$siteId/optimization'
     | '/sites/$siteId/settings'
+    | '/admin/sites/'
+    | '/admin/users/'
     | '/sites/$siteId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/login'
     | '/sites'
-    | '/users'
+    | '/admin/sites/new'
+    | '/admin/users/new'
     | '/sites/$siteId/dashboard'
     | '/sites/$siteId/devices'
     | '/sites/$siteId/forecasts'
     | '/sites/$siteId/measurements'
     | '/sites/$siteId/optimization'
     | '/sites/$siteId/settings'
+    | '/admin/sites'
+    | '/admin/users'
     | '/sites/$siteId'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_public'
+    | '/_authenticated/admin'
     | '/_public/login'
     | '/_authenticated/'
     | '/_authenticated/sites/$siteId'
     | '/_authenticated/sites/'
-    | '/_authenticated/users/'
+    | '/_authenticated/admin/sites/new'
+    | '/_authenticated/admin/users/new'
     | '/_authenticated/sites/$siteId/dashboard'
     | '/_authenticated/sites/$siteId/devices'
     | '/_authenticated/sites/$siteId/forecasts'
     | '/_authenticated/sites/$siteId/measurements'
     | '/_authenticated/sites/$siteId/optimization'
     | '/_authenticated/sites/$siteId/settings'
+    | '/_authenticated/admin/sites/'
+    | '/_authenticated/admin/users/'
     | '/_authenticated/sites/$siteId/'
   fileRoutesById: FileRoutesById
 }
@@ -219,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_public/login': {
       id: '/_public/login'
       path: '/login'
@@ -240,12 +299,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdRouteRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/users/': {
-      id: '/_authenticated/users/'
+    '/_authenticated/admin/sites/': {
+      id: '/_authenticated/admin/sites/'
+      path: '/sites'
+      fullPath: '/admin/sites/'
+      preLoaderRoute: typeof AuthenticatedAdminSitesIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/sites/new': {
+      id: '/_authenticated/admin/sites/new'
+      path: '/sites/new'
+      fullPath: '/admin/sites/new'
+      preLoaderRoute: typeof AuthenticatedAdminSitesNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/users/': {
+      id: '/_authenticated/admin/users/'
       path: '/users'
-      fullPath: '/users/'
-      preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AuthenticatedAdminUsersIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/users/new': {
+      id: '/_authenticated/admin/users/new'
+      path: '/users/new'
+      fullPath: '/admin/users/new'
+      preLoaderRoute: typeof AuthenticatedAdminUsersNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/sites/$siteId/': {
       id: '/_authenticated/sites/$siteId/'
@@ -299,6 +379,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminSitesNewRoute: typeof AuthenticatedAdminSitesNewRoute
+  AuthenticatedAdminUsersNewRoute: typeof AuthenticatedAdminUsersNewRoute
+  AuthenticatedAdminSitesIndexRoute: typeof AuthenticatedAdminSitesIndexRoute
+  AuthenticatedAdminUsersIndexRoute: typeof AuthenticatedAdminUsersIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminSitesNewRoute: AuthenticatedAdminSitesNewRoute,
+    AuthenticatedAdminUsersNewRoute: AuthenticatedAdminUsersNewRoute,
+    AuthenticatedAdminSitesIndexRoute: AuthenticatedAdminSitesIndexRoute,
+    AuthenticatedAdminUsersIndexRoute: AuthenticatedAdminUsersIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
 interface AuthenticatedSitesSiteIdRouteRouteChildren {
   AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
   AuthenticatedSitesSiteIdDevicesRoute: typeof AuthenticatedSitesSiteIdDevicesRoute
@@ -331,18 +431,18 @@ const AuthenticatedSitesSiteIdRouteRouteWithChildren =
   )
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedSitesSiteIdRouteRoute: typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
   AuthenticatedSitesIndexRoute: typeof AuthenticatedSitesIndexRoute
-  AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedSitesSiteIdRouteRoute:
     AuthenticatedSitesSiteIdRouteRouteWithChildren,
   AuthenticatedSitesIndexRoute: AuthenticatedSitesIndexRoute,
-  AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
