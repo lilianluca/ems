@@ -137,6 +137,26 @@ export const cs = {
     created: 'Lokalita {{name}} byla vytvořena.',
   },
 
+  ote: {
+    title: 'Spotová cena elektřiny',
+    description: 'Denní trh OTE, čtvrthodinové bloky. Dnešek a zítřek.',
+    price: 'Cena',
+    unit_czk: 'Kč/MWh',
+    unit_eur: '€/MWh',
+    currency: 'Měna',
+    currency_czk: 'CZK',
+    currency_eur: 'EUR',
+    current: 'Aktuální cena',
+    cheapest: 'Nejlevnější blok',
+    priciest: 'Nejdražší blok',
+    now: 'Teď',
+    today: 'Dnes',
+    tomorrow: 'Zítra',
+    tomorrow_pending: 'Zítřejší ceny se zveřejňují odpoledne, až proběhne aukce denního trhu.',
+    empty: 'Zatím nejsou k dispozici žádné ceny.',
+    load_error: 'Ceny se nepodařilo načíst.',
+  },
+
   nav: {
     dashboard: 'Přehled',
     measurements: 'Měření',
