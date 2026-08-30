@@ -8,6 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 export interface RouterContext {
   queryClient: QueryClient;
   isAuthenticated: () => boolean;
+  isAdmin: () => boolean;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

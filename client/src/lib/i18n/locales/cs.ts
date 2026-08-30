@@ -52,9 +52,13 @@ export const cs = {
     email_required: 'E-mail je povinný.',
     email_invalid: 'Zadejte platný e-mail.',
     password_required: 'Heslo je povinné.',
-    password_too_short: 'Heslo musí mít alespoň 8 znaků.',
+    password_too_short: 'Heslo musí mít alespoň 12 znaků.',
     first_name_required: 'Jméno je povinné.',
     last_name_required: 'Příjmení je povinné.',
+    site_name_required: 'Název lokality je povinný.',
+    latitude_invalid: 'Zeměpisná šířka musí být mezi -90 a 90.',
+    longitude_invalid: 'Zeměpisná délka musí být mezi -180 a 180.',
+    owner_required: 'Vyberte vlastníka lokality.',
   },
 
   auth: {
@@ -65,6 +69,72 @@ export const cs = {
     password: 'Heslo',
     submit: 'Přihlásit se',
     submitting: 'Přihlašuji…',
+  },
+
+  users: {
+    title: 'Uživatelé',
+    description: 'Účty se zakládají zde — systém nemá veřejnou registraci.',
+    new: 'Nový uživatel',
+    empty: 'Zatím tu nejsou žádní uživatelé.',
+    pagination: '{{from}}–{{to}} z {{total}}',
+    previous: 'Předchozí',
+    next: 'Další',
+
+    column_name: 'Jméno',
+    column_email: 'E-mail',
+    column_role: 'Role',
+    column_status: 'Stav',
+    column_created: 'Vytvořen',
+
+    role_admin: 'Správce',
+    role_user: 'Uživatel',
+    status_active: 'Aktivní',
+    status_inactive: 'Deaktivovaný',
+
+    create_title: 'Nový uživatel',
+    create_description: 'Heslo zvolte a předejte ho uživateli bezpečnou cestou.',
+    first_name: 'Jméno',
+    last_name: 'Příjmení',
+    email: 'E-mail',
+    password: 'Heslo',
+    role: 'Role',
+    submit: 'Vytvořit uživatele',
+    submitting: 'Vytvářím…',
+    cancel: 'Zrušit',
+    created: 'Uživatel {{email}} byl vytvořen.',
+  },
+
+  sites: {
+    title: 'Lokality',
+    description: 'Lokality zakládá správce a přiřazuje jim vlastníka.',
+    new: 'Nová lokalita',
+    empty: 'Zatím tu nejsou žádné lokality.',
+    pagination: '{{from}}–{{to}} z {{total}}',
+    previous: 'Předchozí',
+    next: 'Další',
+
+    column_name: 'Název',
+    column_coordinates: 'Souřadnice',
+    column_created: 'Vytvořena',
+    column_actions: 'Akce',
+
+    delete: 'Smazat',
+    delete_title: 'Smazat lokalitu {{name}}?',
+    delete_description:
+      'Smažou se i všechna členství. Naměřená data v InfluxDB zůstanou, ale zůstanou bez lokality. Akci nelze vrátit.',
+    deleted: 'Lokalita {{name}} byla smazána.',
+    cancel: 'Zrušit',
+
+    create_title: 'Nová lokalita',
+    create_description: 'Souřadnice se používají pro předpověď počasí a výroby FVE.',
+    name: 'Název',
+    latitude: 'Zeměpisná šířka',
+    longitude: 'Zeměpisná délka',
+    owner: 'Vlastník',
+    select_owner: 'Vyberte vlastníka',
+    submit: 'Vytvořit lokalitu',
+    submitting: 'Vytvářím…',
+    created: 'Lokalita {{name}} byla vytvořena.',
   },
 
   nav: {
