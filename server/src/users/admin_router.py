@@ -8,7 +8,9 @@ from src.users.schemas import UserCreate, UserListResponse, UserRead
 router = APIRouter(prefix="/users", tags=["admin-users"])
 
 
-@router.post("", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "", response_model=UserRead, status_code=status.HTTP_201_CREATED, responses=errors(409, 422)
+)
 async def create_user(payload: UserCreate, user_service: UserServiceDep) -> UserRead:
     """Create a user account. The system has no public registration."""
     user = await user_service.create_user(

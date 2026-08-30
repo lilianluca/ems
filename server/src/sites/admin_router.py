@@ -9,7 +9,9 @@ from src.sites.schemas import SiteCreate, SiteListResponse, SiteRead
 router = APIRouter(prefix="/sites", tags=["admin-sites"])
 
 
-@router.post("", response_model=SiteRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "", response_model=SiteRead, status_code=status.HTTP_201_CREATED, responses=errors(404, 422)
+)
 async def create_site(payload: SiteCreate, site_service: SiteServiceDep) -> Site:
     """Create a site and assign the given user as its owner."""
     return await site_service.create_site(
