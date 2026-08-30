@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any
 
 import pandas as pd
 from influxdb_client_3 import InfluxDBClient3, Point
@@ -37,3 +38,18 @@ async def query_to_dataframe(
     client = get_influx_client()
     table = await asyncio.to_thread(client.query, query, query_parameters=query_parameters)
     return table.to_pandas()  # type: ignore
+
+
+async def query_to_records(
+    query: str, query_parameters: dict[str, object] | None = None
+) -> list[dict[str, Any]]:
+    """Execute a SQL query against InfluxDB and return results as plain dictionaries.
+
+    Prefer this over `query_to_dataframe` when the rows are only being mapped to
+    response schemas: it skips the pandas round-trip and hands back values that
+    are already usable. Nanosecond timestamps arrive as `pandas.Timestamp`, which
+    subclasses `datetime`, so they behave like one everywhere it matters.
+    """
+    client = get_influx_client()
+    table = await asyncio.to_thread(client.query, query, query_parameters=query_parameters)
+    return table.to_pylist()  # type: ignore

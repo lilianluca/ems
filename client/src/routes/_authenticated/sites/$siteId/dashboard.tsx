@@ -1,9 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { spotPricesQueryOptions } from '@/features/ote/api';
+import { SpotPriceChart } from '@/features/ote/components/spot-price-chart';
+
 export const Route = createFileRoute('/_authenticated/sites/$siteId/dashboard')({
-  component: RouteComponent,
+  loader: ({ context }) => context.queryClient.ensureQueryData(spotPricesQueryOptions()),
+  component: DashboardPage,
 });
 
-function RouteComponent() {
-  return <div>Hello "/_authenticated/sites/$siteId/dashboard"!</div>;
+function DashboardPage() {
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Spot prices are nationwide, so this card is the same for every site. */}
+      <SpotPriceChart />
+    </div>
+  );
 }

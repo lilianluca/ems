@@ -300,6 +300,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ote/prices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Prices
+         * @description List quarter-hourly day-ahead spot prices.
+         *
+         *     Prices are the same nationwide, so this is not scoped to a site. Timestamps
+         *     without an offset are read as UTC.
+         */
+        get: operations["ote-list_prices-get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sites/{site_id}/weather/fetch-forecast": {
         parameters: {
             query?: never;
@@ -747,6 +770,26 @@ export interface components {
         OTEFetchPricesResponse: {
             /** Pointswritten */
             pointsWritten: number;
+        };
+        /**
+         * OTEPriceRead
+         * @description A single quarter-hour block of the day-ahead spot price.
+         *
+         *     `starts_at` is the instant the block begins, in UTC. The price holds constant
+         *     for the whole block, which is why the frontend draws it as a step.
+         */
+        OTEPriceRead: {
+            /**
+             * Startsat
+             * Format: date-time
+             */
+            startsAt: string;
+            /** Priceczkmwh */
+            priceCzkMwh: number;
+            /** Priceeurmwh */
+            priceEurMwh: number;
+            /** Level */
+            level: string;
         };
         /**
          * OnDemandConfig
@@ -1680,6 +1723,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    "ote-list_prices-get": {
+        parameters: {
+            query?: {
+                /** @description Inclusive lower bound; defaults to today in Czech local time. */
+                start?: string | null;
+                /** @description Exclusive upper bound; defaults to the end of tomorrow in Czech local time. */
+                end?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OTEPriceRead"][];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

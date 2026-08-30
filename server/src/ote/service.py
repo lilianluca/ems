@@ -4,16 +4,49 @@ from zoneinfo import ZoneInfo
 from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.influxdb import write_points
+from src.core.influxdb import query_to_records, write_points
 from src.ote.client import OTEClient
-from src.ote.exceptions import OTEFetchTooSoonError
+from src.ote.exceptions import OTEFetchTooSoonError, OTEInvalidRangeError
 from src.ote.repository import OTERepository
-from src.ote.schemas import OTEPricesResponse, OTEQuarterHourPrice
+from src.ote.schemas import OTEPriceRead, OTEPricesResponse, OTEQuarterHourPrice
 
 PRAGUE_TZ = ZoneInfo("Europe/Prague")
 UTC_TZ = ZoneInfo("UTC")
 
 DEFAULT_MIN_FETCH_INTERVAL = timedelta(minutes=15)
+
+# Guards against a client asking for the whole history in one request.
+MAX_PRICE_RANGE = timedelta(days=31)
+
+PRICES_QUERY = """
+    SELECT time, level, price_czk_mwh, price_eur_mwh
+    FROM ote_spot_price
+    WHERE time >= $start AND time < $end
+    ORDER BY time
+"""
+
+
+def _as_utc(value: datetime) -> datetime:
+    """Interpret a naive timestamp as UTC rather than as the server's local time."""
+    if value.tzinfo is None:
+        return value.replace(tzinfo=UTC_TZ)
+    return value.astimezone(UTC_TZ)
+
+
+def _default_range() -> tuple[datetime, datetime]:
+    """Today and tomorrow, as the Czech market defines a day.
+
+    The bounds are built from calendar dates rather than by adding 48 hours, so
+    the range still covers two whole local days across a daylight saving change.
+    """
+    today = datetime.now(PRAGUE_TZ).date()
+    day_after_tomorrow = today + timedelta(days=2)
+
+    start = datetime(today.year, today.month, today.day, tzinfo=PRAGUE_TZ)
+    end = datetime(
+        day_after_tomorrow.year, day_after_tomorrow.month, day_after_tomorrow.day, tzinfo=PRAGUE_TZ
+    )
+    return start.astimezone(UTC_TZ), end.astimezone(UTC_TZ)
 
 
 class OTEService:
@@ -50,6 +83,45 @@ class OTEService:
         await self._db.commit()
 
         return len(points)
+
+    async def get_prices(
+        self, start: datetime | None = None, end: datetime | None = None
+    ) -> list[OTEPriceRead]:
+        """Read stored quarter-hourly prices for a half-open [start, end) range.
+
+        Both bounds default to the current Czech market day and the next one.
+        """
+        if start is None or end is None:
+            default_start, default_end = _default_range()
+            start = start or default_start
+            end = end or default_end
+
+        start, end = _as_utc(start), _as_utc(end)
+
+        if end <= start:
+            raise OTEInvalidRangeError("The end of the range must be after its start.")
+        if end - start > MAX_PRICE_RANGE:
+            raise OTEInvalidRangeError(
+                f"The range must not span more than {MAX_PRICE_RANGE.days} days."
+            )
+
+        rows = await query_to_records(
+            PRICES_QUERY,
+            query_parameters={"start": start.isoformat(), "end": end.isoformat()},
+        )
+
+        return [
+            OTEPriceRead(
+                # InfluxDB returns naive timestamps that are already UTC; label
+                # them so the API emits an offset rather than an ambiguous
+                # local-looking time.
+                starts_at=row["time"].replace(tzinfo=UTC_TZ),
+                price_czk_mwh=row["price_czk_mwh"],
+                price_eur_mwh=row["price_eur_mwh"],
+                level=row["level"],
+            )
+            for row in rows
+        ]
 
     async def _check_cooldown(self, min_interval: timedelta) -> None:
         """Check if the last fetch was done within the minimum interval."""

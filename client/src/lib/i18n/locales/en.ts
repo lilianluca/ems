@@ -137,6 +137,27 @@ export const en = {
     created: 'Site {{name}} has been created.',
   },
 
+  ote: {
+    title: 'Spot electricity price',
+    description: 'OTE day-ahead market, quarter-hour blocks. Today and tomorrow.',
+    price: 'Price',
+    unit_czk: 'CZK/MWh',
+    unit_eur: '€/MWh',
+    currency: 'Currency',
+    currency_czk: 'CZK',
+    currency_eur: 'EUR',
+    current: 'Current price',
+    cheapest: 'Cheapest block',
+    priciest: 'Priciest block',
+    now: 'Now',
+    today: 'Today',
+    tomorrow: 'Tomorrow',
+    tomorrow_pending:
+      "Tomorrow's prices are published in the afternoon, once the day-ahead auction clears.",
+    empty: 'No prices available yet.',
+    load_error: 'Prices could not be loaded.',
+  },
+
   nav: {
     dashboard: 'Dashboard',
     measurements: 'Measurements',
