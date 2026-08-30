@@ -7,6 +7,8 @@ from src.sites.enums import SiteRole
 from src.sites.exceptions import MembershipNotFoundError, SiteNotFoundError, UserAlreadyMemberError
 from src.sites.models import Site, SiteMembership
 from src.sites.repository import SiteRepository
+from src.users.exceptions import UserNotFoundError
+from src.users.repository import UserRepository
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +19,7 @@ class SiteService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.site_repo = SiteRepository(db)
+        self.user_repo = UserRepository(db)
 
     async def create_site(
         self,
@@ -29,6 +32,12 @@ class SiteService:
         logger.info(
             f"Creating site '{name}' at ({latitude}, {longitude}) with owner ID {owner_id}."
         )
+
+        owner = await self.user_repo.get_by_id(owner_id)
+        if owner is None:
+            logger.warning(f"Cannot create site: owner with ID {owner_id} not found.")
+            raise UserNotFoundError(owner_id)
+
         site = await self.site_repo.create(name=name, latitude=latitude, longitude=longitude)
         await self.site_repo.create_membership(
             user_id=owner_id, site_id=site.id, role=SiteRole.OWNER
