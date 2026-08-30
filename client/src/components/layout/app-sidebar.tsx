@@ -3,6 +3,7 @@ import {
   BatteryChargingIcon,
   GaugeIcon,
   LayoutDashboardIcon,
+  MapPinIcon,
   PlugIcon,
   SettingsIcon,
   TrendingUpIcon,
@@ -144,11 +145,24 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   tooltip={t('nav.users')}
-                  isActive={!!matchRoute({ to: '/users' })}
+                  isActive={!!matchRoute({ to: '/admin/users' })}
                   render={
-                    <Link to="/users">
+                    <Link to="/admin/users">
                       <UsersIcon aria-hidden />
                       <span>{t('nav.users')}</span>
+                    </Link>
+                  }
+                />
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  tooltip={t('nav.manage_sites')}
+                  isActive={!!matchRoute({ to: '/admin/sites' })}
+                  render={
+                    <Link to="/admin/sites">
+                      <MapPinIcon aria-hidden />
+                      <span>{t('nav.manage_sites')}</span>
                     </Link>
                   }
                 />
