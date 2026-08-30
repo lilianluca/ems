@@ -21,7 +21,11 @@ celery_app.conf.update(
 celery_app.conf.beat_schedule = {
     "fetch-ote-prices": {
         "task": "ote.fetch_prices",
-        "schedule": crontab(minute="*/30"),  # Fetch OTE prices every 30 minutes
+        # Prices are a once-daily auction result: tomorrow's block appears in the
+        # early afternoon and never changes afterwards. This frequent schedule is
+        # therefore a retry loop, not a refresh — a missed window cannot be
+        # recovered, because the upstream API only ever serves today and tomorrow.
+        "schedule": crontab(minute="*/30"),
     },
     "fetch-weather-forecasts": {
         "task": "weather.fetch_forecasts",
