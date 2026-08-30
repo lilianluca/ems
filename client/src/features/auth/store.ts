@@ -28,3 +28,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 export function isAuthenticated(): boolean {
   return useAuthStore.getState().status === 'authenticated';
 }
+
+/** Non-reactive read for router guards, which run outside the React tree. */
+export function isAdmin(): boolean {
+  return useAuthStore.getState().user?.role === 'admin';
+}
