@@ -153,6 +153,8 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
                   cursor={{ strokeDasharray: '4 4' }}
                   content={
                     <ChartTooltipContent
+                      unit={t('forecasts.unit_power')}
+                      valueFormatter={(value) => energyFormatter.format(value)}
                       labelFormatter={(_label, payload) => {
                         const entry = payload[0] as { payload?: ChartPoint } | undefined;
                         const timestamp = entry?.payload?.timestamp;
