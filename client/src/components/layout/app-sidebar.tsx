@@ -8,6 +8,7 @@ import {
   SettingsIcon,
   TrendingUpIcon,
   UsersIcon,
+  WashingMachineIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -116,6 +117,19 @@ export function AppSidebar() {
                       <Link to="/sites/$siteId/devices" params={siteParams}>
                         <PlugIcon aria-hidden />
                         <span>{t('nav.devices')}</span>
+                      </Link>
+                    }
+                  />
+                </SidebarMenuItem>
+
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={t('nav.appliances')}
+                    isActive={!!matchRoute({ to: '/sites/$siteId/appliances', params: siteParams })}
+                    render={
+                      <Link to="/sites/$siteId/appliances" params={siteParams}>
+                        <WashingMachineIcon aria-hidden />
+                        <span>{t('nav.appliances')}</span>
                       </Link>
                     }
                   />

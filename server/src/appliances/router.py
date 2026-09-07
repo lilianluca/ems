@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 
 from src.appliances.dependencies import ApplianceServiceDep
+from src.core.responses import errors
 from src.appliances.models import Appliance
 from src.appliances.schemas import ApplianceCreate, ApplianceRead, ApplianceUpdate
 from src.sites.dependencies import require_site_role
@@ -17,7 +18,12 @@ AnyMember = Annotated[
 ManagerOrOwner = Annotated[User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER))]
 
 
-@router.post("", response_model=ApplianceRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=ApplianceRead,
+    status_code=status.HTTP_201_CREATED,
+    responses=errors(401, 403, 404, 422),
+)
 async def create_appliance(
     site_id: int,
     payload: ApplianceCreate,
@@ -28,7 +34,7 @@ async def create_appliance(
     return await appliance_service.create_appliance(site_id, payload)
 
 
-@router.get("", response_model=list[ApplianceRead])
+@router.get("", response_model=list[ApplianceRead], responses=errors(401, 403, 404, 422))
 async def list_appliances(
     site_id: int,
     _member: AnyMember,
@@ -38,7 +44,7 @@ async def list_appliances(
     return await appliance_service.list_appliances_for_site(site_id)
 
 
-@router.get("/{appliance_id}", response_model=ApplianceRead)
+@router.get("/{appliance_id}", response_model=ApplianceRead, responses=errors(401, 403, 404, 422))
 async def get_appliance(
     site_id: int,
     appliance_id: int,
@@ -49,7 +55,7 @@ async def get_appliance(
     return await appliance_service.get_appliance(appliance_id)
 
 
-@router.patch("/{appliance_id}", response_model=ApplianceRead)
+@router.patch("/{appliance_id}", response_model=ApplianceRead, responses=errors(401, 403, 404, 422))
 async def update_appliance(
     site_id: int,
     appliance_id: int,
@@ -61,7 +67,11 @@ async def update_appliance(
     return await appliance_service.update_appliance(appliance_id, payload)
 
 
-@router.delete("/{appliance_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{appliance_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=errors(401, 403, 404, 422),
+)
 async def delete_appliance(
     site_id: int,
     appliance_id: int,
@@ -72,7 +82,7 @@ async def delete_appliance(
     await appliance_service.delete_appliance(appliance_id)
 
 
-@router.post("/forecast", status_code=status.HTTP_200_OK)
+@router.post("/forecast", status_code=status.HTTP_200_OK, responses=errors(401, 403, 404))
 async def generate_load_forecast(
     site_id: int,
     _member: ManagerOrOwner,
