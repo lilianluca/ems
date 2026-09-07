@@ -236,6 +236,7 @@ export const cs = {
     expected_generation: 'Předpokládaná výroba',
     expected_consumption: 'Předpokládaná spotřeba',
     unit_energy: 'kWh',
+    unit_power: 'kW',
     empty: 'Pro tuto lokalitu zatím nejsou k dispozici žádné predikce.',
     load_error: 'Predikce se nepodařilo načíst.',
   },

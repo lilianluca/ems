@@ -237,6 +237,7 @@ export const en = {
     expected_generation: 'Expected generation',
     expected_consumption: 'Expected consumption',
     unit_energy: 'kWh',
+    unit_power: 'kW',
     empty: 'No forecasts available for this site yet.',
     load_error: 'Forecasts could not be loaded.',
   },

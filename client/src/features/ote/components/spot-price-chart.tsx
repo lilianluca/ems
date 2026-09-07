@@ -189,6 +189,8 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
                   cursor={{ strokeDasharray: '4 4' }}
                   content={
                     <ChartTooltipContent
+                      unit={unit}
+                      valueFormatter={(value) => priceFormatter.format(value)}
                       labelFormatter={(_label, payload) => {
                         // Recharts types the payload loosely; the point shape is
                         // ours, so narrow it rather than reading through `any`.
@@ -201,11 +203,6 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
                           i18n.language,
                         )}`;
                       }}
-                      formatter={(value) => (
-                        <span className="text-foreground tabular-nums">
-                          {priceFormatter.format(Number(value))} {unit}
-                        </span>
-                      )}
                     />
                   }
                 />
