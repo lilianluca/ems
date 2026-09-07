@@ -13,6 +13,7 @@ dependencies = [
     "httpx>=0.28.1",
     "influxdb3-python>=0.21.0",
     "pandas>=3.0.5",
+    "pulp[cbc]>=3.3.2",
     "pvlib>=0.15.2",
     "pydantic-settings>=2.15.0",
     "pydantic[email]>=2.13.5",
@@ -24,6 +25,11 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest>=9.1.1", "pytest-asyncio>=1.4.0", "ruff>=0.16.5"]
+
+[tool.pytest.ini_options]
+# Tests import the application as `src.…`, the same way the app itself runs.
+pythonpath = ["."]
+testpaths = ["tests"]
 
 [tool.ruff]
 target-version = "py313"
@@ -62,6 +68,11 @@ ignore = [
 ]
 fixable = ["ALL"]
 unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+# `assert` is how pytest expresses expectations; the bandit rule is aimed at
+# production code, where an optimised build would strip it.
+"tests/**" = ["S101"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]

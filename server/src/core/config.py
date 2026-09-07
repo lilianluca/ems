@@ -41,6 +41,20 @@ class Settings(BaseSettings):
     # --- OTE ---
     ote_api_base_url: str = "https://spotovaelektrina.cz/api/v1/price"
 
+    # --- Tariff ---
+    # The spot price is only part of what a kWh costs. Importing adds the
+    # supplier's margin, the regulated fees set by ERÚ and VAT; exporting is paid
+    # as the bare commodity. That asymmetry is what makes storing own generation
+    # worth more than arbitrage, so the optimiser needs both sides separately.
+    #
+    # These are placeholder magnitudes — replace them from an actual bill, and
+    # note that they differ by distribution area and tariff rate.
+    supplier_margin_czk_kwh: float = 0.30
+    distribution_fees_czk_kwh: float = 1.80
+    vat_rate: float = 0.21
+    # Share of the spot price paid for electricity fed back into the grid.
+    export_factor: float = 1.0
+
     # --- Celery ---
     celery_broker_url: str = "redis://redis:6379/0"
     celery_result_backend: str = "redis://redis:6379/0"
