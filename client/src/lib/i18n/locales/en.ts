@@ -14,6 +14,10 @@ const errors: Record<ErrorCode, string> = {
   device_not_found: 'Device not found.',
   device_type_mismatch: 'Device type does not match the expected type.',
 
+  // --- Optimization ---
+  no_battery_device: 'The site has no battery to schedule.',
+  optimization_data_missing: 'Prices or forecasts are missing for the planned horizon.',
+
   // --- OTE ---
   ote_fetch_error: 'Failed to fetch data from OTE. Please try again later.',
   ote_fetch_too_soon: 'Data from OTE cannot be fetched this frequently. Please try again later.',

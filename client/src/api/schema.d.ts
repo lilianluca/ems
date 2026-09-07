@@ -323,6 +323,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/optimization": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Optimization Plan
+         * @description Compute the cheapest battery schedule for the site.
+         *
+         *     The horizon starts at the current hour — hours that have passed cannot be
+         *     planned — and covers the same window as the prices and forecasts it is
+         *     built from.
+         */
+        get: operations["optimization-get_optimization_plan-get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ote/prices": {
         parameters: {
             query?: never;
@@ -774,7 +798,7 @@ export interface components {
          *     change for the frontend, which uses them as translation keys.
          * @enum {string}
          */
-        ErrorCode: "invalid_credentials" | "inactive_user" | "invalid_token" | "missing_token" | "invalid_refresh_token" | "missing_refresh_token" | "device_not_found" | "device_type_mismatch" | "ote_fetch_error" | "ote_fetch_too_soon" | "site_not_found" | "membership_not_found" | "insufficient_site_permissions" | "user_already_member" | "user_already_exists" | "user_not_found" | "weather_fetch_error" | "weather_fetch_too_soon" | "not_found" | "forbidden" | "unauthorized" | "conflict" | "validation_error" | "internal_error";
+        ErrorCode: "invalid_credentials" | "inactive_user" | "invalid_token" | "missing_token" | "invalid_refresh_token" | "missing_refresh_token" | "device_not_found" | "device_type_mismatch" | "no_battery_device" | "optimization_data_missing" | "ote_fetch_error" | "ote_fetch_too_soon" | "site_not_found" | "membership_not_found" | "insufficient_site_permissions" | "user_already_member" | "user_already_exists" | "user_not_found" | "weather_fetch_error" | "weather_fetch_too_soon" | "not_found" | "forbidden" | "unauthorized" | "conflict" | "validation_error" | "internal_error";
         /**
          * ErrorDetail
          * @description The error detail model for API responses.
@@ -858,6 +882,44 @@ export interface components {
              * @default 1
              */
             maxUsesPerWindow: number;
+        };
+        /**
+         * OptimizationPlan
+         * @description A schedule and what it is worth.
+         *
+         *     `baseline_cost_czk` is the same horizon run without a battery. Without it
+         *     the cost figure says nothing: the point is the difference.
+         */
+        OptimizationPlan: {
+            /** Steps */
+            steps: components["schemas"]["OptimizationStep"][];
+            /** Costczk */
+            costCzk: number;
+            /** Baselinecostczk */
+            baselineCostCzk: number;
+            /** Savingsczk */
+            savingsCzk: number;
+        };
+        /**
+         * OptimizationStep
+         * @description What the plan does in one hour of the horizon.
+         */
+        OptimizationStep: {
+            /**
+             * Startsat
+             * Format: date-time
+             */
+            startsAt: string;
+            /** Chargekw */
+            chargeKw: number;
+            /** Dischargekw */
+            dischargeKw: number;
+            /** Gridimportkw */
+            gridImportKw: number;
+            /** Gridexportkw */
+            gridExportKw: number;
+            /** Stateofchargekwh */
+            stateOfChargeKwh: number;
         };
         /**
          * PVDeviceCreate
@@ -2031,6 +2093,69 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SiteForecastPoint"][];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "optimization-get_optimization_plan-get": {
+        parameters: {
+            query?: {
+                /** @description Inclusive lower bound; defaults to today in Czech local time. */
+                start?: string | null;
+                /** @description Exclusive upper bound; defaults to the end of tomorrow in Czech local time. */
+                end?: string | null;
+            };
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OptimizationPlan"];
                 };
             };
             /** @description Not authenticated */

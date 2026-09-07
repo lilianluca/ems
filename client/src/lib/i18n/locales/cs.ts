@@ -14,6 +14,10 @@ const errors: Record<ErrorCode, string> = {
   device_not_found: 'Zařízení nebylo nalezeno.',
   device_type_mismatch: 'Typ zařízení neodpovídá očekávanému.',
 
+  // --- Optimalizace ---
+  no_battery_device: 'Lokalita nemá baterii, kterou by šlo řídit.',
+  optimization_data_missing: 'Chybí ceny nebo predikce pro plánovaný horizont.',
+
   // --- OTE ---
   ote_fetch_error: 'Nepodařilo se načíst data z OTE. Zkuste to prosím později.',
   ote_fetch_too_soon: 'Data z OTE nelze načíst tak často. Zkuste to prosím později.',
