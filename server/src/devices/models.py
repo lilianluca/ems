@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, Float, ForeignKey, String
+from sqlalchemy import CheckConstraint, DateTime, Enum, Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -58,11 +58,27 @@ class BatteryDevice(Device):
     """Battery energy storage device."""
 
     __tablename__ = "battery_devices"
+    __table_args__ = (
+        CheckConstraint("min_state_of_charge < max_state_of_charge", name="chk_battery_soc_range"),
+    )
 
     id: Mapped[int] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"), primary_key=True)
     capacity_kwh: Mapped[float] = mapped_column(Float, nullable=False)
     max_charge_power_kw: Mapped[float] = mapped_column(Float, nullable=False)
     max_discharge_power_kw: Mapped[float] = mapped_column(Float, nullable=False)
+    # A battery is cycled between these bounds rather than between empty and
+    # full, so only `capacity_kwh * (max - min)` is available to the optimiser.
+    min_state_of_charge: Mapped[float] = mapped_column(
+        Float, nullable=False, default=0.1, server_default="0.1"
+    )
+    max_state_of_charge: Mapped[float] = mapped_column(
+        Float, nullable=False, default=1.0, server_default="1.0"
+    )
+    # Fraction of stored energy that survives a charge/discharge cycle. Without
+    # it the optimiser would count losses as savings.
+    round_trip_efficiency: Mapped[float] = mapped_column(
+        Float, nullable=False, default=0.9, server_default="0.9"
+    )
 
     __mapper_args__ = {  # noqa: RUF012
         "polymorphic_identity": DeviceType.BATTERY,

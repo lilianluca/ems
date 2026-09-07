@@ -61,6 +61,9 @@ class DeviceRepository:
         capacity_kwh: float,
         max_charge_power_kw: float,
         max_discharge_power_kw: float,
+        min_state_of_charge: float,
+        max_state_of_charge: float,
+        round_trip_efficiency: float,
     ) -> BatteryDevice:
         """Create a new battery energy storage device."""
         device = BatteryDevice(
@@ -69,6 +72,9 @@ class DeviceRepository:
             capacity_kwh=capacity_kwh,
             max_charge_power_kw=max_charge_power_kw,
             max_discharge_power_kw=max_discharge_power_kw,
+            min_state_of_charge=min_state_of_charge,
+            max_state_of_charge=max_state_of_charge,
+            round_trip_efficiency=round_trip_efficiency,
         )
         self.db.add(device)
         await self.db.flush()

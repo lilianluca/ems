@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from src.core.responses import errors
 from src.devices.dependencies import DeviceServiceDep
 from src.devices.models import BatteryDevice, Device, PVDevice
 from src.devices.schemas import (
@@ -20,7 +21,12 @@ from src.users.models import User
 router = APIRouter(prefix="/sites/{site_id}/devices", tags=["devices"])
 
 
-@router.post("/pv", response_model=PVDeviceRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/pv",
+    response_model=PVDeviceRead,
+    status_code=status.HTTP_201_CREATED,
+    responses=errors(401, 403, 404, 422),
+)
 async def create_pv_device(
     site_id: int,
     payload: PVDeviceCreate,
@@ -38,7 +44,9 @@ async def create_pv_device(
     )
 
 
-@router.patch("/pv/{device_id}", response_model=PVDeviceRead)
+@router.patch(
+    "/pv/{device_id}", response_model=PVDeviceRead, responses=errors(401, 403, 404, 409, 422)
+)
 async def update_pv_device(
     site_id: int,
     device_id: int,
@@ -57,7 +65,12 @@ async def update_pv_device(
     )
 
 
-@router.post("/battery", response_model=BatteryDeviceRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/battery",
+    response_model=BatteryDeviceRead,
+    status_code=status.HTTP_201_CREATED,
+    responses=errors(401, 403, 404, 422),
+)
 async def create_battery_device(
     site_id: int,
     payload: BatteryDeviceCreate,
@@ -71,10 +84,17 @@ async def create_battery_device(
         capacity_kwh=payload.capacity_kwh,
         max_charge_power_kw=payload.max_charge_power_kw,
         max_discharge_power_kw=payload.max_discharge_power_kw,
+        min_state_of_charge=payload.min_state_of_charge,
+        max_state_of_charge=payload.max_state_of_charge,
+        round_trip_efficiency=payload.round_trip_efficiency,
     )
 
 
-@router.patch("/battery/{device_id}", response_model=BatteryDeviceRead)
+@router.patch(
+    "/battery/{device_id}",
+    response_model=BatteryDeviceRead,
+    responses=errors(401, 403, 404, 409, 422),
+)
 async def update_battery_device(
     site_id: int,
     device_id: int,
@@ -89,10 +109,13 @@ async def update_battery_device(
         capacity_kwh=payload.capacity_kwh,
         max_charge_power_kw=payload.max_charge_power_kw,
         max_discharge_power_kw=payload.max_discharge_power_kw,
+        min_state_of_charge=payload.min_state_of_charge,
+        max_state_of_charge=payload.max_state_of_charge,
+        round_trip_efficiency=payload.round_trip_efficiency,
     )
 
 
-@router.get("", response_model=list[DeviceRead])
+@router.get("", response_model=list[DeviceRead], responses=errors(401, 403, 404, 422))
 async def list_devices(
     site_id: int,
     _member: Annotated[
@@ -104,7 +127,7 @@ async def list_devices(
     return await device_service.list_devices_for_site(site_id)
 
 
-@router.get("/{device_id}", response_model=DeviceRead)
+@router.get("/{device_id}", response_model=DeviceRead, responses=errors(401, 403, 404, 422))
 async def get_device(
     site_id: int,
     device_id: int,
@@ -117,7 +140,11 @@ async def get_device(
     return await device_service.get_device(device_id)
 
 
-@router.delete("/{device_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{device_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=errors(401, 403, 404, 422),
+)
 async def delete_device(
     site_id: int,
     device_id: int,
