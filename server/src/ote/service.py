@@ -1,22 +1,16 @@
 from datetime import UTC, date, datetime, timedelta
-from zoneinfo import ZoneInfo
 
 from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.influxdb import query_to_records, write_points
+from src.core.timerange import PRAGUE_TZ, UTC_TZ, resolve_range
 from src.ote.client import OTEClient
-from src.ote.exceptions import OTEFetchTooSoonError, OTEInvalidRangeError
+from src.ote.exceptions import OTEFetchTooSoonError
 from src.ote.repository import OTERepository
 from src.ote.schemas import OTEPriceRead, OTEPricesResponse, OTEQuarterHourPrice
 
-PRAGUE_TZ = ZoneInfo("Europe/Prague")
-UTC_TZ = ZoneInfo("UTC")
-
 DEFAULT_MIN_FETCH_INTERVAL = timedelta(minutes=15)
-
-# Guards against a client asking for the whole history in one request.
-MAX_PRICE_RANGE = timedelta(days=31)
 
 PRICES_QUERY = """
     SELECT time, level, price_czk_mwh, price_eur_mwh
@@ -24,29 +18,6 @@ PRICES_QUERY = """
     WHERE time >= $start AND time < $end
     ORDER BY time
 """
-
-
-def _as_utc(value: datetime) -> datetime:
-    """Interpret a naive timestamp as UTC rather than as the server's local time."""
-    if value.tzinfo is None:
-        return value.replace(tzinfo=UTC_TZ)
-    return value.astimezone(UTC_TZ)
-
-
-def _default_range() -> tuple[datetime, datetime]:
-    """Today and tomorrow, as the Czech market defines a day.
-
-    The bounds are built from calendar dates rather than by adding 48 hours, so
-    the range still covers two whole local days across a daylight saving change.
-    """
-    today = datetime.now(PRAGUE_TZ).date()
-    day_after_tomorrow = today + timedelta(days=2)
-
-    start = datetime(today.year, today.month, today.day, tzinfo=PRAGUE_TZ)
-    end = datetime(
-        day_after_tomorrow.year, day_after_tomorrow.month, day_after_tomorrow.day, tzinfo=PRAGUE_TZ
-    )
-    return start.astimezone(UTC_TZ), end.astimezone(UTC_TZ)
 
 
 class OTEService:
@@ -91,19 +62,7 @@ class OTEService:
 
         Both bounds default to the current Czech market day and the next one.
         """
-        if start is None or end is None:
-            default_start, default_end = _default_range()
-            start = start or default_start
-            end = end or default_end
-
-        start, end = _as_utc(start), _as_utc(end)
-
-        if end <= start:
-            raise OTEInvalidRangeError("The end of the range must be after its start.")
-        if end - start > MAX_PRICE_RANGE:
-            raise OTEInvalidRangeError(
-                f"The range must not span more than {MAX_PRICE_RANGE.days} days."
-            )
+        start, end = resolve_range(start, end)
 
         rows = await query_to_records(
             PRICES_QUERY,

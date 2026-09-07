@@ -32,6 +32,17 @@ class ConflictError(AppError):
         super().__init__(message, code=code, status_code=status.HTTP_409_CONFLICT)
 
 
+class InvalidTimeRangeError(AppError):
+    """Exception raised when a requested time range is empty or too wide."""
+
+    def __init__(self, message: str):
+        super().__init__(
+            message,
+            code=ErrorCode.VALIDATION_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        )
+
+
 class ForbiddenError(AppError):
     """Exception raised when access to a resource is forbidden.
 
