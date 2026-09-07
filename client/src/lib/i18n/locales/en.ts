@@ -59,6 +59,12 @@ export const en = {
     latitude_invalid: 'Latitude must be between -90 and 90.',
     longitude_invalid: 'Longitude must be between -180 and 180.',
     owner_required: 'Select a site owner.',
+    device_name_required: 'Device name is required.',
+    power_positive: 'Enter a positive number.',
+    tilt_invalid: 'Tilt must be between 0 and 90°.',
+    azimuth_invalid: 'Azimuth must be between 0 and 360°.',
+    percent_invalid: 'Enter a percentage.',
+    state_of_charge_range: 'Maximum charge must be higher than minimum charge.',
   },
 
   auth: {
@@ -137,6 +143,12 @@ export const en = {
     created: 'Site {{name}} has been created.',
   },
 
+  chart: {
+    now: 'Now',
+    today: 'Today',
+    tomorrow: 'Tomorrow',
+  },
+
   ote: {
     title: 'Spot electricity price',
     description: 'OTE day-ahead market, quarter-hour blocks. Today and tomorrow.',
@@ -149,13 +161,84 @@ export const en = {
     current: 'Current price',
     cheapest: 'Cheapest block',
     priciest: 'Priciest block',
-    now: 'Now',
-    today: 'Today',
-    tomorrow: 'Tomorrow',
     tomorrow_pending:
       "Tomorrow's prices are published in the afternoon, once the day-ahead auction clears.",
     empty: 'No prices available yet.',
     load_error: 'Prices could not be loaded.',
+  },
+
+  devices: {
+    title: 'Devices',
+    description: 'Device parameters feed the generation forecast and the optimisation.',
+    add_pv: 'Add PV array',
+    add_battery: 'Add battery',
+    empty: 'No devices configured for this site yet.',
+
+    type_pv: 'Photovoltaics',
+    type_battery: 'Battery',
+
+    name: 'Name',
+    pv_name_placeholder: 'South roof',
+    battery_name_placeholder: 'Home battery',
+
+    installed_power: 'Panel power',
+    inverter_power: 'Inverter power',
+    tilt: 'Tilt',
+    azimuth: 'Azimuth',
+    capacity: 'Capacity',
+    max_charge_power: 'Max charge power',
+    max_discharge_power: 'Max discharge power',
+    min_soc: 'Minimum charge',
+    max_soc: 'Maximum charge',
+    efficiency: 'Round-trip efficiency',
+    usable_range: 'Usable range',
+
+    hint_kwp: 'Peak panel power in kWp, from the installation documents.',
+    hint_inverter: 'Usually somewhat lower than the panel power.',
+    hint_tilt: '0° is flat, 90° is vertical. A pitched roof is usually 30–45°.',
+    hint_azimuth: '0° north, 90° east, 180° south, 270° west.',
+    hint_soc:
+      'A battery is not cycled between empty and full. Usable energy is capacity × (max − min), and some is lost charging and discharging. Both values are on the datasheet.',
+
+    compass_north: 'north',
+    compass_northeast: 'north-east',
+    compass_east: 'east',
+    compass_southeast: 'south-east',
+    compass_south: 'south',
+    compass_southwest: 'south-west',
+    compass_west: 'west',
+    compass_northwest: 'north-west',
+
+    pv_create_title: 'New PV array',
+    pv_edit_title: 'Edit PV array',
+    pv_description: 'A site can have several arrays — one per roof orientation.',
+    battery_create_title: 'New battery',
+    battery_edit_title: 'Edit battery',
+    battery_description: 'Capacity is in kWh, power limits are in kW.',
+
+    edit: 'Edit',
+    delete: 'Delete',
+    delete_title: 'Delete device {{name}}?',
+    delete_description:
+      'Forecasts computed for this device stay in the measurement store without a device. This cannot be undone.',
+    deleted: 'Device {{name}} has been deleted.',
+    created: 'Device {{name}} has been created.',
+    updated: 'Device {{name}} has been updated.',
+    submit: 'Save',
+    submitting: 'Saving…',
+    cancel: 'Cancel',
+  },
+
+  forecasts: {
+    title: 'Generation and consumption forecast',
+    description: 'Hourly model for this site. These are predictions, not measurements.',
+    generation: 'PV generation',
+    consumption: 'Consumption',
+    expected_generation: 'Expected generation',
+    expected_consumption: 'Expected consumption',
+    unit_energy: 'kWh',
+    empty: 'No forecasts available for this site yet.',
+    load_error: 'Forecasts could not be loaded.',
   },
 
   nav: {

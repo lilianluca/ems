@@ -59,6 +59,12 @@ export const cs = {
     latitude_invalid: 'Zeměpisná šířka musí být mezi -90 a 90.',
     longitude_invalid: 'Zeměpisná délka musí být mezi -180 a 180.',
     owner_required: 'Vyberte vlastníka lokality.',
+    device_name_required: 'Název zařízení je povinný.',
+    power_positive: 'Zadejte kladné číslo.',
+    tilt_invalid: 'Sklon musí být mezi 0 a 90°.',
+    azimuth_invalid: 'Azimut musí být mezi 0 a 360°.',
+    percent_invalid: 'Zadejte hodnotu v procentech.',
+    state_of_charge_range: 'Maximální nabití musí být vyšší než minimální.',
   },
 
   auth: {
@@ -137,6 +143,12 @@ export const cs = {
     created: 'Lokalita {{name}} byla vytvořena.',
   },
 
+  chart: {
+    now: 'Teď',
+    today: 'Dnes',
+    tomorrow: 'Zítra',
+  },
+
   ote: {
     title: 'Spotová cena elektřiny',
     description: 'Denní trh OTE, čtvrthodinové bloky. Dnešek a zítřek.',
@@ -149,12 +161,83 @@ export const cs = {
     current: 'Aktuální cena',
     cheapest: 'Nejlevnější blok',
     priciest: 'Nejdražší blok',
-    now: 'Teď',
-    today: 'Dnes',
-    tomorrow: 'Zítra',
     tomorrow_pending: 'Zítřejší ceny se zveřejňují odpoledne, až proběhne aukce denního trhu.',
     empty: 'Zatím nejsou k dispozici žádné ceny.',
     load_error: 'Ceny se nepodařilo načíst.',
+  },
+
+  devices: {
+    title: 'Zařízení',
+    description: 'Parametry zařízení vstupují do predikce výroby a do optimalizace.',
+    add_pv: 'Přidat FVE',
+    add_battery: 'Přidat baterii',
+    empty: 'Pro tuto lokalitu zatím nejsou zadaná žádná zařízení.',
+
+    type_pv: 'Fotovoltaika',
+    type_battery: 'Baterie',
+
+    name: 'Název',
+    pv_name_placeholder: 'Střecha jih',
+    battery_name_placeholder: 'Domácí baterie',
+
+    installed_power: 'Výkon panelů',
+    inverter_power: 'Výkon střídače',
+    tilt: 'Sklon',
+    azimuth: 'Azimut',
+    capacity: 'Kapacita',
+    max_charge_power: 'Max. nabíjecí výkon',
+    max_discharge_power: 'Max. vybíjecí výkon',
+    min_soc: 'Minimální nabití',
+    max_soc: 'Maximální nabití',
+    efficiency: 'Účinnost cyklu',
+    usable_range: 'Využitelný rozsah',
+
+    hint_kwp: 'Špičkový výkon panelů v kWp podle projektu.',
+    hint_inverter: 'Bývá o něco nižší než výkon panelů.',
+    hint_tilt: '0° vodorovně, 90° svisle. Šikmá střecha obvykle 30–45°.',
+    hint_azimuth: '0° sever, 90° východ, 180° jih, 270° západ.',
+    hint_soc:
+      'Baterie se necykluje mezi nulou a plným nabitím. Využitelná energie je kapacita × (max − min), a část se navíc ztratí při nabíjení a vybíjení. Hodnoty najdete v datovém listu.',
+
+    compass_north: 'sever',
+    compass_northeast: 'severovýchod',
+    compass_east: 'východ',
+    compass_southeast: 'jihovýchod',
+    compass_south: 'jih',
+    compass_southwest: 'jihozápad',
+    compass_west: 'západ',
+    compass_northwest: 'severozápad',
+
+    pv_create_title: 'Nová fotovoltaika',
+    pv_edit_title: 'Úprava fotovoltaiky',
+    pv_description: 'Lokalita může mít víc polí — pro každou orientaci střechy jedno.',
+    battery_create_title: 'Nová baterie',
+    battery_edit_title: 'Úprava baterie',
+    battery_description: 'Kapacita je v kWh, výkony v kW.',
+
+    edit: 'Upravit',
+    delete: 'Smazat',
+    delete_title: 'Smazat zařízení {{name}}?',
+    delete_description:
+      'Predikce spočítané pro toto zařízení zůstanou v databázi měření bez vazby. Akci nelze vrátit.',
+    deleted: 'Zařízení {{name}} bylo smazáno.',
+    created: 'Zařízení {{name}} bylo vytvořeno.',
+    updated: 'Zařízení {{name}} bylo upraveno.',
+    submit: 'Uložit',
+    submitting: 'Ukládám…',
+    cancel: 'Zrušit',
+  },
+
+  forecasts: {
+    title: 'Predikce výroby a spotřeby',
+    description: 'Hodinový model pro tuto lokalitu. Jde o předpověď, ne o naměřené hodnoty.',
+    generation: 'Výroba FVE',
+    consumption: 'Spotřeba',
+    expected_generation: 'Předpokládaná výroba',
+    expected_consumption: 'Předpokládaná spotřeba',
+    unit_energy: 'kWh',
+    empty: 'Pro tuto lokalitu zatím nejsou k dispozici žádné predikce.',
+    load_error: 'Predikce se nepodařilo načíst.',
   },
 
   nav: {

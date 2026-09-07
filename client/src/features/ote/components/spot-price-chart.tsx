@@ -1,15 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ReferenceArea,
-  ReferenceLine,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts';
 
+import { dayBands, nowLine, useTimeAxis } from '@/components/chart/time-axis';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   type ChartConfig,
@@ -20,12 +13,9 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useNow } from '@/hooks/use-now';
-import { formatPragueTime, pragueDayKey, pragueHourMinute } from '@/lib/datetime';
+import { formatPragueTime } from '@/lib/datetime';
 
 import { BLOCK_DURATION_MS, type SpotPrice, useSpotPrices } from '../api';
-
-/** One axis tick every six hours keeps 192 quarter-hour blocks readable. */
-const TICK_INTERVAL_HOURS = 6;
 
 /** How often the "now" marker and the current block are recomputed. */
 const NOW_REFRESH_MS = 60_000;
@@ -53,7 +43,12 @@ interface ChartPoint {
   priceEurMwh: number;
 }
 
-export function SpotPriceChart() {
+interface SpotPriceChartProps {
+  /** Shared with the forecast chart so the two stack on one time axis. */
+  window: [number, number];
+}
+
+export function SpotPriceChart({ window }: SpotPriceChartProps) {
   const { t, i18n } = useTranslation();
   const { data: prices, isPending, isError } = useSpotPrices();
   const [currency, setCurrency] = useState<Currency>('czk');
@@ -85,30 +80,11 @@ export function SpotPriceChart() {
     [prices],
   );
 
-  const ticks = useMemo(
-    () =>
-      points
-        .filter((point) => {
-          const { hour, minute } = pragueHourMinute(point.timestamp);
-          return minute === 0 && hour % TICK_INTERVAL_HOURS === 0;
-        })
-        .map((point) => point.timestamp),
-    [points],
-  );
-
-  /** First block that falls on the next calendar day in Prague. */
-  const dayBoundary = useMemo(() => {
-    if (points.length === 0) return null;
-    const firstDay = pragueDayKey(points[0].timestamp);
-    return points.find((point) => pragueDayKey(point.timestamp) !== firstDay)?.timestamp ?? null;
-  }, [points]);
-
+  const { ticks, dayStarts } = useTimeAxis(window);
   const now = useNow(NOW_REFRESH_MS);
   const currentBlock = points.findLast(
     (point) => point.timestamp <= now && now < point.timestamp + BLOCK_DURATION_MS,
   );
-  const nowIsInRange =
-    points.length > 0 && now >= points[0].timestamp && now <= points[points.length - 1].timestamp;
 
   const priceFormatter = new Intl.NumberFormat(i18n.language, {
     maximumFractionDigits: CURRENCY_DECIMALS[currency],
@@ -185,41 +161,14 @@ export function SpotPriceChart() {
               <AreaChart data={points} margin={{ left: 4, right: 8, top: 8 }}>
                 <CartesianGrid vertical={false} />
 
-                {/* Declared before the series so the bands sit behind it. The two
-                    days are separated by shading rather than by splitting the
-                    chart: the cheap overnight window straddles midnight, and a
-                    cut there would land in the middle of the decision. */}
-                {dayBoundary !== null && (
-                  <>
-                    <ReferenceArea
-                      x1={points[0].timestamp}
-                      x2={dayBoundary}
-                      fill="transparent"
-                      label={{
-                        value: t('ote.today'),
-                        position: 'insideTopLeft',
-                        className: 'fill-muted-foreground text-xs',
-                      }}
-                    />
-                    <ReferenceArea
-                      x1={dayBoundary}
-                      x2={points[points.length - 1].timestamp}
-                      fill="var(--muted)"
-                      fillOpacity={0.6}
-                      label={{
-                        value: t('ote.tomorrow'),
-                        position: 'insideTopLeft',
-                        className: 'fill-muted-foreground text-xs',
-                      }}
-                    />
-                  </>
-                )}
+                {/* Declared before the series so the bands sit behind them. */}
+                {dayBands(dayStarts, window[1], [t('chart.today'), t('chart.tomorrow')])}
 
                 <XAxis
                   dataKey="timestamp"
                   type="number"
                   scale="time"
-                  domain={['dataMin', 'dataMax']}
+                  domain={window}
                   ticks={ticks}
                   tickFormatter={(value: number) => formatPragueTime(value, i18n.language)}
                   tickLine={false}
@@ -263,19 +212,7 @@ export function SpotPriceChart() {
 
                 {hasNegativePrice && <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />}
 
-                {nowIsInRange && (
-                  <ReferenceLine
-                    x={now}
-                    stroke="var(--foreground)"
-                    strokeWidth={1.5}
-                    label={{
-                      value: t('ote.now'),
-                      // Bottom, so it never collides with the day labels above.
-                      position: 'insideBottomLeft',
-                      className: 'fill-foreground text-xs',
-                    }}
-                  />
-                )}
+                {nowLine(now, window, t('chart.now'))}
 
                 {/* A step, not a curve: the price holds for the whole block and
                     then jumps. Interpolating would draw prices that never existed. */}
@@ -295,7 +232,7 @@ export function SpotPriceChart() {
 
             {/* Tomorrow's auction result is published in the early afternoon; until
                 then the chart simply ends at midnight, which looks like a fault. */}
-            {dayBoundary === null && (
+            {points[points.length - 1].timestamp < window[1] - BLOCK_DURATION_MS && (
               <p className="text-muted-foreground text-sm">{t('ote.tomorrow_pending')}</p>
             )}
           </>
