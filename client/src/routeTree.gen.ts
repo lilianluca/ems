@@ -22,11 +22,15 @@ import { Route as AuthenticatedAdminUsersIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminUsersNewRouteImport } from './routes/_authenticated/admin/users/new'
 import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated/sites/$siteId/index'
 import { Route as AuthenticatedSitesSiteIdDashboardRouteImport } from './routes/_authenticated/sites/$siteId/dashboard'
-import { Route as AuthenticatedSitesSiteIdDevicesRouteImport } from './routes/_authenticated/sites/$siteId/devices'
 import { Route as AuthenticatedSitesSiteIdForecastsRouteImport } from './routes/_authenticated/sites/$siteId/forecasts'
 import { Route as AuthenticatedSitesSiteIdMeasurementsRouteImport } from './routes/_authenticated/sites/$siteId/measurements'
 import { Route as AuthenticatedSitesSiteIdOptimizationRouteImport } from './routes/_authenticated/sites/$siteId/optimization'
 import { Route as AuthenticatedSitesSiteIdSettingsRouteImport } from './routes/_authenticated/sites/$siteId/settings'
+import { Route as AuthenticatedSitesSiteIdDevicesIndexRouteImport } from './routes/_authenticated/sites/$siteId/devices/index'
+import { Route as AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRouteImport } from './routes/_authenticated/sites/$siteId/devices/battery/$deviceId'
+import { Route as AuthenticatedSitesSiteIdDevicesBatteryNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/battery/new'
+import { Route as AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport } from './routes/_authenticated/sites/$siteId/devices/pv/$deviceId'
+import { Route as AuthenticatedSitesSiteIdDevicesPvNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/pv/new'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -98,12 +102,6 @@ const AuthenticatedSitesSiteIdDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
   } as any)
-const AuthenticatedSitesSiteIdDevicesRoute =
-  AuthenticatedSitesSiteIdDevicesRouteImport.update({
-    id: '/devices',
-    path: '/devices',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
-  } as any)
 const AuthenticatedSitesSiteIdForecastsRoute =
   AuthenticatedSitesSiteIdForecastsRouteImport.update({
     id: '/forecasts',
@@ -128,6 +126,36 @@ const AuthenticatedSitesSiteIdSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
   } as any)
+const AuthenticatedSitesSiteIdDevicesIndexRoute =
+  AuthenticatedSitesSiteIdDevicesIndexRouteImport.update({
+    id: '/devices/',
+    path: '/devices/',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute =
+  AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRouteImport.update({
+    id: '/devices/battery/$deviceId',
+    path: '/devices/battery/$deviceId',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesBatteryNewRoute =
+  AuthenticatedSitesSiteIdDevicesBatteryNewRouteImport.update({
+    id: '/devices/battery/new',
+    path: '/devices/battery/new',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute =
+  AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport.update({
+    id: '/devices/pv/$deviceId',
+    path: '/devices/pv/$deviceId',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesPvNewRoute =
+  AuthenticatedSitesSiteIdDevicesPvNewRouteImport.update({
+    id: '/devices/pv/new',
+    path: '/devices/pv/new',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -138,7 +166,6 @@ export interface FileRoutesByFullPath {
   '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
-  '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
   '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
   '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
   '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
@@ -146,6 +173,11 @@ export interface FileRoutesByFullPath {
   '/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
+  '/sites/$siteId/devices/': typeof AuthenticatedSitesSiteIdDevicesIndexRoute
+  '/sites/$siteId/devices/battery/$deviceId': typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
+  '/sites/$siteId/devices/battery/new': typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  '/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
+  '/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -155,7 +187,6 @@ export interface FileRoutesByTo {
   '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
-  '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
   '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
   '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
   '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
@@ -163,6 +194,11 @@ export interface FileRoutesByTo {
   '/admin/sites': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdIndexRoute
+  '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesIndexRoute
+  '/sites/$siteId/devices/battery/$deviceId': typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
+  '/sites/$siteId/devices/battery/new': typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  '/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
+  '/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -176,7 +212,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/_authenticated/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/_authenticated/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
-  '/_authenticated/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRoute
   '/_authenticated/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
   '/_authenticated/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
   '/_authenticated/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
@@ -184,6 +219,11 @@ export interface FileRoutesById {
   '/_authenticated/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/_authenticated/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/_authenticated/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
+  '/_authenticated/sites/$siteId/devices/': typeof AuthenticatedSitesSiteIdDevicesIndexRoute
+  '/_authenticated/sites/$siteId/devices/battery/$deviceId': typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
+  '/_authenticated/sites/$siteId/devices/battery/new': typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  '/_authenticated/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
+  '/_authenticated/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -196,7 +236,6 @@ export interface FileRouteTypes {
     | '/admin/sites/new'
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
-    | '/sites/$siteId/devices'
     | '/sites/$siteId/forecasts'
     | '/sites/$siteId/measurements'
     | '/sites/$siteId/optimization'
@@ -204,6 +243,11 @@ export interface FileRouteTypes {
     | '/admin/sites/'
     | '/admin/users/'
     | '/sites/$siteId/'
+    | '/sites/$siteId/devices/'
+    | '/sites/$siteId/devices/battery/$deviceId'
+    | '/sites/$siteId/devices/battery/new'
+    | '/sites/$siteId/devices/pv/$deviceId'
+    | '/sites/$siteId/devices/pv/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -213,7 +257,6 @@ export interface FileRouteTypes {
     | '/admin/sites/new'
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
-    | '/sites/$siteId/devices'
     | '/sites/$siteId/forecasts'
     | '/sites/$siteId/measurements'
     | '/sites/$siteId/optimization'
@@ -221,6 +264,11 @@ export interface FileRouteTypes {
     | '/admin/sites'
     | '/admin/users'
     | '/sites/$siteId'
+    | '/sites/$siteId/devices'
+    | '/sites/$siteId/devices/battery/$deviceId'
+    | '/sites/$siteId/devices/battery/new'
+    | '/sites/$siteId/devices/pv/$deviceId'
+    | '/sites/$siteId/devices/pv/new'
   id:
     | '__root__'
     | '/_authenticated'
@@ -233,7 +281,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/sites/new'
     | '/_authenticated/admin/users/new'
     | '/_authenticated/sites/$siteId/dashboard'
-    | '/_authenticated/sites/$siteId/devices'
     | '/_authenticated/sites/$siteId/forecasts'
     | '/_authenticated/sites/$siteId/measurements'
     | '/_authenticated/sites/$siteId/optimization'
@@ -241,6 +288,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/sites/'
     | '/_authenticated/admin/users/'
     | '/_authenticated/sites/$siteId/'
+    | '/_authenticated/sites/$siteId/devices/'
+    | '/_authenticated/sites/$siteId/devices/battery/$deviceId'
+    | '/_authenticated/sites/$siteId/devices/battery/new'
+    | '/_authenticated/sites/$siteId/devices/pv/$deviceId'
+    | '/_authenticated/sites/$siteId/devices/pv/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -341,13 +393,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDashboardRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
     }
-    '/_authenticated/sites/$siteId/devices': {
-      id: '/_authenticated/sites/$siteId/devices'
-      path: '/devices'
-      fullPath: '/sites/$siteId/devices'
-      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
-    }
     '/_authenticated/sites/$siteId/forecasts': {
       id: '/_authenticated/sites/$siteId/forecasts'
       path: '/forecasts'
@@ -376,6 +421,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdSettingsRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
     }
+    '/_authenticated/sites/$siteId/devices/': {
+      id: '/_authenticated/sites/$siteId/devices/'
+      path: '/devices'
+      fullPath: '/sites/$siteId/devices/'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesIndexRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices/battery/$deviceId': {
+      id: '/_authenticated/sites/$siteId/devices/battery/$deviceId'
+      path: '/devices/battery/$deviceId'
+      fullPath: '/sites/$siteId/devices/battery/$deviceId'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices/battery/new': {
+      id: '/_authenticated/sites/$siteId/devices/battery/new'
+      path: '/devices/battery/new'
+      fullPath: '/sites/$siteId/devices/battery/new'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryNewRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices/pv/$deviceId': {
+      id: '/_authenticated/sites/$siteId/devices/pv/$deviceId'
+      path: '/devices/pv/$deviceId'
+      fullPath: '/sites/$siteId/devices/pv/$deviceId'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices/pv/new': {
+      id: '/_authenticated/sites/$siteId/devices/pv/new'
+      path: '/devices/pv/new'
+      fullPath: '/sites/$siteId/devices/pv/new'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesPvNewRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
   }
 }
 
@@ -401,19 +481,22 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedSitesSiteIdRouteRouteChildren {
   AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
-  AuthenticatedSitesSiteIdDevicesRoute: typeof AuthenticatedSitesSiteIdDevicesRoute
   AuthenticatedSitesSiteIdForecastsRoute: typeof AuthenticatedSitesSiteIdForecastsRoute
   AuthenticatedSitesSiteIdMeasurementsRoute: typeof AuthenticatedSitesSiteIdMeasurementsRoute
   AuthenticatedSitesSiteIdOptimizationRoute: typeof AuthenticatedSitesSiteIdOptimizationRoute
   AuthenticatedSitesSiteIdSettingsRoute: typeof AuthenticatedSitesSiteIdSettingsRoute
   AuthenticatedSitesSiteIdIndexRoute: typeof AuthenticatedSitesSiteIdIndexRoute
+  AuthenticatedSitesSiteIdDevicesIndexRoute: typeof AuthenticatedSitesSiteIdDevicesIndexRoute
+  AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
+  AuthenticatedSitesSiteIdDevicesBatteryNewRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
+  AuthenticatedSitesSiteIdDevicesPvNewRoute: typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
 
 const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteRouteChildren =
   {
     AuthenticatedSitesSiteIdDashboardRoute:
       AuthenticatedSitesSiteIdDashboardRoute,
-    AuthenticatedSitesSiteIdDevicesRoute: AuthenticatedSitesSiteIdDevicesRoute,
     AuthenticatedSitesSiteIdForecastsRoute:
       AuthenticatedSitesSiteIdForecastsRoute,
     AuthenticatedSitesSiteIdMeasurementsRoute:
@@ -423,6 +506,16 @@ const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteR
     AuthenticatedSitesSiteIdSettingsRoute:
       AuthenticatedSitesSiteIdSettingsRoute,
     AuthenticatedSitesSiteIdIndexRoute: AuthenticatedSitesSiteIdIndexRoute,
+    AuthenticatedSitesSiteIdDevicesIndexRoute:
+      AuthenticatedSitesSiteIdDevicesIndexRoute,
+    AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute:
+      AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute,
+    AuthenticatedSitesSiteIdDevicesBatteryNewRoute:
+      AuthenticatedSitesSiteIdDevicesBatteryNewRoute,
+    AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute:
+      AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute,
+    AuthenticatedSitesSiteIdDevicesPvNewRoute:
+      AuthenticatedSitesSiteIdDevicesPvNewRoute,
   }
 
 const AuthenticatedSitesSiteIdRouteRouteWithChildren =

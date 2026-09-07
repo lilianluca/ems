@@ -50,3 +50,58 @@ export function pragueHourMinute(value: Date | number): { hour: number; minute: 
   const [hour, minute] = hourMinuteFormatter.format(value).split(':');
   return { hour: Number(hour), minute: Number(minute) };
 }
+
+const HOUR_MS = 3_600_000;
+
+/** Wall-clock time in Prague expressed as if it were UTC, used to derive the offset. */
+function pragueWallClock(value: number): number {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+    timeZone: PRAGUE_TIME_ZONE,
+  }).formatToParts(value);
+
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((part) => part.type === type)?.value);
+
+  return Date.UTC(
+    get('year'),
+    get('month') - 1,
+    get('day'),
+    get('hour'),
+    get('minute'),
+    get('second'),
+  );
+}
+
+/** Midnight in Prague, `dayOffset` days from the given instant, as epoch ms. */
+function pragueMidnight(value: number, dayOffset: number): number {
+  const wall = pragueWallClock(value);
+  const offset = wall - value;
+
+  const midnightWall = new Date(wall);
+  midnightWall.setUTCHours(0, 0, 0, 0);
+  midnightWall.setUTCDate(midnightWall.getUTCDate() + dayOffset);
+
+  // The offset can differ on the target day (daylight saving), so it is
+  // resolved once more against the provisional instant.
+  const provisional = midnightWall.getTime() - offset;
+  return midnightWall.getTime() - (pragueWallClock(provisional) - provisional);
+}
+
+/**
+ * Today and tomorrow as the Czech market defines a day.
+ *
+ * Mirrors `default_market_window()` on the server. Both charts pin their axis to
+ * this window rather than to whatever data happens to exist, so they stay
+ * aligned — and so a half-empty chart reads as "not published yet" instead of
+ * silently stretching one day across the full width.
+ */
+export function pragueMarketWindow(now: number): [number, number] {
+  return [pragueMidnight(now, 0), pragueMidnight(now, 2) - HOUR_MS / 4];
+}

@@ -7,7 +7,12 @@ celery_app = Celery(
     "ems",
     broker=settings.celery_broker_url,
     backend=settings.celery_result_backend,
-    include=["src.ote.tasks", "src.weather.tasks"],
+    include=[
+        "src.appliances.tasks",
+        "src.ote.tasks",
+        "src.simulation.tasks",
+        "src.weather.tasks",
+    ],
 )
 
 celery_app.conf.update(
@@ -30,5 +35,16 @@ celery_app.conf.beat_schedule = {
     "fetch-weather-forecasts": {
         "task": "weather.fetch_forecasts",
         "schedule": crontab(minute=0),  # Fetch weather forecasts every hour
+    },
+    # The generation forecast is derived from the weather that was just fetched,
+    # so it runs a few minutes behind it rather than being chained to it: a
+    # failed weather fetch then costs one stale hour, not a broken chain.
+    "forecast-pv-generation": {
+        "task": "simulation.forecast_pv_generation",
+        "schedule": crontab(minute=10),
+    },
+    "forecast-load": {
+        "task": "appliances.forecast_load",
+        "schedule": crontab(minute=15),
     },
 }

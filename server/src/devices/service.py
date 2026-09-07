@@ -2,7 +2,11 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.devices.exceptions import DeviceNotFoundError, DeviceTypeMismatchError
+from src.devices.exceptions import (
+    DeviceNotFoundError,
+    DeviceTypeMismatchError,
+    InvalidStateOfChargeRangeError,
+)
 from src.devices.models import BatteryDevice, Device, PVDevice
 from src.devices.repository import DeviceRepository
 from src.sites.exceptions import SiteNotFoundError
@@ -50,6 +54,9 @@ class DeviceService:
         capacity_kwh: float,
         max_charge_power_kw: float,
         max_discharge_power_kw: float,
+        min_state_of_charge: float,
+        max_state_of_charge: float,
+        round_trip_efficiency: float,
     ) -> BatteryDevice:
         """Create a new battery energy storage device."""
         logger.info(f"Creating battery device '{name}' for site with ID {site_id}.")
@@ -60,6 +67,9 @@ class DeviceService:
             capacity_kwh=capacity_kwh,
             max_charge_power_kw=max_charge_power_kw,
             max_discharge_power_kw=max_discharge_power_kw,
+            min_state_of_charge=min_state_of_charge,
+            max_state_of_charge=max_state_of_charge,
+            round_trip_efficiency=round_trip_efficiency,
         )
         await self.db.commit()
         logger.info(
@@ -135,10 +145,26 @@ class DeviceService:
         capacity_kwh: float | None,
         max_charge_power_kw: float | None,
         max_discharge_power_kw: float | None,
+        min_state_of_charge: float | None,
+        max_state_of_charge: float | None,
+        round_trip_efficiency: float | None,
     ) -> BatteryDevice:
         """Update a battery energy storage device."""
         logger.info(f"Updating battery device with ID {device_id}.")
         device = await self.get_battery_device(device_id)
+
+        # Validated against the merged values, because a partial update can invert
+        # the range even when each field on its own is in bounds — and validated
+        # *before* anything is assigned, because an autoflush would otherwise hit
+        # the database check constraint and surface as a 500 instead of a 422.
+        merged_min = (
+            device.min_state_of_charge if min_state_of_charge is None else min_state_of_charge
+        )
+        merged_max = (
+            device.max_state_of_charge if max_state_of_charge is None else max_state_of_charge
+        )
+        if merged_min >= merged_max:
+            raise InvalidStateOfChargeRangeError()
 
         if name is not None:
             device.name = name
@@ -148,6 +174,12 @@ class DeviceService:
             device.max_charge_power_kw = max_charge_power_kw
         if max_discharge_power_kw is not None:
             device.max_discharge_power_kw = max_discharge_power_kw
+        if min_state_of_charge is not None:
+            device.min_state_of_charge = min_state_of_charge
+        if max_state_of_charge is not None:
+            device.max_state_of_charge = max_state_of_charge
+        if round_trip_efficiency is not None:
+            device.round_trip_efficiency = round_trip_efficiency
 
         await self.db.commit()
         await self.db.refresh(device)
