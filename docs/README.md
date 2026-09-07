@@ -8,6 +8,10 @@ Osobní poznámky a studijní dokumentace k vývoji Energy Management Systemu.
 
 - [Základy FVE](energetika/fve-zaklady.md) – modely slunečního záření, teploty a výkonu
 
+### Optimalizace
+
+- [LP model řízení baterie](optimalizace/lp-model.md) – volba přístupu, formulace úlohy, pasti
+
 ### Influxdb3
 
 - `influxdb3@dc9d4f677ac1:/$ influxdb3 query --database ems "SHOW TABLES" --token $token`
