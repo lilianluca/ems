@@ -55,6 +55,12 @@ class Settings(BaseSettings):
     # Share of the spot price paid for electricity fed back into the grid.
     export_factor: float = 1.0
 
+    # --- Optimization ---
+    # Connection limit, applied to import and export alike. Belongs on the site
+    # once the model carries the breaker rating; a global default is enough for
+    # a prototype. 17 kW is roughly a 3x25 A main breaker.
+    grid_limit_kw: float = 17.0
+
     # --- Celery ---
     celery_broker_url: str = "redis://redis:6379/0"
     celery_result_backend: str = "redis://redis:6379/0"

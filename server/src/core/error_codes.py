@@ -20,6 +20,10 @@ class ErrorCode(StrEnum):
     DEVICE_NOT_FOUND = "device_not_found"
     DEVICE_TYPE_MISMATCH = "device_type_mismatch"
 
+    # --- Optimization ---
+    NO_BATTERY_DEVICE = "no_battery_device"
+    OPTIMIZATION_DATA_MISSING = "optimization_data_missing"
+
     # --- OTE ---
     OTE_FETCH_ERROR = "ote_fetch_error"
     OTE_FETCH_TOO_SOON = "ote_fetch_too_soon"
