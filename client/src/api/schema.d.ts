@@ -1082,7 +1082,11 @@ export interface components {
         };
         /**
          * TimeWindow
-         * @description Schema representing a time window for scheduled or on-demand appliances.
+         * @description A window in which an appliance may run.
+         *
+         *     A window that ends before it starts wraps past midnight, so "22 to 6" is a
+         *     valid eight-hour night window. Equal bounds are rejected because they are
+         *     ambiguous: they could mean an empty window or a whole day.
          */
         TimeWindow: {
             /** Starthour */

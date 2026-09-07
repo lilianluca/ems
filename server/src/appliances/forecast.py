@@ -2,7 +2,9 @@ import pandas as pd
 
 from src.appliances.enums import ApplianceBehavior
 from src.appliances.models import Appliance
-from src.appliances.schemas import CyclicConfig, OnDemandConfig, ScheduledConfig
+from src.appliances.schemas import CyclicConfig, OnDemandConfig, ScheduledConfig, TimeWindow
+
+HOURS_PER_DAY = 24
 
 WEEKDAY_PEAKS = [(6, 8), (17, 20)]
 WEEKEND_PEAKS = [(8, 10), (11, 13), (17, 20)]
@@ -42,16 +44,35 @@ def expected_hourly_power_w(appliance: Appliance, hour: int, is_weekend: bool) -
     return 0.0
 
 
-def _windowed_expected_power(appliance: Appliance, windows: list, hour: int, uses: int) -> float:
+def _window_length_hours(window: TimeWindow) -> int:
+    """Length of the window in hours, wrapping past midnight when it ends earlier."""
+    span = window.end_hour - window.start_hour
+    return span if span > 0 else span + HOURS_PER_DAY
+
+
+def _hour_in_window(hour: int, window: TimeWindow) -> bool:
+    """Whether the hour falls inside the window, which may wrap past midnight.
+
+    "From 22 to 6" is the natural way to describe a boiler or a car charger, so
+    it has to model as a real window rather than as one that never matches.
+    """
+    if window.end_hour > window.start_hour:
+        return window.start_hour <= hour < window.end_hour
+    return hour >= window.start_hour or hour < window.end_hour
+
+
+def _windowed_expected_power(
+    appliance: Appliance, windows: list[TimeWindow], hour: int, uses: int
+) -> float:
     """Calculate expected power for window-based appliances.
 
     Spread expected runtime over the window.
     """
     total = appliance.standby_power_w
     for w in windows:
-        if not (w.start_hour <= hour < w.end_hour):
+        if not _hour_in_window(hour, w):
             continue
-        window_hours = w.end_hour - w.start_hour
+        window_hours = _window_length_hours(w)
         duration_mean_h = ((w.duration_minutes_min + w.duration_minutes_max) / 2) / 60
         # očekávaný podíl hodiny, kdy spotřebič běží (rozprostřeno přes okno)
         expected_fraction = (w.probability * uses * duration_mean_h) / window_hours

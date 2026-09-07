@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from src.appliances.enums import ApplianceBehavior
 from src.core.schemas import APIBaseModel
@@ -24,15 +24,38 @@ class CyclicConfig(APIBaseModel):
     standby_minutes_min: int = Field(ge=1)
     standby_minutes_max: int = Field(ge=1)
 
+    @model_validator(mode="after")
+    def validate_ranges(self) -> "CyclicConfig":
+        """Reject inverted ranges, which would skew the duty cycle."""
+        if self.active_minutes_min > self.active_minutes_max:
+            raise ValueError("activeMinutesMin must not exceed activeMinutesMax.")
+        if self.standby_minutes_min > self.standby_minutes_max:
+            raise ValueError("standbyMinutesMin must not exceed standbyMinutesMax.")
+        return self
+
 
 class TimeWindow(APIBaseModel):
-    """Schema representing a time window for scheduled or on-demand appliances."""
+    """A window in which an appliance may run.
+
+    A window that ends before it starts wraps past midnight, so "22 to 6" is a
+    valid eight-hour night window. Equal bounds are rejected because they are
+    ambiguous: they could mean an empty window or a whole day.
+    """
 
     start_hour: int = Field(ge=0, le=23)
     end_hour: int = Field(ge=0, le=23)
     probability: float = Field(ge=0, le=1)
     duration_minutes_min: int = Field(ge=1)
     duration_minutes_max: int = Field(ge=1)
+
+    @model_validator(mode="after")
+    def validate_window(self) -> "TimeWindow":
+        """Reject an ambiguous window and an inverted duration range."""
+        if self.start_hour == self.end_hour:
+            raise ValueError("startHour and endHour must differ.")
+        if self.duration_minutes_min > self.duration_minutes_max:
+            raise ValueError("durationMinutesMin must not exceed durationMinutesMax.")
+        return self
 
 
 class ScheduledConfig(APIBaseModel):
