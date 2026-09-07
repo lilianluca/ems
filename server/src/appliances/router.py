@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 
 from src.appliances.dependencies import ApplianceServiceDep
-from src.core.responses import errors
 from src.appliances.models import Appliance
 from src.appliances.schemas import ApplianceCreate, ApplianceRead, ApplianceUpdate
+from src.core.responses import errors
 from src.sites.dependencies import require_site_role
 from src.sites.enums import SiteRole
 from src.users.models import User
