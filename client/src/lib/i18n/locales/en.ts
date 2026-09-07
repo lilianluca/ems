@@ -304,6 +304,19 @@ export const en = {
     cancel: 'Cancel',
   },
 
+  optimization: {
+    title: 'Battery schedule',
+    description:
+      'Positive means the battery supplies the house, negative means it is charging. Derived from spot prices and forecasts.',
+    battery: 'Battery',
+    savings: 'Estimated saving',
+    baseline_cost: 'Cost without control',
+    planned_cost: 'Cost with the plan',
+    state_of_charge: 'charge',
+    unit_power: 'kW',
+    unit_money: 'CZK',
+  },
+
   forecasts: {
     title: 'Generation and consumption forecast',
     description: 'Hourly model for this site. These are predictions, not measurements.',
