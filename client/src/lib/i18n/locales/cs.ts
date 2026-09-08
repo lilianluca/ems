@@ -314,7 +314,6 @@ export const cs = {
     discharging: 'Vybíjení',
     idle: 'Nečinná',
     state_of_charge: 'stav nabití',
-    unit_power: 'kW',
     unit_money: 'Kč',
   },
 
@@ -325,8 +324,6 @@ export const cs = {
     consumption: 'Spotřeba',
     expected_generation: 'Předpokládaná výroba',
     expected_consumption: 'Předpokládaná spotřeba',
-    unit_energy: 'kWh',
-    unit_power: 'kW',
     empty: 'Pro tuto lokalitu zatím nejsou k dispozici žádné predikce.',
     load_error: 'Predikce se nepodařilo načíst.',
   },

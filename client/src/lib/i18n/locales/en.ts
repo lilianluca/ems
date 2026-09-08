@@ -316,7 +316,6 @@ export const en = {
     discharging: 'Discharging',
     idle: 'Idle',
     state_of_charge: 'state of charge',
-    unit_power: 'kW',
     unit_money: 'CZK',
   },
 
@@ -327,8 +326,6 @@ export const en = {
     consumption: 'Consumption',
     expected_generation: 'Expected generation',
     expected_consumption: 'Expected consumption',
-    unit_energy: 'kWh',
-    unit_power: 'kW',
     empty: 'No forecasts available for this site yet.',
     load_error: 'Forecasts could not be loaded.',
   },

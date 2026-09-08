@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatFractionAsPercent, formatWithUnit } from '@/lib/units';
 
 import type { Device } from '../api';
 import { compassPoint } from '../compass';
@@ -21,41 +22,48 @@ interface DeviceCardProps {
  */
 export function DeviceCard({ siteId, device }: DeviceCardProps) {
   const { t, i18n } = useTranslation();
-  const format = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 1 });
-  const percent = (fraction: number) => `${format.format(fraction * 100)} %`;
 
   const specs =
     device.type === 'pv'
       ? [
           {
             label: t('devices.installed_power'),
-            value: `${format.format(device.installedPowerKwp)} kWp`,
+            value: formatWithUnit(device.installedPowerKwp, 'peakPower', i18n.language),
           },
           {
             label: t('devices.inverter_power'),
-            value: `${format.format(device.inverterPowerKw)} kW`,
+            value: formatWithUnit(device.inverterPowerKw, 'power', i18n.language),
           },
-          { label: t('devices.tilt'), value: `${format.format(device.tiltDegrees)}°` },
+          {
+            label: t('devices.tilt'),
+            value: formatWithUnit(device.tiltDegrees, 'angle', i18n.language),
+          },
           {
             label: t('devices.azimuth'),
-            value: `${format.format(device.azimuthDegrees)}° · ${t(`devices.compass_${compassPoint(device.azimuthDegrees)}`)}`,
+            value: `${formatWithUnit(device.azimuthDegrees, 'angle', i18n.language)} · ${t(`devices.compass_${compassPoint(device.azimuthDegrees)}`)}`,
           },
         ]
       : [
-          { label: t('devices.capacity'), value: `${format.format(device.capacityKwh)} kWh` },
+          {
+            label: t('devices.capacity'),
+            value: formatWithUnit(device.capacityKwh, 'energy', i18n.language),
+          },
           {
             label: t('devices.max_charge_power'),
-            value: `${format.format(device.maxChargePowerKw)} kW`,
+            value: formatWithUnit(device.maxChargePowerKw, 'power', i18n.language),
           },
           {
             label: t('devices.max_discharge_power'),
-            value: `${format.format(device.maxDischargePowerKw)} kW`,
+            value: formatWithUnit(device.maxDischargePowerKw, 'power', i18n.language),
           },
           {
             label: t('devices.usable_range'),
-            value: `${percent(device.minStateOfCharge)} – ${percent(device.maxStateOfCharge)}`,
+            value: `${formatFractionAsPercent(device.minStateOfCharge, i18n.language)} – ${formatFractionAsPercent(device.maxStateOfCharge, i18n.language)}`,
           },
-          { label: t('devices.efficiency'), value: percent(device.roundTripEfficiency) },
+          {
+            label: t('devices.efficiency'),
+            value: formatFractionAsPercent(device.roundTripEfficiency, i18n.language),
+          },
         ];
 
   return (

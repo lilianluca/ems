@@ -14,6 +14,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNow } from '@/hooks/use-now';
 import { formatPragueTime } from '@/lib/datetime';
+import { formatMoney, formatQuantity, UNIT } from '@/lib/units';
 
 import { type OptimizationStep, useOptimizationPlan } from '../api';
 
@@ -40,10 +41,7 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
   const now = useNow(NOW_REFRESH_MS);
 
   const chartConfig = {
-    batteryKw: {
-      label: t('optimization.battery'),
-      theme: { light: 'var(--chart-3)', dark: 'var(--chart-1)' },
-    },
+    batteryKw: { label: t('optimization.battery'), color: 'var(--chart-3)' },
   } satisfies ChartConfig;
 
   const points = useMemo<ChartPoint[]>(
@@ -57,9 +55,6 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
       })),
     [plan],
   );
-
-  const powerFormatter = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 2 });
-  const moneyFormatter = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 2 });
 
   return (
     <Card>
@@ -83,7 +78,7 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
               <div>
                 <p className="text-muted-foreground text-xs">{t('optimization.savings')}</p>
                 <p className="text-2xl font-semibold tabular-nums">
-                  {moneyFormatter.format(plan.savingsCzk)}{' '}
+                  {formatMoney(plan.savingsCzk, i18n.language)}{' '}
                   <span className="text-muted-foreground text-sm font-normal">
                     {t('optimization.unit_money')}
                   </span>
@@ -91,11 +86,11 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">{t('optimization.baseline_cost')}</p>
-                <p className="tabular-nums">{moneyFormatter.format(plan.baselineCostCzk)}</p>
+                <p className="tabular-nums">{formatMoney(plan.baselineCostCzk, i18n.language)}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">{t('optimization.planned_cost')}</p>
-                <p className="tabular-nums">{moneyFormatter.format(plan.costCzk)}</p>
+                <p className="tabular-nums">{formatMoney(plan.costCzk, i18n.language)}</p>
               </div>
             </div>
 
@@ -118,7 +113,7 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
                 />
 
                 <YAxis
-                  tickFormatter={(value: number) => powerFormatter.format(value)}
+                  tickFormatter={(value: number) => formatQuantity(value, 'power', i18n.language)}
                   tickLine={false}
                   axisLine={false}
                   width={48}
@@ -144,9 +139,9 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
                           <div className="flex flex-1 items-center justify-between gap-4">
                             <span className="text-muted-foreground">{t(action)}</span>
                             <span className="text-foreground font-mono font-medium tabular-nums">
-                              {powerFormatter.format(Math.abs(power))}{' '}
+                              {formatQuantity(Math.abs(power), 'power', i18n.language)}{' '}
                               <span className="text-muted-foreground font-normal">
-                                {t('optimization.unit_power')}
+                                {UNIT.power}
                               </span>
                             </span>
                           </div>
@@ -160,9 +155,11 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
                         return `${formatPragueTime(point.timestamp, i18n.language)}–${formatPragueTime(
                           point.timestamp + STEP_DURATION_MS,
                           i18n.language,
-                        )} · ${t('optimization.state_of_charge')} ${powerFormatter.format(
+                        )} · ${t('optimization.state_of_charge')} ${formatQuantity(
                           point.stateOfChargeKwh,
-                        )} kWh`;
+                          'energy',
+                          i18n.language,
+                        )} ${UNIT.energy}`;
                       }}
                     />
                   }
