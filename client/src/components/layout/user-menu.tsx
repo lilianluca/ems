@@ -131,7 +131,8 @@ export function UserMenu() {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
-              onSelect={() => {
+              disabled={logout.isPending}
+              onClick={() => {
                 logout.mutate();
               }}
             >
