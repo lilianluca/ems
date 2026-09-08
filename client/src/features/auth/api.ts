@@ -24,10 +24,13 @@ export function useLogin() {
       if (me.error) throw new AppError(me.response.status, me.error);
       return me.data;
     },
+    // No `router.invalidate()` here: the caller navigates away from the login
+    // page, and that navigation already runs the guards against the store
+    // written below. Doing both starts two competing load passes, and the
+    // abandoned one cancels its in-flight queries as its matches unmount —
+    // a `CancelledError` the loader awaiting them surfaces as a route error.
     onSuccess: (user) => {
       useAuthStore.getState().setAuthenticated(user);
-      // Guards read context outside React, so the router must re-evaluate them.
-      void router.invalidate();
     },
   });
 }
@@ -41,12 +44,18 @@ export function useLogout() {
     },
     // onSettled, not onSuccess: a failed request must still log the user out
     // locally rather than trapping them in the application.
-    onSettled: () => {
+    onSettled: async () => {
       setAccessToken(null);
       useAuthStore.getState().setAnonymous();
-      // Clears cached data so it cannot leak to the next user on this device.
-      queryClient.clear();
-      void router.invalidate();
+      try {
+        // Redirect before clearing: the guard sends the router to /login and
+        // tears the authenticated routes down, so the clear below cannot cancel
+        // a query some loader is still awaiting.
+        await router.invalidate();
+      } finally {
+        // Clears cached data so it cannot leak to the next user on this device.
+        queryClient.clear();
+      }
     },
   });
 }
