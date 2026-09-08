@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatWithUnit } from '@/lib/units';
 
 import type { Appliance } from '../api';
 import { DeleteApplianceButton } from './delete-appliance-button';
@@ -16,12 +17,17 @@ interface ApplianceCardProps {
 
 export function ApplianceCard({ siteId, appliance }: ApplianceCardProps) {
   const { t, i18n } = useTranslation();
-  const format = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 0 });
   const config = appliance.config;
 
   const specs: { label: string; value: string }[] = [
-    { label: t('appliances.power'), value: `${format.format(appliance.powerW)} W` },
-    { label: t('appliances.standby_power'), value: `${format.format(appliance.standbyPowerW)} W` },
+    {
+      label: t('appliances.power'),
+      value: formatWithUnit(appliance.powerW, 'wattPower', i18n.language),
+    },
+    {
+      label: t('appliances.standby_power'),
+      value: formatWithUnit(appliance.standbyPowerW, 'wattPower', i18n.language),
+    },
   ];
 
   if (config.behavior === 'cyclic') {

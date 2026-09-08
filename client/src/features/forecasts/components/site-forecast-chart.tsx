@@ -15,6 +15,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNow } from '@/hooks/use-now';
 import { formatPragueTime } from '@/lib/datetime';
+import { formatQuantity, UNIT } from '@/lib/units';
 
 import { FORECAST_STEP_MS, type SiteForecastPoint, useSiteForecast } from '../api';
 
@@ -66,8 +67,6 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
     [points],
   );
 
-  const energyFormatter = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 1 });
-
   return (
     <Card>
       <CardHeader>
@@ -96,10 +95,8 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
                   {t('forecasts.expected_generation')}
                 </p>
                 <p className="tabular-nums">
-                  {energyFormatter.format(totals.generation)}{' '}
-                  <span className="text-muted-foreground text-xs">
-                    {t('forecasts.unit_energy')}
-                  </span>
+                  {formatQuantity(totals.generation, 'energy', i18n.language)}{' '}
+                  <span className="text-muted-foreground text-xs">{UNIT.energy}</span>
                 </p>
               </div>
               <div>
@@ -107,10 +104,8 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
                   {t('forecasts.expected_consumption')}
                 </p>
                 <p className="tabular-nums">
-                  {energyFormatter.format(totals.consumption)}{' '}
-                  <span className="text-muted-foreground text-xs">
-                    {t('forecasts.unit_energy')}
-                  </span>
+                  {formatQuantity(totals.consumption, 'energy', i18n.language)}{' '}
+                  <span className="text-muted-foreground text-xs">{UNIT.energy}</span>
                 </p>
               </div>
             </div>
@@ -137,7 +132,7 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
                 />
 
                 <YAxis
-                  tickFormatter={(value: number) => energyFormatter.format(value)}
+                  tickFormatter={(value: number) => formatQuantity(value, 'power', i18n.language)}
                   tickLine={false}
                   axisLine={false}
                   width={48}
@@ -147,8 +142,8 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
                   cursor={{ strokeDasharray: '4 4' }}
                   content={
                     <ChartTooltipContent
-                      unit={t('forecasts.unit_power')}
-                      valueFormatter={(value) => energyFormatter.format(value)}
+                      unit={UNIT.power}
+                      valueFormatter={(value) => formatQuantity(value, 'power', i18n.language)}
                       labelFormatter={(_label, payload) => {
                         const entry = payload[0] as { payload?: ChartPoint } | undefined;
                         const timestamp = entry?.payload?.timestamp;
