@@ -67,6 +67,7 @@ class OTEService:
         rows = await query_to_records(
             PRICES_QUERY,
             query_parameters={"start": start.isoformat(), "end": end.isoformat()},
+            measurement="ote_spot_price",
         )
 
         return [

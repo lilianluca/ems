@@ -52,8 +52,8 @@ class ForecastService:
             "end": end.isoformat(),
         }
 
-        pv_rows = await query_to_records(PV_QUERY, parameters)
-        load_rows = await query_to_records(LOAD_QUERY, parameters)
+        pv_rows = await query_to_records(PV_QUERY, parameters, measurement="pv_generation_forecast")
+        load_rows = await query_to_records(LOAD_QUERY, parameters, measurement="load_forecast")
 
         # InfluxDB returns naive timestamps that are already UTC; label them so
         # the API emits an offset rather than an ambiguous local-looking time.
