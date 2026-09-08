@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { siteForecastQueryOptions } from '@/features/forecasts/api';
 import { SiteForecastChart } from '@/features/forecasts/components/site-forecast-chart';
+import { optimizationQueryOptions } from '@/features/optimization/api';
+import { OptimizationChart } from '@/features/optimization/components/optimization-chart';
 import { spotPricesQueryOptions } from '@/features/ote/api';
 import { SpotPriceChart } from '@/features/ote/components/spot-price-chart';
 import { useNow } from '@/hooks/use-now';
@@ -15,6 +17,11 @@ export const Route = createFileRoute('/_authenticated/sites/$siteId/dashboard')(
     Promise.all([
       context.queryClient.ensureQueryData(spotPricesQueryOptions()),
       context.queryClient.ensureQueryData(siteForecastQueryOptions(params.siteId)),
+      // The plan answers 422 for a site with no battery, which is a normal
+      // state rather than a failed route.
+      context.queryClient
+        .ensureQueryData(optimizationQueryOptions(params.siteId))
+        .catch(() => null),
     ]),
   component: DashboardPage,
 });
@@ -34,6 +41,7 @@ function DashboardPage() {
       {/* Spot prices are nationwide, so this card is the same for every site. */}
       <SpotPriceChart window={window} />
       <SiteForecastChart siteId={siteId} window={window} />
+      <OptimizationChart siteId={siteId} window={window} />
     </div>
   );
 }

@@ -302,6 +302,22 @@ export const cs = {
     cancel: 'Zrušit',
   },
 
+  optimization: {
+    title: 'Plán řízení baterie',
+    description:
+      'Kladné hodnoty znamenají, že baterie dodává do domu, záporné že se nabíjí. Vypočítáno ze spotových cen a predikcí.',
+    battery: 'Baterie',
+    savings: 'Odhadovaná úspora',
+    baseline_cost: 'Náklad bez řízení',
+    planned_cost: 'Náklad s plánem',
+    charging: 'Nabíjení',
+    discharging: 'Vybíjení',
+    idle: 'Nečinná',
+    state_of_charge: 'stav nabití',
+    unit_power: 'kW',
+    unit_money: 'Kč',
+  },
+
   forecasts: {
     title: 'Predikce výroby a spotřeby',
     description: 'Hodinový model pro tuto lokalitu. Jde o předpověď, ne o naměřené hodnoty.',
