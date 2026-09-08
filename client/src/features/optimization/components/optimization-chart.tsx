@@ -128,8 +128,30 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
                   cursor={{ strokeDasharray: '4 4' }}
                   content={
                     <ChartTooltipContent
-                      unit={t('optimization.unit_power')}
-                      valueFormatter={(value) => powerFormatter.format(value)}
+                      // The direction is spelled out rather than left as a sign
+                      // for the reader to decode, and the state of charge is
+                      // named so it cannot be read as "how much was charged".
+                      formatter={(value) => {
+                        const power = Number(value);
+                        const action =
+                          power < 0
+                            ? 'optimization.charging'
+                            : power > 0
+                              ? 'optimization.discharging'
+                              : 'optimization.idle';
+
+                        return (
+                          <div className="flex flex-1 items-center justify-between gap-4">
+                            <span className="text-muted-foreground">{t(action)}</span>
+                            <span className="text-foreground font-mono font-medium tabular-nums">
+                              {powerFormatter.format(Math.abs(power))}{' '}
+                              <span className="text-muted-foreground font-normal">
+                                {t('optimization.unit_power')}
+                              </span>
+                            </span>
+                          </div>
+                        );
+                      }}
                       labelFormatter={(_label, payload) => {
                         const entry = payload[0] as { payload?: ChartPoint } | undefined;
                         const point = entry?.payload;
