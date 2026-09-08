@@ -66,7 +66,9 @@ class SimulationService:
             WHERE site_id = $site_id
             ORDER BY time
         """
-        df = await query_to_dataframe(query, query_parameters={"site_id": str(site_id)})
+        df = await query_to_dataframe(
+            query, query_parameters={"site_id": str(site_id)}, measurement="weather_forecast"
+        )
 
         if df.empty:
             raise NoWeatherDataError(site_id)
