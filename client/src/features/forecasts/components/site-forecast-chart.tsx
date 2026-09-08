@@ -38,17 +38,11 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
   const { ticks, dayStarts } = useTimeAxis(window);
   const now = useNow(NOW_REFRESH_MS);
 
-  // Two grey series on a greyscale palette are hard to tell apart by colour
-  // alone, so the dash pattern below carries the distinction as well.
   const chartConfig = {
-    pvGenerationKw: {
-      label: t('forecasts.generation'),
-      theme: { light: 'var(--chart-5)', dark: 'var(--chart-1)' },
-    },
-    loadKw: {
-      label: t('forecasts.consumption'),
-      theme: { light: 'var(--chart-2)', dark: 'var(--chart-2)' },
-    },
+    // Amber for generation is the convention users arrive with; the pair is
+    // verified to stay apart under colour vision deficiency.
+    pvGenerationKw: { label: t('forecasts.generation'), color: 'var(--chart-1)' },
+    loadKw: { label: t('forecasts.consumption'), color: 'var(--chart-2)' },
   } satisfies ChartConfig;
 
   const points = useMemo<ChartPoint[]>(

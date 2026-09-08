@@ -40,10 +40,7 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
   const now = useNow(NOW_REFRESH_MS);
 
   const chartConfig = {
-    batteryKw: {
-      label: t('optimization.battery'),
-      theme: { light: 'var(--chart-3)', dark: 'var(--chart-1)' },
-    },
+    batteryKw: { label: t('optimization.battery'), color: 'var(--chart-3)' },
   } satisfies ChartConfig;
 
   const points = useMemo<ChartPoint[]>(

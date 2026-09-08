@@ -58,16 +58,8 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
 
   const chartConfig = {
     // Both series are declared so `--color-<field>` resolves whichever is shown.
-    // The --chart-* tokens hold the same value in light and dark, so each mode
-    // picks the step that actually has contrast against its own surface.
-    priceCzkMwh: {
-      label: t('ote.price'),
-      theme: { light: 'var(--chart-3)', dark: 'var(--chart-1)' },
-    },
-    priceEurMwh: {
-      label: t('ote.price'),
-      theme: { light: 'var(--chart-3)', dark: 'var(--chart-1)' },
-    },
+    priceCzkMwh: { label: t('ote.price'), color: 'var(--chart-5)' },
+    priceEurMwh: { label: t('ote.price'), color: 'var(--chart-5)' },
   } satisfies ChartConfig;
 
   const points = useMemo<ChartPoint[]>(
