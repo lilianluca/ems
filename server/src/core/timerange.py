@@ -17,12 +17,35 @@ UTC_TZ = ZoneInfo("UTC")
 # Guards against a client asking for the whole history in one request.
 MAX_QUERY_RANGE = timedelta(days=31)
 
+# The step every series is sampled at. It follows the market: since October 2025
+# the day-ahead auction clears in quarter-hour blocks, and imbalance is settled
+# in them too, so that is the resolution the money actually moves in. Weather
+# comes from Open-Meteo at the same step, which leaves only the appliance model
+# coarser than this — its parameters are per hour of day.
+STEP = timedelta(minutes=15)
+
+# Pandas offset alias for `STEP`, for building and flooring time indexes.
+STEP_FREQ = "15min"
+
+# How much of an hour one step is. This is the factor that turns a power in kW
+# into an energy in kWh, so it belongs next to the step rather than being
+# rediscovered by each caller that integrates over time.
+STEP_HOURS = STEP.total_seconds() / 3600
+
 
 def as_utc(value: datetime) -> datetime:
     """Interpret a naive timestamp as UTC rather than as the server's local time."""
     if value.tzinfo is None:
         return value.replace(tzinfo=UTC_TZ)
     return value.astimezone(UTC_TZ)
+
+
+def floor_to_step(value: datetime) -> datetime:
+    """Round a timestamp down to the start of the step it falls in."""
+    step_minutes = int(STEP.total_seconds() // 60)
+    return value.replace(
+        minute=value.minute // step_minutes * step_minutes, second=0, microsecond=0
+    )
 
 
 def default_market_window() -> tuple[datetime, datetime]:

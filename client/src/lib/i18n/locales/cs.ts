@@ -319,7 +319,8 @@ export const cs = {
 
   forecasts: {
     title: 'Predikce výroby a spotřeby',
-    description: 'Hodinový model pro tuto lokalitu. Jde o předpověď, ne o naměřené hodnoty.',
+    description:
+      'Model pro tuto lokalitu ve čtvrthodinovém kroku. Jde o předpověď, ne o naměřené hodnoty.',
     generation: 'Výroba FVE',
     consumption: 'Spotřeba',
     expected_generation: 'Předpokládaná výroba',

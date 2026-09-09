@@ -6,9 +6,6 @@ import type { components } from '@/api/schema';
 
 export type SiteForecastPoint = components['schemas']['SiteForecastPoint'];
 
-/** The forecast is produced hourly, unlike the quarter-hourly spot price. */
-export const FORECAST_STEP_MS = 60 * 60_000;
-
 export const forecastKeys = {
   all: ['forecasts'] as const,
   site: (siteId: number) => [...forecastKeys.all, siteId] as const,

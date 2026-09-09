@@ -53,6 +53,22 @@ export function pragueHourMinute(value: Date | number): { hour: number; minute: 
 
 const HOUR_MS = 3_600_000;
 
+/**
+ * The step every series is sampled at, mirroring `STEP` on the server.
+ *
+ * Prices, forecasts and the plan all hold for one of these blocks, so this is
+ * both how wide a point is on a chart and how long a tooltip range runs.
+ */
+export const STEP_DURATION_MS = HOUR_MS / 4;
+
+/**
+ * How much of an hour one step is, mirroring `STEP_HOURS` on the server.
+ *
+ * This is the factor that turns a power in kW into an energy in kWh, so any
+ * total summed from a series of samples has to go through it.
+ */
+export const STEP_HOURS = STEP_DURATION_MS / HOUR_MS;
+
 /** Wall-clock time in Prague expressed as if it were UTC, used to derive the offset. */
 function pragueWallClock(value: number): number {
   const parts = new Intl.DateTimeFormat('en-CA', {
@@ -103,5 +119,5 @@ function pragueMidnight(value: number, dayOffset: number): number {
  * silently stretching one day across the full width.
  */
 export function pragueMarketWindow(now: number): [number, number] {
-  return [pragueMidnight(now, 0), pragueMidnight(now, 2) - HOUR_MS / 4];
+  return [pragueMidnight(now, 0), pragueMidnight(now, 2) - STEP_DURATION_MS];
 }

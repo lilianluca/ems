@@ -81,7 +81,18 @@ def _windowed_expected_power(
 
 
 def generate_load_forecast(appliances: list[Appliance], times: pd.DatetimeIndex) -> pd.Series:
-    """Generate expected total load [kW] for given (tz-aware, hourly) timestamps."""
+    """Generate expected total load [kW] for the given tz-aware timestamps.
+
+    The index may be finer than an hour, and then four consecutive steps carry
+    the same value. That is not a rounding artefact: every parameter this model
+    has is per hour of day — the peak periods, and the appliance windows — so a
+    finer index adds no information, only alignment with the other series.
+
+    Nor would a finer index make the curve spiky. This is an expected value, and
+    the expectation of a kettle that boils for three minutes somewhere in a
+    sixteen-hour window genuinely is flat. The spikes belong to a simulation of
+    the house, which draws the events instead of averaging over them.
+    """
     values = []
     for ts in times:
         local = ts.tz_convert("Europe/Prague")

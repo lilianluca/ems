@@ -3,6 +3,7 @@ from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.influxdb import query_to_dataframe, write_points
+from src.core.timerange import STEP_HOURS
 from src.devices.exceptions import DeviceNotFoundError
 from src.devices.repository import DeviceRepository
 from src.simulation.exceptions import NoWeatherDataError
@@ -48,8 +49,10 @@ class SimulationService:
             PVGenerationPoint(time=ts, power_kw=round(val, 4))  # type: ignore
             for ts, val in power_kw.items()
         ]
-        # hourly data → energy [kWh] = sum of power [kW] x 1h
-        total_energy = round(power_kw.sum(), 4)
+        # energy [kWh] = sum of power [kW] x the hours one step covers. The
+        # weighting is not optional: the same sum over quarter-hour samples
+        # would report four times the energy that was actually generated.
+        total_energy = round(power_kw.sum() * STEP_HOURS, 4)
 
         return PVSimulationResult(
             device_id=device_id,

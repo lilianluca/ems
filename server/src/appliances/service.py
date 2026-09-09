@@ -10,6 +10,7 @@ from src.appliances.models import Appliance
 from src.appliances.repository import ApplianceRepository
 from src.appliances.schemas import ApplianceCreate, ApplianceUpdate
 from src.core.influxdb import write_points
+from src.core.timerange import STEP_FREQ, STEP_HOURS
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -87,8 +88,13 @@ class ApplianceService:
 
         appliances = await self.repo.list_for_site(site_id)
 
-        start = pd.Timestamp.now(tz=UTC).floor("h")
-        times = pd.date_range(start=start, periods=hours, freq="h", tz=UTC)
+        # Sampled at the shared step so the series lines up with the prices and
+        # the generation forecast; the optimiser intersects them by timestamp and
+        # an hourly index here would leave three of every four steps unplannable.
+        start = pd.Timestamp.now(tz=UTC).floor(STEP_FREQ)
+        times = pd.date_range(
+            start=start, periods=round(hours / STEP_HOURS), freq=STEP_FREQ, tz=UTC
+        )
 
         load_kw = generate_load_forecast(appliances, times)
 

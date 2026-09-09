@@ -53,21 +53,21 @@ class WeatherService:
 
     def _build_points(self, site_id: int, forecast: OpenMeteoForecastResponse) -> list[Point]:
         """Build InfluxDB points from the weather forecast data."""
-        hourly = forecast.hourly
+        quarter_hourly = forecast.minutely_15
         points = []
 
-        for i, time_str in enumerate(hourly.time):
+        for i, time_str in enumerate(quarter_hourly.time):
             dt = datetime.fromisoformat(time_str).replace(tzinfo=UTC)
 
             point = (
                 Point("weather_forecast")
                 .tag("site_id", str(site_id))
-                .field("shortwave_radiation", hourly.shortwave_radiation[i])
-                .field("direct_radiation", hourly.direct_radiation[i])
-                .field("diffuse_radiation", hourly.diffuse_radiation[i])
-                .field("direct_normal_irradiance", hourly.direct_normal_irradiance[i])
-                .field("temperature_2m", hourly.temperature_2m[i])
-                .field("cloud_cover", hourly.cloud_cover[i])
+                .field("shortwave_radiation", quarter_hourly.shortwave_radiation[i])
+                .field("direct_radiation", quarter_hourly.direct_radiation[i])
+                .field("diffuse_radiation", quarter_hourly.diffuse_radiation[i])
+                .field("direct_normal_irradiance", quarter_hourly.direct_normal_irradiance[i])
+                .field("temperature_2m", quarter_hourly.temperature_2m[i])
+                .field("cloud_cover", quarter_hourly.cloud_cover[i])
                 .time(dt)
             )
             points.append(point)

@@ -9,7 +9,7 @@ from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
 # A site can have several arrays, and the dashboard wants what the site as a
-# whole will generate, so the devices are summed per hour.
+# whole will generate, so the devices are summed per step.
 PV_QUERY = """
     SELECT time, sum(power_kw) AS pv_generation_kw
     FROM pv_generation_forecast

@@ -80,10 +80,23 @@ výsledek je nečitelná změť indexů.
 
 ## Krok horizontu
 
-Ceny jsou **čtvrthodinové**, predikce **hodinové**. Prototyp počítá hodinově
-(48 kroků na dva dny) — ceny se zprůměrují na hodiny a predikce se použijí tak,
-jak jsou. Přechod na čtvrthodinový krok je pak jen převzorkování vstupů, ne
-přepis modelu.
+Krok je **čtvrthodinový** (`STEP` v `core/timerange.py`), tedy 192 kroků na dva
+dny. Následuje trh: od října 2025 se denní aukce vypořádává ve čtvrthodinových
+blocích a ve stejných blocích se zúčtovává odchylka, takže je to rozlišení, ve
+kterém se skutečně pohybují peníze.
+
+Původně se počítalo hodinově a ceny se do hodin průměrovaly. To zahazovalo právě
+ten vnitrohodinový rozptyl, kvůli kterému baterie existuje: model, který vidí jen
+hodinový průměr, rozprostře vybíjení rovnoměrně přes celou hodinu, místo aby ho
+poslal do té jedné drahé čtvrthodiny.
+
+Počasí dodává Open-Meteo ve stejném kroku (nad střední Evropou nativně z ICON-D2,
+ne interpolací hodiny), takže i predikce výroby je čtvrthodinová. Jediná řada,
+která zůstává hodinová **tvarem**, je predikce spotřeby — všechny její parametry
+jsou per hodina dne, takže se hodnota ve čtyřech krocích zopakuje. Není to ztráta
+přesnosti při převodu, je to všechno, co ten model ví. Špičatý průběh nevznikne
+zjemněním střední hodnoty, ale losováním konkrétních událostí — a to je úloha
+simulace domu, ne prediktoru.
 
 ## Výstup
 

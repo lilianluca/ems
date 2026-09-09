@@ -321,7 +321,7 @@ export const en = {
 
   forecasts: {
     title: 'Generation and consumption forecast',
-    description: 'Hourly model for this site. These are predictions, not measurements.',
+    description: 'Quarter-hourly model for this site. These are predictions, not measurements.',
     generation: 'PV generation',
     consumption: 'Consumption',
     expected_generation: 'Expected generation',

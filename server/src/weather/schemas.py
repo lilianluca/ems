@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
 
-class OpenMeteoHourlyData(BaseModel):
-    """Schema for the hourly data returned by the OpenMeteo API."""
+class OpenMeteoQuarterHourData(BaseModel):
+    """Schema for the quarter-hourly data returned by the OpenMeteo API."""
 
     time: list[str]
     shortwave_radiation: list[float]
@@ -18,4 +18,5 @@ class OpenMeteoForecastResponse(BaseModel):
 
     latitude: float
     longitude: float
-    hourly: OpenMeteoHourlyData
+    # Named for the key Open-Meteo returns, which is the request parameter.
+    minutely_15: OpenMeteoQuarterHourData

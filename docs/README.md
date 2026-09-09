@@ -55,8 +55,9 @@ udělat bez jediného čidla.
       instalace se sdíleným měničem model nadhodnotí výkon.
 - [ ] Optimalizace řídí jen **první** baterii lokality; společné plánování víc
       úložišť (domácí, písková, elektromobil) je rozšíření.
-- [ ] Krok optimalizace je hodinový, ceny jsou čtvrthodinové – zjemnění je jen
-      převzorkování vstupů.
+- [ ] Predikce spotřeby zůstává tvarem hodinová – parametry modelu jsou per
+      hodina dne, takže se hodnota ve čtyřech krocích opakuje. Zjemnit ji lze až
+      lepším tvarem (lichoběžník místo obdélníku přes okno), ne kratším krokem.
 
 ### Aplikace
 
