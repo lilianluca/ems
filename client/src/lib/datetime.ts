@@ -61,6 +61,14 @@ const HOUR_MS = 3_600_000;
  */
 export const STEP_DURATION_MS = HOUR_MS / 4;
 
+/**
+ * How much of an hour one step is, mirroring `STEP_HOURS` on the server.
+ *
+ * This is the factor that turns a power in kW into an energy in kWh, so any
+ * total summed from a series of samples has to go through it.
+ */
+export const STEP_HOURS = STEP_DURATION_MS / HOUR_MS;
+
 /** Wall-clock time in Prague expressed as if it were UTC, used to derive the offset. */
 function pragueWallClock(value: number): number {
   const parts = new Intl.DateTimeFormat('en-CA', {

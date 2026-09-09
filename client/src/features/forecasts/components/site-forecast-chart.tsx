@@ -14,10 +14,10 @@ import {
 } from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNow } from '@/hooks/use-now';
-import { formatPragueTime } from '@/lib/datetime';
+import { formatPragueTime, STEP_DURATION_MS, STEP_HOURS } from '@/lib/datetime';
 import { formatQuantity, UNIT } from '@/lib/units';
 
-import { FORECAST_STEP_MS, type SiteForecastPoint, useSiteForecast } from '../api';
+import { type SiteForecastPoint, useSiteForecast } from '../api';
 
 const NOW_REFRESH_MS = 60_000;
 
@@ -58,11 +58,13 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
     [data],
   );
 
-  // Hourly samples of kW integrate to kWh one-for-one.
+  // Integrating kW to kWh means weighting each sample by the hours its step
+  // covers — summing quarter-hourly samples one-for-one reports four times the
+  // energy. Mirrors `total_energy_kwh` on the server.
   const totals = useMemo(
     () => ({
-      generation: points.reduce((sum, point) => sum + (point.pvGenerationKw ?? 0), 0),
-      consumption: points.reduce((sum, point) => sum + (point.loadKw ?? 0), 0),
+      generation: points.reduce((sum, point) => sum + (point.pvGenerationKw ?? 0), 0) * STEP_HOURS,
+      consumption: points.reduce((sum, point) => sum + (point.loadKw ?? 0), 0) * STEP_HOURS,
     }),
     [points],
   );
@@ -150,7 +152,7 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
                         if (timestamp === undefined) return '';
 
                         return `${formatPragueTime(timestamp, i18n.language)}–${formatPragueTime(
-                          timestamp + FORECAST_STEP_MS,
+                          timestamp + STEP_DURATION_MS,
                           i18n.language,
                         )}`;
                       }}
@@ -164,7 +166,7 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
                     price chart above names it once for the whole stack. */}
                 {nowLine(now, window)}
 
-                {/* Straight segments between samples: these are hourly samples of
+                {/* Straight segments between samples: these are point samples of
                     a continuous quantity, and a curve would invent detail the
                     model never produced. */}
                 <Line
