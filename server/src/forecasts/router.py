@@ -28,7 +28,7 @@ async def get_site_forecast(
         description="Exclusive upper bound; defaults to the end of tomorrow in Czech local time.",
     ),
 ) -> list[SiteForecastPoint]:
-    """Read the site's hourly generation and consumption forecast.
+    """Read the site's quarter-hourly generation and consumption forecast.
 
     Defaults to the same window as the spot prices, so the two line up on a
     shared time axis. Timestamps without an offset are read as UTC.

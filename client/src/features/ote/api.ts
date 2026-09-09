@@ -6,9 +6,6 @@ import type { components } from '@/api/schema';
 
 export type SpotPrice = components['schemas']['OTEPriceRead'];
 
-/** Each price holds for a quarter-hour block of the day-ahead market. */
-export const BLOCK_DURATION_MS = 15 * 60_000;
-
 export const oteKeys = {
   all: ['ote'] as const,
   prices: () => [...oteKeys.all, 'prices'] as const,

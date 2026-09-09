@@ -5,7 +5,10 @@ from src.weather.schemas import OpenMeteoForecastResponse
 
 BASE_URL = "https://api.open-meteo.com/v1/forecast"
 
-HOURLY_VARIABLES = [
+# Asked for at a quarter-hour step rather than hourly. Over Central Europe
+# Open-Meteo serves these from ICON-D2, which runs natively at this resolution,
+# so the extra points carry real detail instead of an interpolation of the hour.
+FORECAST_VARIABLES = [
     "shortwave_radiation",
     "direct_radiation",
     "diffuse_radiation",
@@ -28,7 +31,7 @@ class WeatherClient:
         params = {
             "latitude": latitude,
             "longitude": longitude,
-            "hourly": ",".join(HOURLY_VARIABLES),
+            "minutely_15": ",".join(FORECAST_VARIABLES),
             "forecast_days": forecast_days,
             "timezone": "UTC",
         }

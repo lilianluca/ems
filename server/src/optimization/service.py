@@ -1,11 +1,10 @@
 import logging
-from collections import defaultdict
 from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import settings
-from src.core.timerange import UTC_TZ, resolve_range
+from src.core.timerange import STEP_HOURS, UTC_TZ, floor_to_step, resolve_range
 from src.devices.models import BatteryDevice
 from src.devices.repository import DeviceRepository
 from src.forecasts.service import ForecastService
@@ -17,8 +16,6 @@ from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
 logger = logging.getLogger(__name__)
-
-STEP_HOURS = 1.0
 
 
 def import_price_czk_kwh(spot_czk_mwh: float) -> float:
@@ -67,17 +64,17 @@ class OptimizationService:
         battery = await self._load_battery(site_id)
         start, end = resolve_range(start, end)
 
-        prices = await self._hourly_spot_prices(start, end)
+        prices = await self._spot_prices(start, end)
         forecast = {
             point.starts_at: point
             for point in await self.forecast_service.get_site_forecast(site_id, start, end)
         }
 
-        # Hours that have already passed cannot be planned, so the horizon starts
+        # Steps that have already passed cannot be planned, so the horizon starts
         # at the current one even when the window reaches back to midnight.
-        current_hour = datetime.now(UTC_TZ).replace(minute=0, second=0, microsecond=0)
+        current_step = floor_to_step(datetime.now(UTC_TZ))
         timestamps = sorted(
-            timestamp for timestamp in prices.keys() & forecast.keys() if timestamp >= current_hour
+            timestamp for timestamp in prices.keys() & forecast.keys() if timestamp >= current_step
         )
 
         if not timestamps:
@@ -138,11 +135,16 @@ class OptimizationService:
             round_trip_efficiency=battery.round_trip_efficiency,
         )
 
-    async def _hourly_spot_prices(self, start: datetime, end: datetime) -> dict[datetime, float]:
-        """Average the quarter-hourly market prices into the hours the forecasts use."""
-        quarters: dict[datetime, list[float]] = defaultdict(list)
-        for price in await self.ote_service.get_prices(start, end):
-            hour = price.starts_at.replace(minute=0, second=0, microsecond=0)
-            quarters[hour].append(price.price_czk_mwh)
+    async def _spot_prices(self, start: datetime, end: datetime) -> dict[datetime, float]:
+        """Index the market prices by the step they apply to.
 
-        return {hour: sum(values) / len(values) for hour, values in quarters.items()}
+        Nothing is aggregated: the prices arrive at the step the plan is built
+        in. Averaging the quarters into hours, as this used to do, threw away
+        exactly the intra-hour spread the battery exists to exploit — a battery
+        that can only see the hourly mean spreads its discharge evenly across it
+        instead of putting it into the one expensive quarter.
+        """
+        return {
+            price.starts_at: price.price_czk_mwh
+            for price in await self.ote_service.get_prices(start, end)
+        }

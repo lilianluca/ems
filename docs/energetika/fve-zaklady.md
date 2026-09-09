@@ -79,8 +79,9 @@ Záporné/`NaN` hodnoty (noc, chybějící data) se na konci ořežou na 0. Výs
 
 `SimulationService` uloží výsledné body zpět do InfluxDB do měření `pv_generation_forecast`
 (tagy `device_id`, `site_id`, pole `power_kw`) a zároveň vrátí `PVSimulationResult` s body
-(`PVGenerationPoint`) a celkovou energií za období (`total_energy_kwh` = součet hodinových
-výkonů, protože při hodinovém kroku odpovídá výkon [kW] × 1 h energii [kWh]).
+(`PVGenerationPoint`) a celkovou energií za období (`total_energy_kwh` = součet výkonů
+vážený délkou kroku, tedy × `STEP_HOURS`; při čtvrthodinovém kroku by nevážený součet
+hlásil čtyřnásobek skutečně vyrobené energie).
 
 ## DC vs. AC — rychlé základy
 

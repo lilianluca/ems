@@ -13,13 +13,12 @@ import {
 } from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNow } from '@/hooks/use-now';
-import { formatPragueTime } from '@/lib/datetime';
+import { formatPragueTime, STEP_DURATION_MS } from '@/lib/datetime';
 import { formatMoney, formatQuantity, UNIT } from '@/lib/units';
 
 import { type OptimizationStep, useOptimizationPlan } from '../api';
 
 const NOW_REFRESH_MS = 60_000;
-const STEP_DURATION_MS = 60 * 60_000;
 
 interface ChartPoint {
   timestamp: number;

@@ -13,9 +13,9 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useNow } from '@/hooks/use-now';
-import { formatPragueTime } from '@/lib/datetime';
+import { formatPragueTime, STEP_DURATION_MS } from '@/lib/datetime';
 
-import { BLOCK_DURATION_MS, type SpotPrice, useSpotPrices } from '../api';
+import { type SpotPrice, useSpotPrices } from '../api';
 
 /** How often the "now" marker and the current block are recomputed. */
 const NOW_REFRESH_MS = 60_000;
@@ -75,7 +75,7 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
   const { ticks, dayStarts } = useTimeAxis(window);
   const now = useNow(NOW_REFRESH_MS);
   const currentBlock = points.findLast(
-    (point) => point.timestamp <= now && now < point.timestamp + BLOCK_DURATION_MS,
+    (point) => point.timestamp <= now && now < point.timestamp + STEP_DURATION_MS,
   );
 
   const priceFormatter = new Intl.NumberFormat(i18n.language, {
@@ -191,7 +191,7 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
                         if (timestamp === undefined) return '';
 
                         return `${formatPragueTime(timestamp, i18n.language)}–${formatPragueTime(
-                          timestamp + BLOCK_DURATION_MS,
+                          timestamp + STEP_DURATION_MS,
                           i18n.language,
                         )}`;
                       }}
@@ -221,7 +221,7 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
 
             {/* Tomorrow's auction result is published in the early afternoon; until
                 then the chart simply ends at midnight, which looks like a fault. */}
-            {points[points.length - 1].timestamp < window[1] - BLOCK_DURATION_MS && (
+            {points[points.length - 1].timestamp < window[1] - STEP_DURATION_MS && (
               <p className="text-muted-foreground text-sm">{t('ote.tomorrow_pending')}</p>
             )}
           </>
