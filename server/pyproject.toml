@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=9.1.1", "pytest-asyncio>=1.4.0", "ruff>=0.16.5"]
+dev = ["pytest>=9.1.1", "pytest-asyncio>=1.4.0", "ruff>=0.16.6"]
 
 [tool.pytest.ini_options]
 # Tests import the application as `src.…`, the same way the app itself runs.
