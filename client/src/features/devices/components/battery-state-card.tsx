@@ -54,6 +54,14 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
   const measuredAt = state ? new Date(state.measuredAt).getTime() : null;
   const isStale = measuredAt !== null && now - measuredAt > STALE_AFTER_MS;
 
+  const setpoint = !state
+    ? null
+    : state.dischargeKw > 0
+      ? `${t('optimization.discharging')} ${formatWithUnit(state.dischargeKw, 'power', i18n.language)}`
+      : state.chargeKw > 0
+        ? `${t('optimization.charging')} ${formatWithUnit(state.chargeKw, 'power', i18n.language)}`
+        : t('optimization.idle');
+
   return (
     <Card>
       <CardHeader>
@@ -87,6 +95,10 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
                   {formatQuantity(state.stateOfChargeKwh, 'energy', i18n.language)} /{' '}
                   {formatWithUnit(battery.capacityKwh, 'energy', i18n.language)}
                 </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">{t('battery_state.setpoint')}</p>
+                <p className="tabular-nums">{setpoint}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">{t('devices.usable_range')}</p>

@@ -324,6 +324,7 @@ export const en = {
     description: 'Most recently recorded state of charge of {{name}}.',
     state_of_charge: 'State of charge',
     stored_energy: 'Stored energy',
+    setpoint: 'Now',
     meter_label: 'State of charge of battery {{name}}',
     measured_at: 'Recorded {{time}}',
     stale: 'Recorded {{time}}. The value may be out of date.',

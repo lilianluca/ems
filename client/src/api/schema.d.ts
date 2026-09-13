@@ -798,6 +798,10 @@ export interface components {
             stateOfChargeKwh: number;
             /** Stateofcharge */
             stateOfCharge: number;
+            /** Chargekw */
+            chargeKw: number;
+            /** Dischargekw */
+            dischargeKw: number;
         };
         /**
          * ConstantConfig

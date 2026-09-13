@@ -119,6 +119,15 @@ tvrzení, které by šlo obhájit, „za dva dny ušetří 43 Kč oproti provozu
 horizontu vyprázdní — nevidí za horizont, takže je to pro něj energie zadarmo.
 Chová se to jako chyba, ale vypadá to jako chytré rozhodnutí.
 
+Při přepočtu každý krok se `soc_0` posouvá s každým plánem, takže podmínka slibuje
+jen „na konci horizontu budu aspoň tam, kde jsem teď". Simulace tří syntetických
+dní se skutečným tvarem horizontu (do 13:00 jen do půlnoci) přesto nenašla žádný
+rozdíl proti pevnému cíli, ocenění uložené energie ani úplné absenci podmínky.
+Provádí se jen první krok plánu a ten koncová podmínka ovlivní, jen když baterie
+ráno drží energii a horizont končí dnešní půlnocí. Podmínka proto zůstává. Má
+navíc jednu výhodu: plán je energeticky neutrální, takže srovnání s provozem bez
+baterie nepočítá jako úsporu energii, která už v baterii byla.
+
 **Cena odběru ≠ cena dodávky.** Spot je jen část ceny odběru; přičítá se
 distribuce, poplatky a DPH. Za dodávku dostáváte typicky jen spot nebo výkupní
 cenu. Když se do modelu dosadí obě strany stejné, arbitráž vyjde výrazně
@@ -127,9 +136,18 @@ výnosněji, než ve skutečnosti je.
 **Chybějící limit přípojky.** Kdyby výkupní cena někdy převýšila nákupní, LP by
 odebíral a dodával současně bez omezení. `P_grid` to utne.
 
-**Neznámý počáteční stav nabití.** SoC se neměří. Prototyp ho bere jako parametr
-s výchozí hodnotou `C · soc_min`. Je to reálné omezení práce, ne detail — řeší
-ho až integrace se střídačem.
+**Neznámý počáteční stav nabití.** Plán, který začíná vždy od `C · soc_min`, nemůže
+v prvním kroku vybíjet (`discharge_1 ≤ η · charge_1`). Při přepočtu každý krok se
+přitom provádí jen první krok, takže baterie by se jen nabíjela a nikdy nevybila.
+Stav se proto ukládá do InfluxDB (měření `battery_state`) a plán začíná
+z posledního záznamu posunutého na začátek horizontu
+(`simulation/battery_model.py`). Záznam mimo využitelný rozsah se do něj stáhne,
+jinak by koncová podmínka neměla řešení.
+
+Dokud stav nehlásí střídač, zapisuje ho simulace (Celery, každých 15 minut): vezme
+plán, provede jeho první krok a výsledek uloží. Simulovaná baterie se řídí
+predikcí, ne skutečností — ukazuje, co plán s baterií dělá, ne jak se vyrovná
+s chybou predikce.
 
 **Jednotky.** Ceny Kč/MWh, výkony kW, energie kWh. Jeden faktor tisíc a výsledek
 je nesmysl, který přitom vypadá věrohodně. Ceny se převádějí na Kč/kWh hned na

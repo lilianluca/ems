@@ -100,3 +100,6 @@ class BatteryStateRead(APIBaseModel):
     state_of_charge_kwh: float
     # A fraction of the capacity, so it compares directly with the charge bounds.
     state_of_charge: float
+    # The setpoint the battery runs from `measured_at` on; both zero when idle.
+    charge_kw: float
+    discharge_kw: float

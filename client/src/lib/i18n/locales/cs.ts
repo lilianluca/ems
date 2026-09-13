@@ -322,6 +322,7 @@ export const cs = {
     description: 'Poslední zaznamenaný stav nabití zařízení {{name}}.',
     state_of_charge: 'Stav nabití',
     stored_energy: 'Uložená energie',
+    setpoint: 'Právě',
     meter_label: 'Stav nabití baterie {{name}}',
     measured_at: 'Zaznamenáno {{time}}',
     stale: 'Zaznamenáno {{time}}. Hodnota může být zastaralá.',

@@ -206,12 +206,13 @@ class DeviceService:
         if latest is None:
             return None
 
-        measured_at, state_of_charge_kwh = latest
         return BatteryStateRead(
             device_id=device_id,
-            measured_at=measured_at,
-            state_of_charge_kwh=state_of_charge_kwh,
-            state_of_charge=state_of_charge_kwh / device.capacity_kwh,
+            measured_at=latest.measured_at,
+            state_of_charge_kwh=latest.state_of_charge_kwh,
+            state_of_charge=latest.state_of_charge_kwh / device.capacity_kwh,
+            charge_kw=latest.charge_kw,
+            discharge_kw=latest.discharge_kw,
         )
 
     async def list_devices_for_site(self, site_id: int) -> list[Device]:

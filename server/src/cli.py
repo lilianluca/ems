@@ -28,6 +28,7 @@ from src.core.logger import setup_logging
 from src.core.timerange import UTC_TZ
 from src.devices.battery_state import write_battery_state
 from src.devices.repository import DeviceRepository
+from src.simulation.battery_model import BatterySample
 from src.users.enums import UserRole
 from src.users.repository import UserRepository
 from src.users.schemas import MAX_PASSWORD_BYTES, MIN_PASSWORD_LENGTH
@@ -96,11 +97,14 @@ async def set_battery_state(device_id: int, state_of_charge_kwh: float) -> int:
             logger.error(f"State of charge must be between 0 and {device.capacity_kwh} kWh.")
             return 1
 
+        # Recorded as idle: a state set by hand overrides whatever setpoint the
+        # simulation last issued, until its next run issues a new one.
         await write_battery_state(
             site_id=device.site_id,
             device_id=device.id,
-            measured_at=datetime.now(UTC_TZ),
-            state_of_charge_kwh=state_of_charge_kwh,
+            sample=BatterySample(
+                measured_at=datetime.now(UTC_TZ), state_of_charge_kwh=state_of_charge_kwh
+            ),
         )
         logger.info(f"✅ Recorded {state_of_charge_kwh} kWh for battery '{device.name}'.")
         return 0
