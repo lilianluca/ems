@@ -319,6 +319,17 @@ export const en = {
     unit_money: 'CZK',
   },
 
+  battery_state: {
+    title: 'Battery state',
+    description: 'Most recently recorded state of charge of {{name}}.',
+    state_of_charge: 'State of charge',
+    stored_energy: 'Stored energy',
+    meter_label: 'State of charge of battery {{name}}',
+    measured_at: 'Recorded {{time}}',
+    stale: 'Recorded {{time}}. The value may be out of date.',
+    empty: 'No state of charge has been recorded for this battery yet.',
+  },
+
   forecasts: {
     title: 'Generation and consumption forecast',
     description: 'Quarter-hourly model for this site. These are predictions, not measurements.',

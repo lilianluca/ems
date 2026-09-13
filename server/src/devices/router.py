@@ -9,6 +9,7 @@ from src.devices.schemas import (
     BatteryDeviceCreate,
     BatteryDeviceRead,
     BatteryDeviceUpdate,
+    BatteryStateRead,
     DeviceRead,
     PVDeviceCreate,
     PVDeviceRead,
@@ -113,6 +114,26 @@ async def update_battery_device(
         max_state_of_charge=payload.max_state_of_charge,
         round_trip_efficiency=payload.round_trip_efficiency,
     )
+
+
+@router.get(
+    "/battery/{device_id}/state",
+    response_model=BatteryStateRead | None,
+    responses=errors(401, 403, 404, 409, 422),
+)
+async def get_battery_state(
+    site_id: int,
+    device_id: int,
+    _member: Annotated[
+        User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER, SiteRole.VIEWER))
+    ],
+    device_service: DeviceServiceDep,
+) -> BatteryStateRead | None:
+    """Read the most recent state of charge of a battery.
+
+    Answers `null` until a state has been recorded for the battery.
+    """
+    return await device_service.get_battery_state(site_id=site_id, device_id=device_id)
 
 
 @router.get("", response_model=list[DeviceRead], responses=errors(401, 403, 404, 422))
