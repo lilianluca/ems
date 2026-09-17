@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.devices.battery_state import read_latest_battery_state
 from src.devices.exceptions import (
     DeviceNotFoundError,
     DeviceTypeMismatchError,
@@ -9,6 +10,7 @@ from src.devices.exceptions import (
 )
 from src.devices.models import BatteryDevice, Device, PVDevice
 from src.devices.repository import DeviceRepository
+from src.devices.schemas import BatteryStateRead
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -185,6 +187,33 @@ class DeviceService:
         await self.db.refresh(device)
         logger.info(f"Battery device with ID {device_id} updated.")
         return device
+
+    async def get_battery_state(self, site_id: int, device_id: int) -> BatteryStateRead | None:
+        """Read the most recent state of charge of a battery.
+
+        None rather than an error when nothing has been recorded: until a
+        simulation or an inverter writes one, that is the normal state of a
+        battery, not a failure.
+        """
+        device = await self.get_battery_device(device_id)
+        # Checked against the site in the path, so a member of one site cannot
+        # read another site's battery by guessing its ID.
+        if device.site_id != site_id:
+            logger.warning(f"Device with ID {device_id} does not belong to site {site_id}.")
+            raise DeviceNotFoundError(device_id)
+
+        latest = await read_latest_battery_state(device_id)
+        if latest is None:
+            return None
+
+        return BatteryStateRead(
+            device_id=device_id,
+            measured_at=latest.measured_at,
+            state_of_charge_kwh=latest.state_of_charge_kwh,
+            state_of_charge=latest.state_of_charge_kwh / device.capacity_kwh,
+            charge_kw=latest.charge_kw,
+            discharge_kw=latest.discharge_kw,
+        )
 
     async def list_devices_for_site(self, site_id: int) -> list[Device]:
         """List all devices for a specific site."""

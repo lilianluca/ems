@@ -317,6 +317,18 @@ export const cs = {
     unit_money: 'Kč',
   },
 
+  battery_state: {
+    title: 'Stav baterie',
+    description: 'Poslední zaznamenaný stav nabití zařízení {{name}}.',
+    state_of_charge: 'Stav nabití',
+    stored_energy: 'Uložená energie',
+    setpoint: 'Právě',
+    meter_label: 'Stav nabití baterie {{name}}',
+    measured_at: 'Zaznamenáno {{time}}',
+    stale: 'Zaznamenáno {{time}}. Hodnota může být zastaralá.',
+    empty: 'Pro tuto baterii zatím není zaznamenaný žádný stav nabití.',
+  },
+
   forecasts: {
     title: 'Predikce výroby a spotřeby',
     description:

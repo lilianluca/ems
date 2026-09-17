@@ -12,9 +12,14 @@ export type Device = PVDevice | BatteryDevice;
 export type PVDeviceInput = components['schemas']['PVDeviceCreate'];
 export type BatteryDeviceInput = components['schemas']['BatteryDeviceCreate'];
 
+export type BatteryState = components['schemas']['BatteryStateRead'];
+
 export const deviceKeys = {
   all: ['devices'] as const,
   list: (siteId: number) => [...deviceKeys.all, 'list', siteId] as const,
+  batteryStates: (siteId: number) => [...deviceKeys.all, 'battery-state', siteId] as const,
+  batteryState: (siteId: number, deviceId: number) =>
+    [...deviceKeys.batteryStates(siteId), deviceId] as const,
 };
 
 /** Shared by the hook and route loaders, so both agree on caching. */
@@ -60,13 +65,41 @@ export function useBatteryDevice(siteId: number, deviceId: number) {
 }
 
 /**
+ * A new state lands at most once a step, so polling every minute shows it soon
+ * after it is recorded at a load not worth worrying about.
+ */
+export function batteryStateQueryOptions(siteId: number, deviceId: number) {
+  return queryOptions({
+    queryKey: deviceKeys.batteryState(siteId, deviceId),
+    queryFn: async ({ signal }) => {
+      const { data, error, response } = await api.GET(
+        '/api/v1/sites/{site_id}/devices/battery/{device_id}/state',
+        { params: { path: { site_id: siteId, device_id: deviceId } }, signal },
+      );
+      if (error) throw new AppError(response.status, error);
+      // `null` is the answer for a battery with no recorded state, and React
+      // Query rejects `undefined` as data, so the two are not left to differ.
+      return data ?? null;
+    },
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+  });
+}
+
+export function useBatteryState(siteId: number, deviceId: number) {
+  return useQuery(batteryStateQueryOptions(siteId, deviceId));
+}
+
+/**
  * Device parameters feed the PV simulation, so a change invalidates the stored
- * forecast as well — it was computed from the values that just changed.
+ * forecast as well — it was computed from the values that just changed. The
+ * battery state goes too, because its percentage is taken of the capacity.
  */
 function useDeviceInvalidation(siteId: number) {
   const queryClient = useQueryClient();
   return () => {
     void queryClient.invalidateQueries({ queryKey: deviceKeys.list(siteId) });
+    void queryClient.invalidateQueries({ queryKey: deviceKeys.batteryStates(siteId) });
     void queryClient.invalidateQueries({ queryKey: forecastKeys.site(siteId) });
   };
 }

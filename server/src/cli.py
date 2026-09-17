@@ -8,6 +8,11 @@ here — both the first one and any added later:
 
 The password is always typed at the prompt rather than passed as an argument,
 so it stays out of shell history and out of the process list.
+
+Until a simulation or an inverter records a battery's state of charge, one can
+be set by hand, so the dashboard has something to show:
+
+    uv run python -m src.cli set-battery-state --device-id 3 --soc-kwh 6.5
 """
 
 import argparse
@@ -15,10 +20,15 @@ import asyncio
 import getpass
 import logging
 import sys
+from datetime import datetime
 
 from src.auth.security import hash_password
 from src.core.database import SessionLocal, engine
 from src.core.logger import setup_logging
+from src.core.timerange import UTC_TZ
+from src.devices.battery_state import write_battery_state
+from src.devices.repository import DeviceRepository
+from src.simulation.battery_model import BatterySample
 from src.users.enums import UserRole
 from src.users.repository import UserRepository
 from src.users.schemas import MAX_PASSWORD_BYTES, MIN_PASSWORD_LENGTH
@@ -76,9 +86,35 @@ async def create_admin(email: str, first_name: str, last_name: str, promote: boo
         return 0
 
 
+async def set_battery_state(device_id: int, state_of_charge_kwh: float) -> int:
+    """Record a battery's state of charge as of now."""
+    async with SessionLocal() as session:
+        device = await DeviceRepository(session).get_battery_device_by_id(device_id)
+        if device is None:
+            logger.error(f"Battery device with ID {device_id} not found.")
+            return 1
+        if not 0 <= state_of_charge_kwh <= device.capacity_kwh:
+            logger.error(f"State of charge must be between 0 and {device.capacity_kwh} kWh.")
+            return 1
+
+        # Recorded as idle: a state set by hand overrides whatever setpoint the
+        # simulation last issued, until its next run issues a new one.
+        await write_battery_state(
+            site_id=device.site_id,
+            device_id=device.id,
+            sample=BatterySample(
+                measured_at=datetime.now(UTC_TZ), state_of_charge_kwh=state_of_charge_kwh
+            ),
+        )
+        logger.info(f"✅ Recorded {state_of_charge_kwh} kWh for battery '{device.name}'.")
+        return 0
+
+
 async def dispatch(args: argparse.Namespace) -> int:
     """Run the selected command and release the database engine afterwards."""
     try:
+        if args.command == "set-battery-state":
+            return await set_battery_state(args.device_id, args.soc_kwh)
         return await create_admin(
             email=args.email,
             first_name=args.first_name,
@@ -106,6 +142,13 @@ def main() -> int:
         action="store_true",
         help="Grant the admin role to an existing account instead of failing.",
     )
+
+    battery_state = subparsers.add_parser(
+        "set-battery-state",
+        help="Record a battery's current state of charge, for development.",
+    )
+    battery_state.add_argument("--device-id", type=int, required=True)
+    battery_state.add_argument("--soc-kwh", type=float, required=True)
 
     return asyncio.run(dispatch(parser.parse_args()))
 

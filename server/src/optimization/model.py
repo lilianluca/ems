@@ -105,7 +105,7 @@ def optimize_battery_schedule(
         battery: Capacity, charge bounds, power limits and efficiency.
         grid_limit_kw: Connection limit, applied to import and export alike.
         initial_state_of_charge_kwh: Energy in the battery before the first step;
-            defaults to the lowest allowed level, because it is not measured.
+            defaults to the lowest allowed level, for a battery with no recorded state.
         step_hours: Length of one step.
 
     Returns:

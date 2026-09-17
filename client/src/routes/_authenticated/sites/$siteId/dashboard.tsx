@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { devicesQueryOptions } from '@/features/devices/api';
+import { BatteryStateCards } from '@/features/devices/components/battery-state-card';
 import { siteForecastQueryOptions } from '@/features/forecasts/api';
 import { SiteForecastChart } from '@/features/forecasts/components/site-forecast-chart';
 import { optimizationQueryOptions } from '@/features/optimization/api';
@@ -17,6 +19,9 @@ export const Route = createFileRoute('/_authenticated/sites/$siteId/dashboard')(
     Promise.all([
       context.queryClient.ensureQueryData(spotPricesQueryOptions()),
       context.queryClient.ensureQueryData(siteForecastQueryOptions(params.siteId)),
+      // Loaded up front so the battery cards appear with the page rather than
+      // popping in above the charts and pushing them down.
+      context.queryClient.ensureQueryData(devicesQueryOptions(params.siteId)),
       // The plan answers 422 for a site with no battery, which is a normal
       // state rather than a failed route.
       context.queryClient
@@ -41,6 +46,8 @@ function DashboardPage() {
       {/* Spot prices are nationwide, so this card is the same for every site. */}
       <SpotPriceChart window={window} />
       <SiteForecastChart siteId={siteId} window={window} />
+      {/* Directly above the plan, which starts from the state shown here. */}
+      <BatteryStateCards siteId={siteId} />
       <OptimizationChart siteId={siteId} window={window} />
     </div>
   );

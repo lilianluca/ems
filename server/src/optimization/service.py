@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import settings
 from src.core.timerange import STEP_HOURS, UTC_TZ, floor_to_step, resolve_range
+from src.devices.battery_state import read_latest_battery_state
 from src.devices.models import BatteryDevice
 from src.devices.repository import DeviceRepository
 from src.forecasts.service import ForecastService
@@ -12,6 +13,7 @@ from src.optimization.exceptions import NoBatteryDeviceError, OptimizationDataMi
 from src.optimization.model import BatterySpec, optimize_battery_schedule
 from src.optimization.schemas import OptimizationPlan, OptimizationStep
 from src.ote.service import OTEService
+from src.simulation.battery_model import starting_state_of_charge
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -38,6 +40,18 @@ def export_price_czk_kwh(spot_czk_mwh: float) -> float:
     return spot_czk_mwh / 1000 * settings.export_factor
 
 
+def battery_spec(battery: BatteryDevice) -> BatterySpec:
+    """Convert a stored battery into the parameters the model computes with."""
+    return BatterySpec(
+        capacity_kwh=battery.capacity_kwh,
+        min_state_of_charge=battery.min_state_of_charge,
+        max_state_of_charge=battery.max_state_of_charge,
+        max_charge_power_kw=battery.max_charge_power_kw,
+        max_discharge_power_kw=battery.max_discharge_power_kw,
+        round_trip_efficiency=battery.round_trip_efficiency,
+    )
+
+
 class OptimizationService:
     """Turns stored prices and forecasts into a battery schedule."""
 
@@ -61,7 +75,8 @@ class OptimizationService:
         if site is None:
             raise SiteNotFoundError(site_id)
 
-        battery = await self._load_battery(site_id)
+        battery_device = await self.get_scheduled_battery(site_id)
+        battery = battery_spec(battery_device)
         start, end = resolve_range(start, end)
 
         prices = await self._spot_prices(start, end)
@@ -80,6 +95,13 @@ class OptimizationService:
         if not timestamps:
             raise OptimizationDataMissingError(site_id)
 
+        # The plan begins where the battery actually is. Started from the floor
+        # every time, its first step could never discharge, and under re-planning
+        # the first step is the only one that is ever carried out.
+        initial_state = starting_state_of_charge(
+            battery, await read_latest_battery_state(battery_device.id), timestamps[0]
+        )
+
         result = optimize_battery_schedule(
             price_import_czk_kwh=[import_price_czk_kwh(prices[t]) for t in timestamps],
             price_export_czk_kwh=[export_price_czk_kwh(prices[t]) for t in timestamps],
@@ -87,6 +109,7 @@ class OptimizationService:
             load_kw=[forecast[t].load_kw or 0.0 for t in timestamps],
             battery=battery,
             grid_limit_kw=settings.grid_limit_kw,
+            initial_state_of_charge_kwh=initial_state,
             step_hours=STEP_HOURS,
         )
 
@@ -107,8 +130,8 @@ class OptimizationService:
             savings_czk=result.savings_czk,
         )
 
-    async def _load_battery(self, site_id: int) -> BatterySpec:
-        """Read the site's battery parameters.
+    async def get_scheduled_battery(self, site_id: int) -> BatteryDevice:
+        """Pick the battery the plan is made for.
 
         The model schedules one battery. A site may legitimately have several —
         a home battery, a thermal store, a car — so scheduling them jointly is a
@@ -125,15 +148,7 @@ class OptimizationService:
                 f"optimising only '{batteries[0].name}'."
             )
 
-        battery = batteries[0]
-        return BatterySpec(
-            capacity_kwh=battery.capacity_kwh,
-            min_state_of_charge=battery.min_state_of_charge,
-            max_state_of_charge=battery.max_state_of_charge,
-            max_charge_power_kw=battery.max_charge_power_kw,
-            max_discharge_power_kw=battery.max_discharge_power_kw,
-            round_trip_efficiency=battery.round_trip_efficiency,
-        )
+        return batteries[0]
 
     async def _spot_prices(self, start: datetime, end: datetime) -> dict[datetime, float]:
         """Index the market prices by the step they apply to.

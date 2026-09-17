@@ -256,6 +256,28 @@ export interface paths {
         patch: operations["devices-update_battery_device-patch"];
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/devices/battery/{device_id}/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Battery State
+         * @description Read the most recent state of charge of a battery.
+         *
+         *     Answers `null` until a state has been recorded for the battery.
+         */
+        get: operations["devices-get_battery_state-get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sites/{site_id}/devices": {
         parameters: {
             query?: never;
@@ -309,7 +331,7 @@ export interface paths {
         };
         /**
          * Get Site Forecast
-         * @description Read the site's hourly generation and consumption forecast.
+         * @description Read the site's quarter-hourly generation and consumption forecast.
          *
          *     Defaults to the same window as the spot prices, so the two line up on a
          *     shared time axis. Timestamps without an offset are read as UTC.
@@ -759,6 +781,27 @@ export interface components {
             maxStateOfCharge?: number | null;
             /** Roundtripefficiency */
             roundTripEfficiency?: number | null;
+        };
+        /**
+         * BatteryStateRead
+         * @description The most recently recorded state of charge of a battery.
+         */
+        BatteryStateRead: {
+            /** Deviceid */
+            deviceId: number;
+            /**
+             * Measuredat
+             * Format: date-time
+             */
+            measuredAt: string;
+            /** Stateofchargekwh */
+            stateOfChargeKwh: number;
+            /** Stateofcharge */
+            stateOfCharge: number;
+            /** Chargekw */
+            chargeKw: number;
+            /** Dischargekw */
+            dischargeKw: number;
         };
         /**
          * ConstantConfig
@@ -1847,6 +1890,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BatteryDeviceRead"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "devices-get_battery_state-get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+                device_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BatteryStateRead"] | null;
                 };
             };
             /** @description Not authenticated */

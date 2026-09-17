@@ -47,4 +47,12 @@ celery_app.conf.beat_schedule = {
         "task": "appliances.forecast_load",
         "schedule": crontab(minute=15),
     },
+    # Stands in for the battery controller, so it runs on the step boundary. It
+    # reads whatever forecasts the jobs above last stored rather than waiting
+    # for them: an hour-old forecast still gives a plan, and a missed run only
+    # leaves the battery idle for that step.
+    "simulate-batteries": {
+        "task": "simulation.simulate_batteries",
+        "schedule": crontab(minute="*/15"),
+    },
 }
