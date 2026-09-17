@@ -3,7 +3,7 @@ from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.influxdb import query_to_dataframe, write_points
-from src.core.timerange import STEP_HOURS
+from src.core.timerange import STEP_HOURS, default_market_window
 from src.devices.exceptions import DeviceNotFoundError
 from src.devices.repository import DeviceRepository
 from src.simulation.exceptions import NoWeatherDataError
@@ -62,15 +62,33 @@ class SimulationService:
         )
 
     async def _load_weather(self, site_id: int) -> pd.DataFrame:
+        """Read the stored weather for the window the rest of the system plans in.
+
+        The bounds are not a refinement. InfluxDB 3 Core caps how many Parquet
+        files one query may scan, and weather accumulates with every fetch, so an
+        unbounded query works for a few weeks and then fails outright — taking the
+        whole generation forecast with it.
+
+        The window is the one the dashboard and the optimiser already use, so the
+        forecast covers exactly what reads it, and each run stops recomputing
+        weeks of past forecasts nobody looks at.
+        """
+        start, end = default_market_window()
         query = """
             SELECT time, direct_normal_irradiance, diffuse_radiation,
                    shortwave_radiation, temperature_2m
             FROM weather_forecast
-            WHERE site_id = $site_id
+            WHERE site_id = $site_id AND time >= $start AND time < $end
             ORDER BY time
         """
         df = await query_to_dataframe(
-            query, query_parameters={"site_id": str(site_id)}, measurement="weather_forecast"
+            query,
+            query_parameters={
+                "site_id": str(site_id),
+                "start": start.isoformat(),
+                "end": end.isoformat(),
+            },
+            measurement="weather_forecast",
         )
 
         if df.empty:

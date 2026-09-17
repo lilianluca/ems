@@ -18,6 +18,7 @@ import { formatPragueTime, STEP_DURATION_MS, STEP_HOURS } from '@/lib/datetime';
 import { formatQuantity, UNIT } from '@/lib/units';
 
 import { type SiteForecastPoint, useSiteForecast } from '../api';
+import { RefreshForecastsButton } from './refresh-forecasts-button';
 
 const NOW_REFRESH_MS = 60_000;
 
@@ -71,9 +72,13 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('forecasts.title')}</CardTitle>
-        <CardDescription>{t('forecasts.description')}</CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <CardTitle>{t('forecasts.title')}</CardTitle>
+          <CardDescription>{t('forecasts.description')}</CardDescription>
+        </div>
+        {/* Next to the gap it fills: this card is where a missing forecast shows. */}
+        <RefreshForecastsButton siteId={siteId} />
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">

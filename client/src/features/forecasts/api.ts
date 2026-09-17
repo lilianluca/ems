@@ -1,10 +1,12 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/api/client';
 import { AppError } from '@/api/errors';
 import type { components } from '@/api/schema';
+import { optimizationKeys } from '@/features/optimization/api';
 
 export type SiteForecastPoint = components['schemas']['SiteForecastPoint'];
+export type ForecastRefreshResult = components['schemas']['ForecastRefreshResult'];
 
 export const forecastKeys = {
   all: ['forecasts'] as const,
@@ -31,4 +33,29 @@ export function siteForecastQueryOptions(siteId: number) {
 
 export function useSiteForecast(siteId: number) {
   return useQuery(siteForecastQueryOptions(siteId));
+}
+
+/**
+ * Recompute the site's forecasts now, rather than waiting for the hourly jobs.
+ *
+ * The plan is derived from these series, so it is invalidated with them —
+ * otherwise the chart would refresh under a plan built from the old forecast.
+ */
+export function useRefreshForecasts(siteId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error, response } = await api.POST(
+        '/api/v1/sites/{site_id}/forecasts/refresh',
+        { params: { path: { site_id: siteId } } },
+      );
+      if (error) throw new AppError(response.status, error);
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: forecastKeys.site(siteId) });
+      void queryClient.invalidateQueries({ queryKey: optimizationKeys.site(siteId) });
+    },
+  });
 }

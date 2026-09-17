@@ -339,6 +339,10 @@ export const cs = {
     expected_consumption: 'Předpokládaná spotřeba',
     empty: 'Pro tuto lokalitu zatím nejsou k dispozici žádné predikce.',
     load_error: 'Predikce se nepodařilo načíst.',
+    refresh: 'Přepočítat predikce',
+    refreshed: 'Predikce přepočítány: výroba {{generation}} bodů, spotřeba {{consumption}} bodů.',
+    refreshed_without_pv:
+      'Predikce spotřeby přepočítána. Lokalita nemá fotovoltaiku, takže výroba se nepočítá.',
   },
 
   nav: {
