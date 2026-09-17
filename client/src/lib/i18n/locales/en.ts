@@ -340,6 +340,11 @@ export const en = {
     expected_consumption: 'Expected consumption',
     empty: 'No forecasts available for this site yet.',
     load_error: 'Forecasts could not be loaded.',
+    refresh: 'Recompute forecasts',
+    refreshed:
+      'Forecasts recomputed: {{generation}} generation points, {{consumption}} consumption points.',
+    refreshed_without_pv:
+      'Consumption forecast recomputed. The site has no PV array, so there is no generation to compute.',
   },
 
   nav: {

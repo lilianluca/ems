@@ -9,6 +9,8 @@ _DESCRIPTIONS = {
     404: "Resource not found",
     409: "Resource already exists",
     422: "Validation error",
+    429: "Rate limited",
+    502: "Upstream service failed",
 }
 
 

@@ -345,6 +345,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/forecasts/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh Site Forecasts
+         * @description Recompute the site's weather, generation and consumption forecasts now.
+         *
+         *     The scheduled jobs do this every hour, each on its own minute, which leaves
+         *     gaps a user can see: right after a restart, after a PV array is added, and
+         *     when a weather fetch failed and the generation forecast had nothing to read.
+         *
+         *     A weather fetch still on cooldown is skipped rather than failing the refresh.
+         *     The generation model reads the stored forecast either way, so refusing over a
+         *     fetch that would only be redundant would help nobody.
+         */
+        post: operations["forecasts-refresh_site_forecasts-post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sites/{site_id}/optimization": {
         parameters: {
             query?: never;
@@ -861,6 +889,25 @@ export interface components {
          */
         ErrorResponse: {
             error: components["schemas"]["ErrorDetail"];
+        };
+        /**
+         * ForecastRefreshResult
+         * @description What one manual refresh of a site's forecasts produced.
+         *
+         *     Counted per series rather than as one total: no generation points alongside a
+         *     full consumption series is the normal answer for a site with no PV array, and
+         *     a single number could not tell that apart from a failure. `pv_device_count`
+         *     is what separates the two.
+         */
+        ForecastRefreshResult: {
+            /** Weatherpoints */
+            weatherPoints: number;
+            /** Pvgenerationpoints */
+            pvGenerationPoints: number;
+            /** Loadpoints */
+            loadPoints: number;
+            /** Pvdevicecount */
+            pvDeviceCount: number;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -2235,6 +2282,82 @@ export interface operations {
             };
             /** @description Validation error */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "forecasts-refresh_site_forecasts-post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastRefreshResult"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Upstream service failed */
+            502: {
                 headers: {
                     [name: string]: unknown;
                 };
