@@ -1,12 +1,8 @@
 import { Link, useMatchRoute, useParams } from '@tanstack/react-router';
 import {
-  BatteryChargingIcon,
-  GaugeIcon,
   LayoutDashboardIcon,
   MapPinIcon,
   PlugIcon,
-  SettingsIcon,
-  TrendingUpIcon,
   UsersIcon,
   WashingMachineIcon,
 } from 'lucide-react';
@@ -60,49 +56,6 @@ export function AppSidebar() {
                     }
                   />
                 </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.measurements')}
-                    isActive={
-                      !!matchRoute({ to: '/sites/$siteId/measurements', params: siteParams })
-                    }
-                    render={
-                      <Link to="/sites/$siteId/measurements" params={siteParams}>
-                        <GaugeIcon aria-hidden />
-                        <span>{t('nav.measurements')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.forecasts')}
-                    isActive={!!matchRoute({ to: '/sites/$siteId/forecasts', params: siteParams })}
-                    render={
-                      <Link to="/sites/$siteId/forecasts" params={siteParams}>
-                        <TrendingUpIcon aria-hidden />
-                        <span>{t('nav.forecasts')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.optimization')}
-                    isActive={
-                      !!matchRoute({ to: '/sites/$siteId/optimization', params: siteParams })
-                    }
-                    render={
-                      <Link to="/sites/$siteId/optimization" params={siteParams}>
-                        <BatteryChargingIcon aria-hidden />
-                        <span>{t('nav.optimization')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroup>
 
@@ -130,19 +83,6 @@ export function AppSidebar() {
                       <Link to="/sites/$siteId/appliances" params={siteParams}>
                         <WashingMachineIcon aria-hidden />
                         <span>{t('nav.appliances')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.settings')}
-                    isActive={!!matchRoute({ to: '/sites/$siteId/settings', params: siteParams })}
-                    render={
-                      <Link to="/sites/$siteId/settings" params={siteParams}>
-                        <SettingsIcon aria-hidden />
-                        <span>{t('nav.settings')}</span>
                       </Link>
                     }
                   />

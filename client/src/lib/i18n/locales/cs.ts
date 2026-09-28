@@ -347,12 +347,8 @@ export const cs = {
 
   nav: {
     dashboard: 'Přehled',
-    measurements: 'Měření',
-    forecasts: 'Predikce',
-    optimization: 'Optimalizace',
     devices: 'Zařízení',
     appliances: 'Spotřebiče',
-    settings: 'Nastavení',
     users: 'Uživatelé',
     sites: 'Lokality',
     select_site: 'Vyberte lokalitu',

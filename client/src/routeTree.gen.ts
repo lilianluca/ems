@@ -22,10 +22,6 @@ import { Route as AuthenticatedAdminUsersIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminUsersNewRouteImport } from './routes/_authenticated/admin/users/new'
 import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated/sites/$siteId/index'
 import { Route as AuthenticatedSitesSiteIdDashboardRouteImport } from './routes/_authenticated/sites/$siteId/dashboard'
-import { Route as AuthenticatedSitesSiteIdForecastsRouteImport } from './routes/_authenticated/sites/$siteId/forecasts'
-import { Route as AuthenticatedSitesSiteIdMeasurementsRouteImport } from './routes/_authenticated/sites/$siteId/measurements'
-import { Route as AuthenticatedSitesSiteIdOptimizationRouteImport } from './routes/_authenticated/sites/$siteId/optimization'
-import { Route as AuthenticatedSitesSiteIdSettingsRouteImport } from './routes/_authenticated/sites/$siteId/settings'
 import { Route as AuthenticatedSitesSiteIdAppliancesIndexRouteImport } from './routes/_authenticated/sites/$siteId/appliances/index'
 import { Route as AuthenticatedSitesSiteIdAppliancesApplianceIdRouteImport } from './routes/_authenticated/sites/$siteId/appliances/$applianceId'
 import { Route as AuthenticatedSitesSiteIdAppliancesNewRouteImport } from './routes/_authenticated/sites/$siteId/appliances/new'
@@ -105,30 +101,6 @@ const AuthenticatedSitesSiteIdDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
   } as any)
-const AuthenticatedSitesSiteIdForecastsRoute =
-  AuthenticatedSitesSiteIdForecastsRouteImport.update({
-    id: '/forecasts',
-    path: '/forecasts',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
-  } as any)
-const AuthenticatedSitesSiteIdMeasurementsRoute =
-  AuthenticatedSitesSiteIdMeasurementsRouteImport.update({
-    id: '/measurements',
-    path: '/measurements',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
-  } as any)
-const AuthenticatedSitesSiteIdOptimizationRoute =
-  AuthenticatedSitesSiteIdOptimizationRouteImport.update({
-    id: '/optimization',
-    path: '/optimization',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
-  } as any)
-const AuthenticatedSitesSiteIdSettingsRoute =
-  AuthenticatedSitesSiteIdSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
-  } as any)
 const AuthenticatedSitesSiteIdAppliancesIndexRoute =
   AuthenticatedSitesSiteIdAppliancesIndexRouteImport.update({
     id: '/appliances/',
@@ -187,10 +159,6 @@ export interface FileRoutesByFullPath {
   '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
-  '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
-  '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
-  '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
-  '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
   '/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -211,10 +179,6 @@ export interface FileRoutesByTo {
   '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
-  '/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
-  '/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
-  '/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
-  '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
   '/admin/sites': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -239,10 +203,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/_authenticated/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/_authenticated/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
-  '/_authenticated/sites/$siteId/forecasts': typeof AuthenticatedSitesSiteIdForecastsRoute
-  '/_authenticated/sites/$siteId/measurements': typeof AuthenticatedSitesSiteIdMeasurementsRoute
-  '/_authenticated/sites/$siteId/optimization': typeof AuthenticatedSitesSiteIdOptimizationRoute
-  '/_authenticated/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
   '/_authenticated/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/_authenticated/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/_authenticated/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -266,10 +226,6 @@ export interface FileRouteTypes {
     | '/admin/sites/new'
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
-    | '/sites/$siteId/forecasts'
-    | '/sites/$siteId/measurements'
-    | '/sites/$siteId/optimization'
-    | '/sites/$siteId/settings'
     | '/admin/sites/'
     | '/admin/users/'
     | '/sites/$siteId/'
@@ -290,10 +246,6 @@ export interface FileRouteTypes {
     | '/admin/sites/new'
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
-    | '/sites/$siteId/forecasts'
-    | '/sites/$siteId/measurements'
-    | '/sites/$siteId/optimization'
-    | '/sites/$siteId/settings'
     | '/admin/sites'
     | '/admin/users'
     | '/sites/$siteId'
@@ -317,10 +269,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/sites/new'
     | '/_authenticated/admin/users/new'
     | '/_authenticated/sites/$siteId/dashboard'
-    | '/_authenticated/sites/$siteId/forecasts'
-    | '/_authenticated/sites/$siteId/measurements'
-    | '/_authenticated/sites/$siteId/optimization'
-    | '/_authenticated/sites/$siteId/settings'
     | '/_authenticated/admin/sites/'
     | '/_authenticated/admin/users/'
     | '/_authenticated/sites/$siteId/'
@@ -432,34 +380,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDashboardRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
     }
-    '/_authenticated/sites/$siteId/forecasts': {
-      id: '/_authenticated/sites/$siteId/forecasts'
-      path: '/forecasts'
-      fullPath: '/sites/$siteId/forecasts'
-      preLoaderRoute: typeof AuthenticatedSitesSiteIdForecastsRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
-    }
-    '/_authenticated/sites/$siteId/measurements': {
-      id: '/_authenticated/sites/$siteId/measurements'
-      path: '/measurements'
-      fullPath: '/sites/$siteId/measurements'
-      preLoaderRoute: typeof AuthenticatedSitesSiteIdMeasurementsRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
-    }
-    '/_authenticated/sites/$siteId/optimization': {
-      id: '/_authenticated/sites/$siteId/optimization'
-      path: '/optimization'
-      fullPath: '/sites/$siteId/optimization'
-      preLoaderRoute: typeof AuthenticatedSitesSiteIdOptimizationRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
-    }
-    '/_authenticated/sites/$siteId/settings': {
-      id: '/_authenticated/sites/$siteId/settings'
-      path: '/settings'
-      fullPath: '/sites/$siteId/settings'
-      preLoaderRoute: typeof AuthenticatedSitesSiteIdSettingsRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
-    }
     '/_authenticated/sites/$siteId/appliances/': {
       id: '/_authenticated/sites/$siteId/appliances/'
       path: '/appliances'
@@ -541,10 +461,6 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedSitesSiteIdRouteRouteChildren {
   AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
-  AuthenticatedSitesSiteIdForecastsRoute: typeof AuthenticatedSitesSiteIdForecastsRoute
-  AuthenticatedSitesSiteIdMeasurementsRoute: typeof AuthenticatedSitesSiteIdMeasurementsRoute
-  AuthenticatedSitesSiteIdOptimizationRoute: typeof AuthenticatedSitesSiteIdOptimizationRoute
-  AuthenticatedSitesSiteIdSettingsRoute: typeof AuthenticatedSitesSiteIdSettingsRoute
   AuthenticatedSitesSiteIdIndexRoute: typeof AuthenticatedSitesSiteIdIndexRoute
   AuthenticatedSitesSiteIdAppliancesApplianceIdRoute: typeof AuthenticatedSitesSiteIdAppliancesApplianceIdRoute
   AuthenticatedSitesSiteIdAppliancesNewRoute: typeof AuthenticatedSitesSiteIdAppliancesNewRoute
@@ -560,14 +476,6 @@ const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteR
   {
     AuthenticatedSitesSiteIdDashboardRoute:
       AuthenticatedSitesSiteIdDashboardRoute,
-    AuthenticatedSitesSiteIdForecastsRoute:
-      AuthenticatedSitesSiteIdForecastsRoute,
-    AuthenticatedSitesSiteIdMeasurementsRoute:
-      AuthenticatedSitesSiteIdMeasurementsRoute,
-    AuthenticatedSitesSiteIdOptimizationRoute:
-      AuthenticatedSitesSiteIdOptimizationRoute,
-    AuthenticatedSitesSiteIdSettingsRoute:
-      AuthenticatedSitesSiteIdSettingsRoute,
     AuthenticatedSitesSiteIdIndexRoute: AuthenticatedSitesSiteIdIndexRoute,
     AuthenticatedSitesSiteIdAppliancesApplianceIdRoute:
       AuthenticatedSitesSiteIdAppliancesApplianceIdRoute,
