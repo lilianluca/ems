@@ -72,7 +72,35 @@ udělat bez jediného čidla.
 - [ ] `pragueMarketWindow` v klientovi duplikuje `default_market_window` ze
       serveru – čistší by bylo vracet okno v odpovědi API.
 
-Poznámky:
+### Poznámky
+
+#### Výpočet nákupní ceny
+
+doplnit...
+
+#### Výpočet prodejní ceny
+
+spot_czk_mwh / 1000 \* settings.export_factor
+
+1. Převod mwh na kwh
+2. Distribuční poplatky platíme za to, že nám elektřinu někdo dopraví - když dodáváme elektřinu do sítě tuto službu nevyužíváme, takže neplatíme - a ani nedostáváme zaplaceno za nic jiného než samotnou dodávanou elektřinu
+3. DPH ve vzorečku není protože běžná domácnost s fotovoltaikou není plátce DPH
+4. Kde se export_factor vezme v reálu?
+
+   | Tvar výkupu                | Typicky                          |
+   | :------------------------- | :------------------------------- |
+   | Spot × koeficient          | 0,80 až 0,95                     |
+   | Spot mínus pevný poplatek  | spot – 0,10 až 0,30 Kč/kWh       |
+   | Pevná výkupní cena         | 1 až 2 Kč/kWh bez ohledu na spot |
+   | Bez výkupu, přetoky zdarma | –                                |
+
+#### Energetická bilance
+
+- Co do domu přitéká, musí z něj odtéct:
+
+#### Další
+
+Simulovaný dům se řídí predikcí, ne skutečností. Výsledek tedy říká, kolik by strategie ušetřila, kdyby predikce platily. Kolik ušetří doopravdy, řekne až měření ze skutečného střídače. Pro práci je to legitimní, jen to musí být tak pojmenované.
 
 - Brát aktuální počasí v simulaci PV
 
