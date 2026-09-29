@@ -83,3 +83,28 @@ class BatteryDevice(Device):
     __mapper_args__ = {  # noqa: RUF012
         "polymorphic_identity": DeviceType.BATTERY,
     }
+
+
+class BatteryState(Base):
+    """A battery's recorded state at one moment (TimescaleDB hypertable).
+
+    Kept out of `battery_devices` on purpose. That table holds what the battery
+    is, which changes when someone edits the form; the state of charge is a
+    measurement that changes every step. A column would keep only the latest
+    value, overwriting the history that an evaluation of the optimiser — plan
+    against reality — needs.
+
+    Each row also carries the setpoint the battery runs from that moment on. The
+    next state follows from the two, so the simulation can advance it without
+    recomputing the plan that produced the setpoint.
+    """
+
+    __tablename__ = "battery_state"
+
+    device_id: Mapped[int] = mapped_column(
+        ForeignKey("devices.id", ondelete="CASCADE"), primary_key=True
+    )
+    time: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
+    state_of_charge_kwh: Mapped[float] = mapped_column(Float, nullable=False)
+    charge_kw: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    discharge_kw: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)

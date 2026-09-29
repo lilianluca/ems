@@ -23,6 +23,12 @@ printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdi
 echo "==> Pulling images for tag ${IMAGE_TAG}"
 compose pull --quiet
 
+echo "==> Bringing the database up to date"
+# `compose run` below would reuse a running database container as it is. A change
+# to the database service itself (its image, the extensions it preloads) has to
+# be in place before the migrations that rely on it.
+compose up -d --wait db
+
 echo "==> Applying database migrations"
 # This script is piped into `bash -s` over SSH, so stdin *is* the script.
 # `compose run` attaches stdin to the container by default, which would swallow

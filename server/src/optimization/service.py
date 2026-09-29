@@ -100,7 +100,7 @@ class OptimizationService:
         # every time, its first step could never discharge, and under re-planning
         # the first step is the only one that is ever carried out.
         initial_state = starting_state_of_charge(
-            battery, await read_latest_battery_state(battery_device.id), timestamps[0]
+            battery, await read_latest_battery_state(self.db, battery_device.id), timestamps[0]
         )
 
         # The rule-based schedule for now; `optimize_battery_schedule` from

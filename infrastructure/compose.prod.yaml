@@ -16,7 +16,7 @@ x-app-env: &app-env
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   POSTGRES_DB: ${POSTGRES_DB}
   POSTGRES_HOST: db
-  # InfluxDB
+  # InfluxDB — only for the one-off `src.import_influx_history`; remove with the service
   INFLUXDB_HOST: http://influxdb:8181
   INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
   INFLUXDB_DATABASE: ${INFLUXDB_DATABASE}
@@ -80,8 +80,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      influxdb:
-        condition: service_started
 
   # One-shot: `docker compose -f compose.prod.yaml run --rm migrate`.
   # In a `tools` profile so it never starts as part of `up`.
@@ -100,7 +98,12 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:18-alpine
+    # Postgres with the TimescaleDB extension, which holds the time series
+    # (prices, forecasts, battery states) as hypertables. The library has to be
+    # preloaded; the image only configures that for a freshly initialised data
+    # directory, so it is set here to cover an existing one too.
+    image: timescale/timescaledb:latest-pg18
+    command: ["postgres", "-c", "shared_preload_libraries=timescaledb", "-c", "timescaledb.telemetry_level=off"]
     restart: unless-stopped
     logging: *logging
     networks:
@@ -121,6 +124,9 @@ services:
       timeout: 5s
       retries: 5
 
+  # No longer used by the application. Kept for one release so the history can
+  # be imported into TimescaleDB (`src.import_influx_history`); remove afterwards
+  # together with the INFLUXDB_* variables and the influxdb_data volume.
   influxdb:
     image: influxdb:3-core
     restart: unless-stopped
@@ -166,8 +172,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      influxdb:
-        condition: service_started
 
   celery-beat:
     image: ghcr.io/lilianluca/ems-server:${IMAGE_TAG:-latest}

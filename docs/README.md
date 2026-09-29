@@ -12,18 +12,28 @@ Osobní poznámky a studijní dokumentace k vývoji Energy Management Systemu.
 
 - [LP model řízení baterie](optimalizace/lp-model.md) – volba přístupu, formulace úlohy, pasti
 
-### Influxdb3
+### Úložiště časových řad
 
-- `influxdb3@dc9d4f677ac1:/$ influxdb3 query --database ems "SHOW TABLES" --token $token`
+Ceny, počasí, predikce a stav baterie jsou od 29. 9. 2026 v Postgresu jako
+hypertabulky TimescaleDB (`ote_spot_price`, `weather_forecast`,
+`pv_generation_forecast`, `load_forecast`, `battery_state`).
+
+Původně byly v InfluxDB 3 Core. Ten nemá kompakci: každý přepis stejného
+časového okna (predikce se přepisují každou hodinu na 48 h dopředu) přidal
+nové Parquet soubory a dotaz na „dnes + zítra“ po čase narazil na limit
+souborů (`--query-file-limit`) – dashboard i simulace baterie přestaly
+fungovat. V Postgresu je přepis obyčejný upsert podle `(…_id, time)`.
+
+- Přehled hypertabulek: `SELECT * FROM timescaledb_information.hypertables;`
 
 ## Úkolníček
 
 ### Vyhodnocení (chybějící kapitola práce)
 
 Implementace stojí, vyhodnocení ne. Úspora 52 Kč spočítaná z predikcí na jednom
-dvoudenním okně je ukázka, ne výsledek. V InfluxDB je přitom **historie
-spotových cen od 10. 7. 2026** (přes 3 400 čtvrthodin), takže všechno níž jde
-udělat bez jediného čidla.
+dvoudenním okně je ukázka, ne výsledek. V tabulce `ote_spot_price` je přitom
+**historie spotových cen od 10. 7. 2026**, takže všechno níž jde udělat bez
+jediného čidla.
 
 - [ ] **Zpětný test** – přehrát optimalizátorem každý uplynulý den a spočítat
       úsporu za celé období. Výstup je rozdělení, ne jedno číslo: průměr na den,
@@ -37,8 +47,12 @@ udělat bez jediného čidla.
 
 ### Provoz
 
-- [ ] **Zálohy Postgresu a InfluxDB** – zatím žádné. Jediný dluh, který může
-      zničit všechno naráz; s rostoucí historií roste i sázka.
+- [ ] **Automatické zálohy Postgresu** – zatím jen ruční `pg_dump` (29. 9. 2026,
+      před přechodem na TimescaleDB). Jediný dluh, který může zničit všechno
+      naráz; s rostoucí historií roste i sázka.
+- [ ] **Odstranit InfluxDB** – po importu historie (`src.import_influx_history`)
+      smazat službu, proměnné `INFLUXDB_*`, volume `influxdb_data` a samotný
+      skript.
 - [ ] Historie běhů optimalizace (tabulka `job_run` nebo obdoba) – bez ní nejde
       doložit, že systém dlouhodobě šetří.
 

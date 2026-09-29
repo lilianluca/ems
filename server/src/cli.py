@@ -100,12 +100,13 @@ async def set_battery_state(device_id: int, state_of_charge_kwh: float) -> int:
         # Recorded as idle: a state set by hand overrides whatever setpoint the
         # simulation last issued, until its next run issues a new one.
         await write_battery_state(
-            site_id=device.site_id,
+            session,
             device_id=device.id,
             sample=BatterySample(
                 measured_at=datetime.now(UTC_TZ), state_of_charge_kwh=state_of_charge_kwh
             ),
         )
+        await session.commit()
         logger.info(f"✅ Recorded {state_of_charge_kwh} kWh for battery '{device.name}'.")
         return 0
 
