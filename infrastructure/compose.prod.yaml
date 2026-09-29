@@ -133,6 +133,9 @@ services:
       - --node-id=ems-node
       - --object-store=file
       - --data-dir=/var/lib/influxdb3/data
+      # Core never compacts, so every rewrite of the same window adds files that
+      # a query over it has to scan. The default of 432 is reached within days.
+      - --query-file-limit=2000
     volumes:
       - influxdb_data:/var/lib/influxdb3
 

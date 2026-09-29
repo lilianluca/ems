@@ -1,7 +1,10 @@
+from collections.abc import Iterable
+from datetime import date
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.ote.models import OTEFetchLog
+from src.ote.models import OTEFetchLog, OTEStoredDay
 
 
 class OTERepository:
@@ -23,3 +26,15 @@ class OTERepository:
         self.db.add(log)
         await self.db.flush()
         return log
+
+    async def get_stored_days(self, days: Iterable[date]) -> set[date]:
+        """Return which of the given market days already have their prices stored."""
+        result = await self.db.execute(
+            select(OTEStoredDay.market_date).where(OTEStoredDay.market_date.in_(list(days)))
+        )
+        return set(result.scalars())
+
+    async def mark_day_stored(self, market_date: date) -> None:
+        """Record that a market day's prices are in InfluxDB."""
+        self.db.add(OTEStoredDay(market_date=market_date))
+        await self.db.flush()

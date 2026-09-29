@@ -1,9 +1,11 @@
+from datetime import UTC
+
 import pandas as pd
 from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.influxdb import query_to_dataframe, write_points
-from src.core.timerange import STEP_HOURS, default_market_window
+from src.core.timerange import STEP_FREQ, STEP_HOURS, default_market_window
 from src.devices.exceptions import DeviceNotFoundError
 from src.devices.repository import DeviceRepository
 from src.simulation.exceptions import NoWeatherDataError
@@ -108,6 +110,10 @@ class SimulationService:
         return df
 
     async def _store_generation(self, device_id: int, site_id: int, power_kw: pd.Series) -> None:
+        # Past steps are left as they were. Rewriting them every hour would change
+        # nothing anyone acts on, and each rewrite adds Parquet files to the window
+        # the dashboard reads, which InfluxDB 3 Core caps.
+        power_kw = power_kw[power_kw.index >= pd.Timestamp.now(tz=UTC).floor(STEP_FREQ)]
         points = [
             Point("pv_generation_forecast")
             .tag("device_id", str(device_id))
