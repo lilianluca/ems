@@ -1,13 +1,13 @@
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
-from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.influxdb import write_points
-from src.core.timerange import floor_to_step
+from src.core.timeseries import upsert
 from src.sites.models import Site
 from src.weather.client import WeatherClient
 from src.weather.exceptions import WeatherFetchTooSoonError
+from src.weather.models import WeatherForecast
 from src.weather.repository import WeatherRepository
 from src.weather.schemas import OpenMeteoForecastResponse
 
@@ -27,19 +27,16 @@ class WeatherService:
         site: Site,
         min_interval: timedelta = DEFAULT_MIN_FETCH_INTERVAL,
     ) -> int:
-        """Fetch the weather forecast for a given site and store it in InfluxDB."""
+        """Fetch the weather forecast for a given site and store it."""
         await self._check_cooldown(site.id, min_interval)
 
         forecast = await self._client.fetch_forecast(site.latitude, site.longitude)
-        points = self._build_points(site.id, forecast)
+        written = await upsert(self._db, WeatherForecast, self._build_rows(site.id, forecast))
 
-        if points:
-            await write_points(points)
-
-        await self._repo.log_fetch(site_id=site.id, points_written=len(points))
+        await self._repo.log_fetch(site_id=site.id, points_written=written)
         await self._db.commit()
 
-        return len(points)
+        return written
 
     async def _check_cooldown(self, site_id: int, min_interval: timedelta) -> None:
         """Check if the minimum interval since the last fetch has passed."""
@@ -52,34 +49,21 @@ class WeatherService:
             retry_after = int((min_interval - elapsed).total_seconds())
             raise WeatherFetchTooSoonError(retry_after)
 
-    def _build_points(self, site_id: int, forecast: OpenMeteoForecastResponse) -> list[Point]:
-        """Build InfluxDB points from the weather forecast data.
-
-        Open-Meteo answers from midnight, but only steps from the current one on
-        are kept: the earlier ones were stored by previous fetches, and each
-        rewrite adds Parquet files to the window the forecasts read, which
-        InfluxDB 3 Core caps.
-        """
+    def _build_rows(
+        self, site_id: int, forecast: OpenMeteoForecastResponse
+    ) -> list[dict[str, Any]]:
+        """Build rows from the weather forecast data."""
         quarter_hourly = forecast.minutely_15
-        current_step = floor_to_step(datetime.now(UTC))
-        points = []
-
-        for i, time_str in enumerate(quarter_hourly.time):
-            dt = datetime.fromisoformat(time_str).replace(tzinfo=UTC)
-            if dt < current_step:
-                continue
-
-            point = (
-                Point("weather_forecast")
-                .tag("site_id", str(site_id))
-                .field("shortwave_radiation", quarter_hourly.shortwave_radiation[i])
-                .field("direct_radiation", quarter_hourly.direct_radiation[i])
-                .field("diffuse_radiation", quarter_hourly.diffuse_radiation[i])
-                .field("direct_normal_irradiance", quarter_hourly.direct_normal_irradiance[i])
-                .field("temperature_2m", quarter_hourly.temperature_2m[i])
-                .field("cloud_cover", quarter_hourly.cloud_cover[i])
-                .time(dt)
-            )
-            points.append(point)
-
-        return points
+        return [
+            {
+                "site_id": site_id,
+                "time": datetime.fromisoformat(time_str).replace(tzinfo=UTC),
+                "shortwave_radiation": quarter_hourly.shortwave_radiation[i],
+                "direct_radiation": quarter_hourly.direct_radiation[i],
+                "diffuse_radiation": quarter_hourly.diffuse_radiation[i],
+                "direct_normal_irradiance": quarter_hourly.direct_normal_irradiance[i],
+                "temperature_2m": quarter_hourly.temperature_2m[i],
+                "cloud_cover": quarter_hourly.cloud_cover[i],
+            }
+            for i, time_str in enumerate(quarter_hourly.time)
+        ]

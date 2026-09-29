@@ -1,6 +1,6 @@
-from datetime import date, datetime
+from datetime import datetime
 
-from sqlalchemy import Date, DateTime, Integer
+from sqlalchemy import DateTime, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -19,16 +19,17 @@ class OTEFetchLog(Base):
     points_written: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
-class OTEStoredDay(Base):
-    """A market day whose prices are already in InfluxDB.
+class OTESpotPrice(Base):
+    """The day-ahead spot price for one quarter-hour block (TimescaleDB hypertable).
 
-    Kept here rather than asked of InfluxDB: the check runs on every fetch, and
-    a query over the prices is exactly what the file limit breaks.
+    `time` is the instant the block begins. The price is nationwide, so the block
+    alone identifies it.
     """
 
-    __tablename__ = "ote_stored_day"
+    __tablename__ = "ote_spot_price"
 
-    market_date: Mapped[date] = mapped_column(Date, primary_key=True)
-    stored_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    time: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
+    price_czk_mwh: Mapped[float] = mapped_column(Float, nullable=False)
+    price_eur_mwh: Mapped[float] = mapped_column(Float, nullable=False)
+    level: Mapped[str] = mapped_column(String(16), nullable=False)
+    level_num_96: Mapped[int] = mapped_column(Integer, nullable=False)
