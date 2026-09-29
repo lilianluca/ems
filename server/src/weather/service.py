@@ -4,6 +4,7 @@ from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.influxdb import write_points
+from src.core.timerange import floor_to_step
 from src.sites.models import Site
 from src.weather.client import WeatherClient
 from src.weather.exceptions import WeatherFetchTooSoonError
@@ -52,12 +53,21 @@ class WeatherService:
             raise WeatherFetchTooSoonError(retry_after)
 
     def _build_points(self, site_id: int, forecast: OpenMeteoForecastResponse) -> list[Point]:
-        """Build InfluxDB points from the weather forecast data."""
+        """Build InfluxDB points from the weather forecast data.
+
+        Open-Meteo answers from midnight, but only steps from the current one on
+        are kept: the earlier ones were stored by previous fetches, and each
+        rewrite adds Parquet files to the window the forecasts read, which
+        InfluxDB 3 Core caps.
+        """
         quarter_hourly = forecast.minutely_15
+        current_step = floor_to_step(datetime.now(UTC))
         points = []
 
         for i, time_str in enumerate(quarter_hourly.time):
             dt = datetime.fromisoformat(time_str).replace(tzinfo=UTC)
+            if dt < current_step:
+                continue
 
             point = (
                 Point("weather_forecast")

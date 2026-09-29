@@ -33,19 +33,30 @@ class OTEService:
     ) -> int:
         """Fetch today's and tomorrow's quarter-hourly prices and store them in InfluxDB.
 
+        A day is written once and then skipped: its prices never change after the
+        auction, and every rewrite adds Parquet files to the window the dashboard
+        reads, which InfluxDB 3 Core caps.
+
         Returns the number of points written.
         """
         await self._check_cooldown(min_interval)
 
-        prices: OTEPricesResponse = await self._client.fetch_prices()
-
         today = datetime.now(PRAGUE_TZ).date()
         tomorrow = today + timedelta(days=1)
 
-        points = [
-            *self._build_points(prices.hours_today, today),
-            *self._build_points(prices.hours_tomorrow, tomorrow),
-        ]
+        stored = await self._repo.get_stored_days([today, tomorrow])
+        if stored == {today, tomorrow}:
+            return 0
+
+        prices: OTEPricesResponse = await self._client.fetch_prices()
+
+        points = []
+        for market_date, hours in ((today, prices.hours_today), (tomorrow, prices.hours_tomorrow)):
+            # Tomorrow is empty until the auction clears; it is picked up by a later run.
+            if market_date in stored or not hours:
+                continue
+            points.extend(self._build_points(hours, market_date))
+            await self._repo.mark_day_stored(market_date)
 
         if points:
             await write_points(points)
