@@ -19,17 +19,17 @@ a uloží výsledek.
 
 | Parametr                | Zdroj                               | Význam                                                                  |
 | ----------------------- | ----------------------------------- | ----------------------------------------------------------------------- |
-| `weather`               | InfluxDB, měření `weather_forecast` | předpověď počasí indexovaná UTC časem (`dni`, `dhi`, `ghi`, `temp_air`) |
+| `weather`               | TimescaleDB, tabulka `weather_forecast` | předpověď počasí indexovaná UTC časem (`dni`, `dhi`, `ghi`, `temp_air`) |
 | `latitude`, `longitude` | `Site`                              | poloha instalace                                                        |
 | `installed_power_kwp`   | `PVDevice`                          | jmenovitý DC výkon panelu/pole [kWp]                                    |
 | `inverter_power_kw`     | `PVDevice`                          | jmenovitý AC výkon měniče [kW]                                          |
 | `tilt_degrees`          | `PVDevice`                          | sklon panelu                                                            |
 | `azimuth_degrees`       | `PVDevice`                          | orientace panelu                                                        |
 
-Počasí se načítá v `SimulationService._load_weather` z InfluxDB a přejmenovává na názvy
+Počasí se načítá v `SimulationService._load_weather` z databáze a přejmenovává na názvy
 sloupců, které očekává pvlib:
 
-| InfluxDB sloupec           | pvlib název | Význam                                        |
+| Sloupec v databázi         | pvlib název | Význam                                        |
 | -------------------------- | ----------- | --------------------------------------------- |
 | `direct_normal_irradiance` | `dni`       | přímé normálové záření [W/m²]                 |
 | `diffuse_radiation`        | `dhi`       | difúzní záření na horizontální rovinu [W/m²]  |
@@ -77,8 +77,8 @@ Záporné/`NaN` hodnoty (noc, chybějící data) se na konci ořežou na 0. Výs
 
 ### Uložení výsledku
 
-`SimulationService` uloží výsledné body zpět do InfluxDB do měření `pv_generation_forecast`
-(tagy `device_id`, `site_id`, pole `power_kw`) a zároveň vrátí `PVSimulationResult` s body
+`SimulationService` uloží výsledné body do tabulky `pv_generation_forecast`
+(sloupce `device_id`, `site_id`, `power_kw`) a zároveň vrátí `PVSimulationResult` s body
 (`PVGenerationPoint`) a celkovou energií za období (`total_energy_kwh` = součet výkonů
 vážený délkou kroku, tedy × `STEP_HOURS`; při čtvrthodinovém kroku by nevážený součet
 hlásil čtyřnásobek skutečně vyrobené energie).

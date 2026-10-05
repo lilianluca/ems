@@ -50,9 +50,6 @@ jediného čidla.
 - [ ] **Automatické zálohy Postgresu** – zatím jen ruční `pg_dump` (29. 9. 2026,
       před přechodem na TimescaleDB). Jediný dluh, který může zničit všechno
       naráz; s rostoucí historií roste i sázka.
-- [ ] **Odstranit InfluxDB** – po importu historie (`src.import_influx_history`)
-      smazat službu, proměnné `INFLUXDB_*`, volume `influxdb_data` a samotný
-      skript.
 - [ ] Historie běhů optimalizace (tabulka `job_run` nebo obdoba) – bez ní nejde
       doložit, že systém dlouhodobě šetří.
 
