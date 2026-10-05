@@ -12,18 +12,28 @@ Osobní poznámky a studijní dokumentace k vývoji Energy Management Systemu.
 
 - [LP model řízení baterie](optimalizace/lp-model.md) – volba přístupu, formulace úlohy, pasti
 
-### Influxdb3
+### Úložiště časových řad
 
-- `influxdb3@dc9d4f677ac1:/$ influxdb3 query --database ems "SHOW TABLES" --token $token`
+Ceny, počasí, predikce a stav baterie jsou od 29. 9. 2026 v Postgresu jako
+hypertabulky TimescaleDB (`ote_spot_price`, `weather_forecast`,
+`pv_generation_forecast`, `load_forecast`, `battery_state`).
+
+Původně byly v InfluxDB 3 Core. Ten nemá kompakci: každý přepis stejného
+časového okna (predikce se přepisují každou hodinu na 48 h dopředu) přidal
+nové Parquet soubory a dotaz na „dnes + zítra“ po čase narazil na limit
+souborů (`--query-file-limit`) – dashboard i simulace baterie přestaly
+fungovat. V Postgresu je přepis obyčejný upsert podle `(…_id, time)`.
+
+- Přehled hypertabulek: `SELECT * FROM timescaledb_information.hypertables;`
 
 ## Úkolníček
 
 ### Vyhodnocení (chybějící kapitola práce)
 
 Implementace stojí, vyhodnocení ne. Úspora 52 Kč spočítaná z predikcí na jednom
-dvoudenním okně je ukázka, ne výsledek. V InfluxDB je přitom **historie
-spotových cen od 10. 7. 2026** (přes 3 400 čtvrthodin), takže všechno níž jde
-udělat bez jediného čidla.
+dvoudenním okně je ukázka, ne výsledek. V tabulce `ote_spot_price` je přitom
+**historie spotových cen od 10. 7. 2026**, takže všechno níž jde udělat bez
+jediného čidla.
 
 - [ ] **Zpětný test** – přehrát optimalizátorem každý uplynulý den a spočítat
       úsporu za celé období. Výstup je rozdělení, ne jedno číslo: průměr na den,
@@ -37,8 +47,12 @@ udělat bez jediného čidla.
 
 ### Provoz
 
-- [ ] **Zálohy Postgresu a InfluxDB** – zatím žádné. Jediný dluh, který může
-      zničit všechno naráz; s rostoucí historií roste i sázka.
+- [ ] **Automatické zálohy Postgresu** – zatím jen ruční `pg_dump` (29. 9. 2026,
+      před přechodem na TimescaleDB). Jediný dluh, který může zničit všechno
+      naráz; s rostoucí historií roste i sázka.
+- [ ] **Odstranit InfluxDB** – po importu historie (`src.import_influx_history`)
+      smazat službu, proměnné `INFLUXDB_*`, volume `influxdb_data` a samotný
+      skript.
 - [ ] Historie běhů optimalizace (tabulka `job_run` nebo obdoba) – bez ní nejde
       doložit, že systém dlouhodobě šetří.
 
@@ -72,7 +86,35 @@ udělat bez jediného čidla.
 - [ ] `pragueMarketWindow` v klientovi duplikuje `default_market_window` ze
       serveru – čistší by bylo vracet okno v odpovědi API.
 
-Poznámky:
+### Poznámky
+
+#### Výpočet nákupní ceny
+
+doplnit...
+
+#### Výpočet prodejní ceny
+
+spot_czk_mwh / 1000 \* settings.export_factor
+
+1. Převod mwh na kwh
+2. Distribuční poplatky platíme za to, že nám elektřinu někdo dopraví - když dodáváme elektřinu do sítě tuto službu nevyužíváme, takže neplatíme - a ani nedostáváme zaplaceno za nic jiného než samotnou dodávanou elektřinu
+3. DPH ve vzorečku není protože běžná domácnost s fotovoltaikou není plátce DPH
+4. Kde se export_factor vezme v reálu?
+
+   | Tvar výkupu                | Typicky                          |
+   | :------------------------- | :------------------------------- |
+   | Spot × koeficient          | 0,80 až 0,95                     |
+   | Spot mínus pevný poplatek  | spot – 0,10 až 0,30 Kč/kWh       |
+   | Pevná výkupní cena         | 1 až 2 Kč/kWh bez ohledu na spot |
+   | Bez výkupu, přetoky zdarma | –                                |
+
+#### Energetická bilance
+
+- Co do domu přitéká, musí z něj odtéct:
+
+#### Další
+
+Simulovaný dům se řídí predikcí, ne skutečností. Výsledek tedy říká, kolik by strategie ušetřila, kdyby predikce platily. Kolik ušetří doopravdy, řekne až měření ze skutečného střídače. Pro práci je to legitimní, jen to musí být tak pojmenované.
 
 - Brát aktuální počasí v simulaci PV
 

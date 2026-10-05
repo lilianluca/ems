@@ -139,7 +139,7 @@ odebíral a dodával současně bez omezení. `P_grid` to utne.
 **Neznámý počáteční stav nabití.** Plán, který začíná vždy od `C · soc_min`, nemůže
 v prvním kroku vybíjet (`discharge_1 ≤ η · charge_1`). Při přepočtu každý krok se
 přitom provádí jen první krok, takže baterie by se jen nabíjela a nikdy nevybila.
-Stav se proto ukládá do InfluxDB (měření `battery_state`) a plán začíná
+Stav se proto ukládá do TimescaleDB (hypertabulka `battery_state`) a plán začíná
 z posledního záznamu posunutého na začátek horizontu
 (`simulation/battery_model.py`). Záznam mimo využitelný rozsah se do něj stáhne,
 jinak by koncová podmínka neměla řešení.
@@ -160,8 +160,8 @@ vstupu a dál se v modelu nepřepočítávají.
 2. **Testy na vymyšlených vstupech**, kde je výsledek zřejmý předem:
    konstantní cena → baterie nedělá nic; jedna levná a jedna drahá hodina →
    nabije a vybije; nulová účinnost → nedělá nic.
-3. Služba, která načte ceny a predikce z InfluxDB a plán tam uloží
-   (měření `optimization_plan`, tag `site_id`).
+3. Služba, která načte ceny a predikce z databáze a plán tam uloží
+   (tabulka `optimization_plan` po lokalitách).
 4. `GET /sites/{site_id}/optimization` pro dashboard.
 5. Úloha v Celery beatu po obnovení predikcí.
 

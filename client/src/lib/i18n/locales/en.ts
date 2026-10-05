@@ -349,12 +349,8 @@ export const en = {
 
   nav: {
     dashboard: 'Dashboard',
-    measurements: 'Measurements',
-    forecasts: 'Forecasts',
-    optimization: 'Optimization',
     devices: 'Devices',
     appliances: 'Appliances',
-    settings: 'Settings',
     users: 'Users',
     sites: 'Sites',
     select_site: 'Select Site',

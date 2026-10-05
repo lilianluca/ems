@@ -10,7 +10,8 @@ from src.devices.models import BatteryDevice
 from src.devices.repository import DeviceRepository
 from src.forecasts.service import ForecastService
 from src.optimization.exceptions import NoBatteryDeviceError, OptimizationDataMissingError
-from src.optimization.model import BatterySpec, optimize_battery_schedule
+from src.optimization.model import BatterySpec
+from src.optimization.rule_based import rule_based_schedule
 from src.optimization.schemas import OptimizationPlan, OptimizationStep
 from src.ote.service import OTEService
 from src.simulation.battery_model import starting_state_of_charge
@@ -99,10 +100,12 @@ class OptimizationService:
         # every time, its first step could never discharge, and under re-planning
         # the first step is the only one that is ever carried out.
         initial_state = starting_state_of_charge(
-            battery, await read_latest_battery_state(battery_device.id), timestamps[0]
+            battery, await read_latest_battery_state(self.db, battery_device.id), timestamps[0]
         )
 
-        result = optimize_battery_schedule(
+        # The rule-based schedule for now; `optimize_battery_schedule` from
+        # `model.py` takes the same arguments and can be swapped back in.
+        result = rule_based_schedule(
             price_import_czk_kwh=[import_price_czk_kwh(prices[t]) for t in timestamps],
             price_export_czk_kwh=[export_price_czk_kwh(prices[t]) for t in timestamps],
             pv_kw=[forecast[t].pv_generation_kw or 0.0 for t in timestamps],

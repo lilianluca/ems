@@ -1,23 +1,17 @@
 from datetime import UTC, date, datetime, timedelta
+from typing import Any
 
-from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.influxdb import query_to_records, write_points
 from src.core.timerange import PRAGUE_TZ, UTC_TZ, resolve_range
+from src.core.timeseries import upsert
 from src.ote.client import OTEClient
 from src.ote.exceptions import OTEFetchTooSoonError
+from src.ote.models import OTESpotPrice
 from src.ote.repository import OTERepository
 from src.ote.schemas import OTEPriceRead, OTEPricesResponse, OTEQuarterHourPrice
 
 DEFAULT_MIN_FETCH_INTERVAL = timedelta(minutes=15)
-
-PRICES_QUERY = """
-    SELECT time, level, price_czk_mwh, price_eur_mwh
-    FROM ote_spot_price
-    WHERE time >= $start AND time < $end
-    ORDER BY time
-"""
 
 
 class OTEService:
@@ -31,7 +25,10 @@ class OTEService:
     async def fetch_and_store_prices(
         self, min_interval: timedelta = DEFAULT_MIN_FETCH_INTERVAL
     ) -> int:
-        """Fetch today's and tomorrow's quarter-hourly prices and store them in InfluxDB.
+        """Fetch today's and tomorrow's quarter-hourly prices and store them.
+
+        Blocks already stored are overwritten with the same values, so the
+        frequent schedule that retries until tomorrow's auction clears is harmless.
 
         Returns the number of points written.
         """
@@ -42,18 +39,16 @@ class OTEService:
         today = datetime.now(PRAGUE_TZ).date()
         tomorrow = today + timedelta(days=1)
 
-        points = [
-            *self._build_points(prices.hours_today, today),
-            *self._build_points(prices.hours_tomorrow, tomorrow),
+        rows = [
+            *self._build_rows(prices.hours_today, today),
+            *self._build_rows(prices.hours_tomorrow, tomorrow),
         ]
+        written = await upsert(self._db, OTESpotPrice, rows)
 
-        if points:
-            await write_points(points)
-
-        await self._repo.log_fetch(points_written=len(points))
+        await self._repo.log_fetch(points_written=written)
         await self._db.commit()
 
-        return len(points)
+        return written
 
     async def get_prices(
         self, start: datetime | None = None, end: datetime | None = None
@@ -64,23 +59,14 @@ class OTEService:
         """
         start, end = resolve_range(start, end)
 
-        rows = await query_to_records(
-            PRICES_QUERY,
-            query_parameters={"start": start.isoformat(), "end": end.isoformat()},
-            measurement="ote_spot_price",
-        )
-
         return [
             OTEPriceRead(
-                # InfluxDB returns naive timestamps that are already UTC; label
-                # them so the API emits an offset rather than an ambiguous
-                # local-looking time.
-                starts_at=row["time"].replace(tzinfo=UTC_TZ),
-                price_czk_mwh=row["price_czk_mwh"],
-                price_eur_mwh=row["price_eur_mwh"],
-                level=row["level"],
+                starts_at=price.time,
+                price_czk_mwh=price.price_czk_mwh,
+                price_eur_mwh=price.price_eur_mwh,
+                level=price.level,
             )
-            for row in rows
+            for price in await self._repo.list_prices(start, end)
         ]
 
     async def _check_cooldown(self, min_interval: timedelta) -> None:
@@ -94,9 +80,11 @@ class OTEService:
             retry_after = int((min_interval - elapsed).total_seconds())
             raise OTEFetchTooSoonError(retry_after)
 
-    def _build_points(self, prices: list[OTEQuarterHourPrice], for_date: date) -> list[Point]:
-        """Build InfluxDB points from OTE quarter-hourly prices for a specific date."""
-        points = []
+    def _build_rows(
+        self, prices: list[OTEQuarterHourPrice], for_date: date
+    ) -> list[dict[str, Any]]:
+        """Build rows from OTE quarter-hourly prices for a specific date."""
+        rows = []
         for price in prices:
             local_dt = datetime(
                 for_date.year,
@@ -106,15 +94,13 @@ class OTEService:
                 price.minute,
                 tzinfo=PRAGUE_TZ,
             )
-            utc_dt = local_dt.astimezone(UTC_TZ)
-
-            point = (
-                Point("ote_spot_price")
-                .tag("level", price.level)
-                .field("price_czk_mwh", price.price_czk)
-                .field("price_eur_mwh", price.price_eur)
-                .field("level_num_96", price.level_num_96)
-                .time(utc_dt)
+            rows.append(
+                {
+                    "time": local_dt.astimezone(UTC_TZ),
+                    "price_czk_mwh": price.price_czk,
+                    "price_eur_mwh": price.price_eur,
+                    "level": price.level,
+                    "level_num_96": price.level_num_96,
+                }
             )
-            points.append(point)
-        return points
+        return rows

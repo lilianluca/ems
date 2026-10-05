@@ -1,7 +1,10 @@
+from collections.abc import Sequence
+from datetime import datetime
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.ote.models import OTEFetchLog
+from src.ote.models import OTEFetchLog, OTESpotPrice
 
 
 class OTERepository:
@@ -23,3 +26,12 @@ class OTERepository:
         self.db.add(log)
         await self.db.flush()
         return log
+
+    async def list_prices(self, start: datetime, end: datetime) -> Sequence[OTESpotPrice]:
+        """Read the stored prices for a half-open [start, end) range, oldest first."""
+        result = await self.db.execute(
+            select(OTESpotPrice)
+            .where(OTESpotPrice.time >= start, OTESpotPrice.time < end)
+            .order_by(OTESpotPrice.time)
+        )
+        return result.scalars().all()

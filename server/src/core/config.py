@@ -27,11 +27,6 @@ class Settings(BaseSettings):
     postgres_host: str = "db"
     postgres_port: int = 5432
 
-    # --- InfluxDB ---
-    influxdb_host: str = "http://influxdb:8181"
-    influxdb_token: str
-    influxdb_database: str
-
     # --- JWT ---
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
