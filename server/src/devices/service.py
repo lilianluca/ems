@@ -202,7 +202,7 @@ class DeviceService:
             logger.warning(f"Device with ID {device_id} does not belong to site {site_id}.")
             raise DeviceNotFoundError(device_id)
 
-        latest = await read_latest_battery_state(device_id)
+        latest = await read_latest_battery_state(self.db, device_id)
         if latest is None:
             return None
 

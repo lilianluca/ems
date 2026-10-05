@@ -30,6 +30,7 @@ class BatterySimulationService:
     """Advances a site's simulated battery by one step."""
 
     def __init__(self, db: AsyncSession, ote_service: OTEService):
+        self.db = db
         self.optimization_service = OptimizationService(db, ote_service)
 
     async def simulate_step(self, site_id: int, now: datetime) -> BatterySample | None:
@@ -43,7 +44,7 @@ class BatterySimulationService:
         device = await self.optimization_service.get_scheduled_battery(site_id)
         battery = battery_spec(device)
 
-        latest = await read_latest_battery_state(device.id)
+        latest = await read_latest_battery_state(self.db, device.id)
         if latest is not None and latest.measured_at >= step_start:
             logger.info(f"Battery {device.id} already has a state for {step_start}; skipping.")
             return None
@@ -67,7 +68,8 @@ class BatterySimulationService:
             charge_kw=charge_kw,
             discharge_kw=discharge_kw,
         )
-        await write_battery_state(site_id=site_id, device_id=device.id, sample=sample)
+        await write_battery_state(self.db, device_id=device.id, sample=sample)
+        await self.db.commit()
         logger.info(
             f"Battery {device.id} at {state:.2f} kWh; "
             f"charge {charge_kw:.2f} kW, discharge {discharge_kw:.2f} kW until the next step."
