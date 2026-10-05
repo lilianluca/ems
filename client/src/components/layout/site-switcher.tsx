@@ -68,7 +68,7 @@ export function SiteSwitcher() {
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem render={<Link to="/sites">{t('nav.manage_sites')}</Link>} />
+            <DropdownMenuItem render={<Link to="/sites">{t('my_sites.title')}</Link>} />
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
