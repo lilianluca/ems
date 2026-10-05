@@ -140,7 +140,7 @@ export const en = {
     delete: 'Delete',
     delete_title: 'Delete site {{name}}?',
     delete_description:
-      'Its memberships are deleted as well. Measurements in InfluxDB remain but are left without a site. This cannot be undone.',
+      'Its memberships, devices, appliances and data — weather, forecasts and battery state history — are deleted as well. This cannot be undone.',
     deleted: 'Site {{name}} has been deleted.',
     cancel: 'Cancel',
 
