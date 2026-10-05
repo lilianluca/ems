@@ -1,16 +1,18 @@
 import pandas as pd
-from influxdb_client_3 import Point
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.influxdb import query_to_dataframe, write_points
 from src.core.timerange import STEP_HOURS, default_market_window
+from src.core.timeseries import upsert
 from src.devices.exceptions import DeviceNotFoundError
 from src.devices.repository import DeviceRepository
+from src.forecasts.models import PVGenerationForecast
 from src.simulation.exceptions import NoWeatherDataError
 from src.simulation.pv_model import simulate_pv_generation
 from src.simulation.schemas import PVGenerationPoint, PVSimulationResult
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
+from src.weather.models import WeatherForecast
 
 
 class SimulationService:
@@ -22,7 +24,7 @@ class SimulationService:
         self.site_repo = SiteRepository(db)
 
     async def simulate_pv_device(self, device_id: int) -> PVSimulationResult:
-        """Simulate PV generation for a specific device and store the results in InfluxDB."""
+        """Simulate PV generation for a specific device and store the results."""
         device = await self.device_repo.get_pv_device_by_id(device_id)
         if device is None:
             raise DeviceNotFoundError(device_id)
@@ -64,57 +66,46 @@ class SimulationService:
     async def _load_weather(self, site_id: int) -> pd.DataFrame:
         """Read the stored weather for the window the rest of the system plans in.
 
-        The bounds are not a refinement. InfluxDB 3 Core caps how many Parquet
-        files one query may scan, and weather accumulates with every fetch, so an
-        unbounded query works for a few weeks and then fails outright — taking the
-        whole generation forecast with it.
-
         The window is the one the dashboard and the optimiser already use, so the
         forecast covers exactly what reads it, and each run stops recomputing
         weeks of past forecasts nobody looks at.
         """
         start, end = default_market_window()
-        query = """
-            SELECT time, direct_normal_irradiance, diffuse_radiation,
-                   shortwave_radiation, temperature_2m
-            FROM weather_forecast
-            WHERE site_id = $site_id AND time >= $start AND time < $end
-            ORDER BY time
-        """
-        df = await query_to_dataframe(
-            query,
-            query_parameters={
-                "site_id": str(site_id),
-                "start": start.isoformat(),
-                "end": end.isoformat(),
-            },
-            measurement="weather_forecast",
+        result = await self.db.execute(
+            # Labelled with the names pvlib expects.
+            select(
+                WeatherForecast.time,
+                WeatherForecast.direct_normal_irradiance.label("dni"),
+                WeatherForecast.diffuse_radiation.label("dhi"),
+                WeatherForecast.shortwave_radiation.label("ghi"),
+                WeatherForecast.temperature_2m.label("temp_air"),
+            )
+            .where(
+                WeatherForecast.site_id == site_id,
+                WeatherForecast.time >= start,
+                WeatherForecast.time < end,
+            )
+            .order_by(WeatherForecast.time)
         )
+        rows = result.mappings().all()
 
-        if df.empty:
+        if not rows:
             raise NoWeatherDataError(site_id)
 
-        # pvlib expects specific column names and a datetime index
-        df = df.rename(
-            columns={
-                "direct_normal_irradiance": "dni",
-                "diffuse_radiation": "dhi",
-                "shortwave_radiation": "ghi",
-                "temperature_2m": "temp_air",
-            }
-        )
+        # pvlib expects a datetime index
+        df = pd.DataFrame(rows)
         df["time"] = pd.to_datetime(df["time"], utc=True)
-        df = df.set_index("time")
-        return df
+        return df.set_index("time")
 
     async def _store_generation(self, device_id: int, site_id: int, power_kw: pd.Series) -> None:
-        points = [
-            Point("pv_generation_forecast")
-            .tag("device_id", str(device_id))
-            .tag("site_id", str(site_id))
-            .field("power_kw", float(value))
-            .time(timestamp)
+        rows = [
+            {
+                "device_id": device_id,
+                "time": timestamp.to_pydatetime(),  # type: ignore[union-attr]
+                "site_id": site_id,
+                "power_kw": float(value),
+            }
             for timestamp, value in power_kw.items()
         ]
-        if points:
-            await write_points(points)
+        await upsert(self.db, PVGenerationForecast, rows)
+        await self.db.commit()

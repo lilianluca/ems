@@ -1,7 +1,6 @@
 from datetime import UTC
 
 import pandas as pd
-from influxdb_client_3 import Point
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.appliances.exceptions import ApplianceNotFoundError
@@ -9,8 +8,9 @@ from src.appliances.forecast import generate_load_forecast
 from src.appliances.models import Appliance
 from src.appliances.repository import ApplianceRepository
 from src.appliances.schemas import ApplianceCreate, ApplianceUpdate
-from src.core.influxdb import write_points
 from src.core.timerange import STEP_FREQ, STEP_HOURS
+from src.core.timeseries import upsert
+from src.forecasts.models import LoadForecast
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -98,16 +98,13 @@ class ApplianceService:
 
         load_kw = generate_load_forecast(appliances, times)
 
-        points = [
-            Point("load_forecast")
-            .tag("site_id", str(site_id))
-            .field("load_kw", float(value))
-            .time(ts)
+        rows = [
+            {"site_id": site_id, "time": ts.to_pydatetime(), "load_kw": float(value)}
             for ts, value in load_kw.items()
         ]
-        if points:
-            await write_points(points)
-        return len(points)
+        written = await upsert(self.db, LoadForecast, rows)
+        await self.db.commit()
+        return written
 
     async def _ensure_site_exists(self, site_id: int) -> None:
         """Check if a site exists; raise an error if it does not."""
