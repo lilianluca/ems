@@ -347,6 +347,13 @@ export const en = {
       'Consumption forecast recomputed. The site has no PV array, so there is no generation to compute.',
   },
 
+  my_sites: {
+    title: 'My Sites',
+    description: 'Sites you have access to. Pick one to open its dashboard.',
+    empty_title: 'You have not been assigned to any site yet.',
+    empty_description: 'Ask an administrator to add you to one.',
+  },
+
   nav: {
     dashboard: 'Dashboard',
     devices: 'Devices',

@@ -345,6 +345,13 @@ export const cs = {
       'Predikce spotřeby přepočítána. Lokalita nemá fotovoltaiku, takže výroba se nepočítá.',
   },
 
+  my_sites: {
+    title: 'Moje lokality',
+    description: 'Lokality, ke kterým máte přístup. Vyberte jednu a zobrazí se její přehled.',
+    empty_title: 'Zatím nemáte přiřazenou žádnou lokalitu.',
+    empty_description: 'Požádejte správce, aby vás k lokalitě přidal.',
+  },
+
   nav: {
     dashboard: 'Přehled',
     devices: 'Zařízení',
