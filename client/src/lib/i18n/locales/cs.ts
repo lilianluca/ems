@@ -140,7 +140,7 @@ export const cs = {
     delete: 'Smazat',
     delete_title: 'Smazat lokalitu {{name}}?',
     delete_description:
-      'Smažou se i všechna členství. Naměřená data v InfluxDB zůstanou, ale zůstanou bez lokality. Akci nelze vrátit.',
+      'Smažou se i všechna členství, zařízení, spotřebiče a data lokality – počasí, predikce a historie stavu baterie. Akci nelze vrátit.',
     deleted: 'Lokalita {{name}} byla smazána.',
     cancel: 'Zrušit',
 

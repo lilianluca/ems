@@ -16,10 +16,6 @@ x-app-env: &app-env
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   POSTGRES_DB: ${POSTGRES_DB}
   POSTGRES_HOST: db
-  # InfluxDB — only for the one-off `src.import_influx_history`; remove with the service
-  INFLUXDB_HOST: http://influxdb:8181
-  INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
-  INFLUXDB_DATABASE: ${INFLUXDB_DATABASE}
   # JWT
   JWT_SECRET_KEY: ${JWT_SECRET_KEY}
   # Celery
@@ -124,27 +120,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # No longer used by the application. Kept for one release so the history can
-  # be imported into TimescaleDB (`src.import_influx_history`); remove afterwards
-  # together with the INFLUXDB_* variables and the influxdb_data volume.
-  influxdb:
-    image: influxdb:3-core
-    restart: unless-stopped
-    logging: *logging
-    networks:
-      - internal
-    command:
-      - influxdb3
-      - serve
-      - --node-id=ems-node
-      - --object-store=file
-      - --data-dir=/var/lib/influxdb3/data
-      # Core never compacts, so every rewrite of the same window adds files that
-      # a query over it has to scan. The default of 432 is reached within days.
-      - --query-file-limit=2000
-    volumes:
-      - influxdb_data:/var/lib/influxdb3
-
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -196,5 +171,4 @@ networks:
 
 volumes:
   db_data:
-  influxdb_data:
   redis_data:
