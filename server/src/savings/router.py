@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 
 from src.core.responses import errors
 from src.savings.dependencies import SavingsServiceDep
-from src.savings.schemas import DailySavings
+from src.savings.schemas import DailySavings, SavingsTotal
 from src.sites.dependencies import require_site_role
 from src.sites.enums import SiteRole
 from src.users.models import User
@@ -35,3 +35,14 @@ async def get_daily_savings(
     """
     return await savings_service.get_daily_savings(site_id=site_id, start=start, end=end)
 
+
+@router.get("/total", response_model=SavingsTotal, responses=errors(401, 403, 404, 422))
+async def get_total_savings(
+    site_id: int,
+    _member: Annotated[
+        User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER, SiteRole.VIEWER))
+    ],
+    savings_service: SavingsServiceDep,
+) -> SavingsTotal:
+    """Read everything the battery has saved since the first recorded step."""
+    return await savings_service.get_total(site_id=site_id)

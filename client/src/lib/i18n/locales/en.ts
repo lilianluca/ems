@@ -355,8 +355,29 @@ export const en = {
     empty_description: 'Ask an administrator to add you to one.',
   },
 
+  savings: {
+    history_title: 'Savings history',
+    history_description:
+      'What the battery saved in the quarter-hours that have passed. Simulated from forecasts for now, not measured.',
+    month_total: 'Saved this month',
+    daily_average: 'Daily average',
+    best_day: 'Best day',
+    since_start: 'Since the start',
+    since: 'since {{date}}',
+    previous_month: 'Previous month',
+    next_month: 'Next month',
+    empty: 'The battery has no recorded step in this month yet.',
+    saved: 'Saving',
+    baseline_cost: 'Cost without battery',
+    cost: 'Cost with battery',
+    partial_day: 'Incomplete day: {{steps}} of {{total}} quarter-hours',
+    partial_note:
+      'Lighter bars are days the simulation did not record every quarter-hour of, so their saving is incomplete.',
+  },
+
   nav: {
     dashboard: 'Dashboard',
+    savings: 'Savings',
     devices: 'Devices',
     appliances: 'Appliances',
     users: 'Users',

@@ -22,6 +22,7 @@ import { Route as AuthenticatedAdminUsersIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminUsersNewRouteImport } from './routes/_authenticated/admin/users/new'
 import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated/sites/$siteId/index'
 import { Route as AuthenticatedSitesSiteIdDashboardRouteImport } from './routes/_authenticated/sites/$siteId/dashboard'
+import { Route as AuthenticatedSitesSiteIdSavingsRouteImport } from './routes/_authenticated/sites/$siteId/savings'
 import { Route as AuthenticatedSitesSiteIdAppliancesIndexRouteImport } from './routes/_authenticated/sites/$siteId/appliances/index'
 import { Route as AuthenticatedSitesSiteIdAppliancesApplianceIdRouteImport } from './routes/_authenticated/sites/$siteId/appliances/$applianceId'
 import { Route as AuthenticatedSitesSiteIdAppliancesNewRouteImport } from './routes/_authenticated/sites/$siteId/appliances/new'
@@ -101,6 +102,12 @@ const AuthenticatedSitesSiteIdDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
   } as any)
+const AuthenticatedSitesSiteIdSavingsRoute =
+  AuthenticatedSitesSiteIdSavingsRouteImport.update({
+    id: '/savings',
+    path: '/savings',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
 const AuthenticatedSitesSiteIdAppliancesIndexRoute =
   AuthenticatedSitesSiteIdAppliancesIndexRouteImport.update({
     id: '/appliances/',
@@ -159,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
+  '/sites/$siteId/savings': typeof AuthenticatedSitesSiteIdSavingsRoute
   '/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -179,6 +187,7 @@ export interface FileRoutesByTo {
   '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
+  '/sites/$siteId/savings': typeof AuthenticatedSitesSiteIdSavingsRoute
   '/admin/sites': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -203,6 +212,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/_authenticated/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/_authenticated/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
+  '/_authenticated/sites/$siteId/savings': typeof AuthenticatedSitesSiteIdSavingsRoute
   '/_authenticated/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/_authenticated/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/_authenticated/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/admin/sites/new'
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
+    | '/sites/$siteId/savings'
     | '/admin/sites/'
     | '/admin/users/'
     | '/sites/$siteId/'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/admin/sites/new'
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
+    | '/sites/$siteId/savings'
     | '/admin/sites'
     | '/admin/users'
     | '/sites/$siteId'
@@ -269,6 +281,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/sites/new'
     | '/_authenticated/admin/users/new'
     | '/_authenticated/sites/$siteId/dashboard'
+    | '/_authenticated/sites/$siteId/savings'
     | '/_authenticated/admin/sites/'
     | '/_authenticated/admin/users/'
     | '/_authenticated/sites/$siteId/'
@@ -380,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDashboardRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
     }
+    '/_authenticated/sites/$siteId/savings': {
+      id: '/_authenticated/sites/$siteId/savings'
+      path: '/savings'
+      fullPath: '/sites/$siteId/savings'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdSavingsRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
     '/_authenticated/sites/$siteId/appliances/': {
       id: '/_authenticated/sites/$siteId/appliances/'
       path: '/appliances'
@@ -461,6 +481,7 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedSitesSiteIdRouteRouteChildren {
   AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
+  AuthenticatedSitesSiteIdSavingsRoute: typeof AuthenticatedSitesSiteIdSavingsRoute
   AuthenticatedSitesSiteIdIndexRoute: typeof AuthenticatedSitesSiteIdIndexRoute
   AuthenticatedSitesSiteIdAppliancesApplianceIdRoute: typeof AuthenticatedSitesSiteIdAppliancesApplianceIdRoute
   AuthenticatedSitesSiteIdAppliancesNewRoute: typeof AuthenticatedSitesSiteIdAppliancesNewRoute
@@ -476,6 +497,7 @@ const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteR
   {
     AuthenticatedSitesSiteIdDashboardRoute:
       AuthenticatedSitesSiteIdDashboardRoute,
+    AuthenticatedSitesSiteIdSavingsRoute: AuthenticatedSitesSiteIdSavingsRoute,
     AuthenticatedSitesSiteIdIndexRoute: AuthenticatedSitesSiteIdIndexRoute,
     AuthenticatedSitesSiteIdAppliancesApplianceIdRoute:
       AuthenticatedSitesSiteIdAppliancesApplianceIdRoute,

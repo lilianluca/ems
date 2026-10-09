@@ -3,12 +3,12 @@ from datetime import datetime
 from sqlalchemy import Date, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.timerange import resolve_range, today_window
+from src.core.timerange import PRAGUE_TZ, resolve_range, today_window
 from src.core.timeseries import upsert
 from src.optimization.enums import PlanStrategy
 from src.savings.balance import StepBalance, step_balance
 from src.savings.models import SiteEnergyBalance
-from src.savings.schemas import DailySavings
+from src.savings.schemas import DailySavings, SavingsTotal
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -66,6 +66,33 @@ class SavingsService:
             ],
         )
         return balance
+
+    async def get_total(self, site_id: int) -> SavingsTotal:
+        """Sum every recorded step of the site.
+
+        Unbounded on purpose: it is one aggregate over a site's rows, which the
+        primary key already orders, not a series to transfer.
+        """
+        site = await self.site_repo.get_by_id(site_id)
+        if site is None:
+            raise SiteNotFoundError(site_id)
+
+        result = await self.db.execute(
+            select(
+                func.min(SiteEnergyBalance.time),
+                func.coalesce(
+                    func.sum(SiteEnergyBalance.baseline_cost_czk - SiteEnergyBalance.cost_czk), 0.0
+                ),
+                func.count(),
+            ).where(SiteEnergyBalance.site_id == site_id)
+        )
+        first, savings, steps = result.one()
+
+        return SavingsTotal(
+            since=None if first is None else first.astimezone(PRAGUE_TZ).date(),
+            savings_czk=savings,
+            steps=steps,
+        )
 
     async def get_daily_savings(
         self, site_id: int, start: datetime | None = None, end: datetime | None = None

@@ -17,3 +17,14 @@ class DailySavings(APIBaseModel):
     baseline_cost_czk: float
     steps: int
 
+
+class SavingsTotal(APIBaseModel):
+    """Everything the battery has saved since the first recorded step.
+
+    `since` is the Czech calendar day of that step, or None while nothing has
+    been recorded.
+    """
+
+    since: date | None
+    savings_czk: float
+    steps: int

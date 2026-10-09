@@ -2,6 +2,7 @@ import { Link, useMatchRoute, useParams } from '@tanstack/react-router';
 import {
   LayoutDashboardIcon,
   MapPinIcon,
+  PiggyBankIcon,
   PlugIcon,
   UsersIcon,
   WashingMachineIcon,
@@ -52,6 +53,19 @@ export function AppSidebar() {
                       <Link to="/sites/$siteId/dashboard" params={siteParams}>
                         <LayoutDashboardIcon aria-hidden />
                         <span>{t('nav.dashboard')}</span>
+                      </Link>
+                    }
+                  />
+                </SidebarMenuItem>
+
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={t('nav.savings')}
+                    isActive={!!matchRoute({ to: '/sites/$siteId/savings', params: siteParams })}
+                    render={
+                      <Link to="/sites/$siteId/savings" params={siteParams}>
+                        <PiggyBankIcon aria-hidden />
+                        <span>{t('nav.savings')}</span>
                       </Link>
                     }
                   />

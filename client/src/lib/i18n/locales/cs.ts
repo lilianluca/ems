@@ -353,8 +353,29 @@ export const cs = {
     empty_description: 'Požádejte správce, aby vás k lokalitě přidal.',
   },
 
+  savings: {
+    history_title: 'Historie úspor',
+    history_description:
+      'Co baterie ušetřila v čtvrthodinách, které už proběhly. Zatím ze simulace podle predikcí, ne z měření.',
+    month_total: 'Ušetřeno za měsíc',
+    daily_average: 'Průměr na den',
+    best_day: 'Nejlepší den',
+    since_start: 'Od začátku provozu',
+    since: 'od {{date}}',
+    previous_month: 'Předchozí měsíc',
+    next_month: 'Další měsíc',
+    empty: 'V tomto měsíci zatím baterie nemá zaznamenaný žádný krok.',
+    saved: 'Úspora',
+    baseline_cost: 'Náklad bez baterie',
+    cost: 'Náklad s baterií',
+    partial_day: 'Neúplný den: {{steps}} z {{total}} čtvrthodin',
+    partial_note:
+      'Světlejší sloupce jsou dny, kdy simulace nezaznamenala všechny čtvrthodiny – jejich úspora je neúplná.',
+  },
+
   nav: {
     dashboard: 'Přehled',
+    savings: 'Úspory',
     devices: 'Zařízení',
     appliances: 'Spotřebiče',
     users: 'Uživatelé',

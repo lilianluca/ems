@@ -15,8 +15,10 @@ from src.core.exceptions import InvalidTimeRangeError
 PRAGUE_TZ = ZoneInfo("Europe/Prague")
 UTC_TZ = ZoneInfo("UTC")
 
-# Guards against a client asking for the whole history in one request.
-MAX_QUERY_RANGE = timedelta(days=31)
+# Guards against a client asking for the whole history in one request. Wide
+# enough for any calendar month in local time: October is 31 days and an hour
+# long, since the clocks go back in it.
+MAX_QUERY_RANGE = timedelta(days=32)
 
 # The step every series is sampled at. It follows the market: since October 2025
 # the day-ahead auction clears in quarter-hour blocks, and imbalance is settled
