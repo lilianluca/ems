@@ -2,20 +2,17 @@ import asyncio
 
 from src.core.celery_app import celery_app
 from src.core.config import settings
-from src.core.database import SessionLocal, engine
+from src.core.database import task_session
 from src.ote.client import OTEClient
 from src.ote.exceptions import OTEFetchTooSoonError
 from src.ote.service import OTEService
 
 
 async def _fetch_and_store_prices() -> int:
-    try:
-        async with SessionLocal() as db:
-            client = OTEClient(base_url=settings.ote_api_base_url)
-            service = OTEService(client, db)
-            return await service.fetch_and_store_prices()
-    finally:
-        await engine.dispose()  # Ensure the database connection is closed after the operation
+    async with task_session() as db:
+        client = OTEClient(base_url=settings.ote_api_base_url)
+        service = OTEService(client, db)
+        return await service.fetch_and_store_prices()
 
 
 @celery_app.task(name="ote.fetch_prices")

@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from src.core.celery_app import celery_app
 from src.core.config import settings
-from src.core.database import SessionLocal, engine
+from src.core.database import task_session
 from src.core.timerange import UTC_TZ
 from src.devices.models import BatteryDevice, PVDevice
 from src.optimization.exceptions import NoBatteryDeviceError
@@ -27,24 +27,21 @@ async def _simulate_all_pv_devices() -> dict[int, int]:
 
     """
     results: dict[int, int] = {}
-    try:
-        async with SessionLocal() as db:
-            service = SimulationService(db)
+    async with task_session() as db:
+        service = SimulationService(db)
 
-            devices_result = await db.execute(select(PVDevice))
-            devices = devices_result.scalars().all()
+        devices_result = await db.execute(select(PVDevice))
+        devices = devices_result.scalars().all()
 
-            for device in devices:
-                try:
-                    simulation = await service.simulate_pv_device(device.id)
-                    results[device.id] = len(simulation.points)
-                except NoWeatherDataError:
-                    # The weather fetch has not produced data for this site yet;
-                    # the next run picks it up.
-                    logger.warning(f"No weather data for PV device {device.id}, skipping.")
-                    results[device.id] = 0
-    finally:
-        await engine.dispose()
+        for device in devices:
+            try:
+                simulation = await service.simulate_pv_device(device.id)
+                results[device.id] = len(simulation.points)
+            except NoWeatherDataError:
+                # The weather fetch has not produced data for this site yet;
+                # the next run picks it up.
+                logger.warning(f"No weather data for PV device {device.id}, skipping.")
+                results[device.id] = 0
 
     return results
 
@@ -67,24 +64,21 @@ async def _simulate_all_batteries() -> dict[int, float | None]:
     # runs past a step boundary.
     now = datetime.now(UTC_TZ)
     results: dict[int, float | None] = {}
-    try:
-        async with SessionLocal() as db:
-            client = OTEClient(base_url=settings.ote_api_base_url)
-            service = BatterySimulationService(db, OTEService(client, db))
+    async with task_session() as db:
+        client = OTEClient(base_url=settings.ote_api_base_url)
+        service = BatterySimulationService(db, OTEService(client, db))
 
-            sites_result = await db.execute(select(BatteryDevice.site_id).distinct())
-            site_ids = sites_result.scalars().all()
+        sites_result = await db.execute(select(BatteryDevice.site_id).distinct())
+        site_ids = sites_result.scalars().all()
 
-            for site_id in site_ids:
-                try:
-                    sample = await service.simulate_step(site_id, now)
-                except NoBatteryDeviceError:
-                    # The battery was deleted after the query above.
-                    logger.warning(f"Site {site_id} no longer has a battery, skipping.")
-                    continue
-                results[site_id] = None if sample is None else sample.state_of_charge_kwh
-    finally:
-        await engine.dispose()
+        for site_id in site_ids:
+            try:
+                sample = await service.simulate_step(site_id, now)
+            except NoBatteryDeviceError:
+                # The battery was deleted after the query above.
+                logger.warning(f"Site {site_id} no longer has a battery, skipping.")
+                continue
+            results[site_id] = None if sample is None else sample.state_of_charge_kwh
 
     return results
 
