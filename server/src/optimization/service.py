@@ -9,8 +9,9 @@ from src.devices.battery_state import read_latest_battery_state
 from src.devices.models import BatteryDevice
 from src.devices.repository import DeviceRepository
 from src.forecasts.service import ForecastService
+from src.optimization.enums import PlanStrategy
 from src.optimization.exceptions import NoBatteryDeviceError, OptimizationDataMissingError
-from src.optimization.model import BatterySpec
+from src.optimization.model import BatterySpec, optimize_battery_schedule
 from src.optimization.rule_based import rule_based_schedule
 from src.optimization.schemas import OptimizationPlan, OptimizationStep
 from src.ote.service import OTEService
@@ -19,6 +20,13 @@ from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
 logger = logging.getLogger(__name__)
+
+# Both take the same arguments and return the same result, so the strategy is
+# only a choice of function.
+SCHEDULERS = {
+    PlanStrategy.RULE_BASED: rule_based_schedule,
+    PlanStrategy.LINEAR_PROGRAM: optimize_battery_schedule,
+}
 
 
 def import_price_czk_kwh(spot_czk_mwh: float) -> float:
@@ -55,6 +63,9 @@ def battery_spec(battery: BatteryDevice) -> BatterySpec:
 
 class OptimizationService:
     """Turns stored prices and forecasts into a battery schedule."""
+
+    # The simpler rule for now; the linear program stays available.
+    strategy = PlanStrategy.RULE_BASED
 
     def __init__(self, db: AsyncSession, ote_service: OTEService):
         self.db = db
@@ -103,9 +114,7 @@ class OptimizationService:
             battery, await read_latest_battery_state(self.db, battery_device.id), timestamps[0]
         )
 
-        # The rule-based schedule for now; `optimize_battery_schedule` from
-        # `model.py` takes the same arguments and can be swapped back in.
-        result = rule_based_schedule(
+        result = SCHEDULERS[self.strategy](
             price_import_czk_kwh=[import_price_czk_kwh(prices[t]) for t in timestamps],
             price_export_czk_kwh=[export_price_czk_kwh(prices[t]) for t in timestamps],
             pv_kw=[forecast[t].pv_generation_kw or 0.0 for t in timestamps],

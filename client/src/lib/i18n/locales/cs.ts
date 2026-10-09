@@ -307,7 +307,8 @@ export const cs = {
     description:
       'Kladné hodnoty znamenají, že baterie dodává do domu, záporné že se nabíjí. Vypočítáno ze spotových cen a predikcí.',
     battery: 'Baterie',
-    savings: 'Odhadovaná úspora',
+    saved_today: 'Dnes ušetřeno',
+    savings: 'Odhadovaná úspora plánu',
     baseline_cost: 'Náklad bez řízení',
     planned_cost: 'Náklad s plánem',
     charging: 'Nabíjení',

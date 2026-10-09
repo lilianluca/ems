@@ -12,6 +12,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTodaySavings } from '@/features/savings/api';
 import { useNow } from '@/hooks/use-now';
 import { formatPragueTime, STEP_DURATION_MS } from '@/lib/datetime';
 import { formatMoney, formatQuantity, UNIT } from '@/lib/units';
@@ -36,6 +37,7 @@ interface OptimizationChartProps {
 export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
   const { t, i18n } = useTranslation();
   const { data: plan, isPending, error } = useOptimizationPlan(siteId);
+  const { data: todaySavings } = useTodaySavings(siteId);
   const { ticks, dayStarts } = useTimeAxis(window);
   const now = useNow(NOW_REFRESH_MS);
 
@@ -74,6 +76,17 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
         {!isPending && !error && points.length > 0 && (
           <>
             <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+              {/* What the steps carried out so far today saved, next to what the
+                  plan expects from here on. Only the first adds up over days. */}
+              <div>
+                <p className="text-muted-foreground text-xs">{t('optimization.saved_today')}</p>
+                <p className="text-2xl font-semibold tabular-nums">
+                  {todaySavings ? formatMoney(todaySavings.savingsCzk, i18n.language) : '–'}{' '}
+                  <span className="text-muted-foreground text-sm font-normal">
+                    {t('optimization.unit_money')}
+                  </span>
+                </p>
+              </div>
               <div>
                 <p className="text-muted-foreground text-xs">{t('optimization.savings')}</p>
                 <p className="text-2xl font-semibold tabular-nums">

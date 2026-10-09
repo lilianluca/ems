@@ -9,6 +9,7 @@ from src.forecasts.router import router as forecasts_router
 from src.optimization.router import router as optimization_router
 from src.ote.admin_router import router as ote_admin_router
 from src.ote.router import router as ote_router
+from src.savings.router import router as savings_router
 from src.simulation.router import router as simulation_router
 from src.sites.admin_router import router as sites_admin_router
 from src.sites.router import router as sites_router
@@ -23,6 +24,7 @@ api_router.include_router(sites_router)
 api_router.include_router(devices_router)
 api_router.include_router(forecasts_router)
 api_router.include_router(optimization_router)
+api_router.include_router(savings_router)
 api_router.include_router(ote_router)
 api_router.include_router(weather_router)
 api_router.include_router(simulation_router)

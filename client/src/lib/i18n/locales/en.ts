@@ -309,7 +309,8 @@ export const en = {
     description:
       'Positive means the battery supplies the house, negative means it is charging. Derived from spot prices and forecasts.',
     battery: 'Battery',
-    savings: 'Estimated saving',
+    saved_today: 'Saved today',
+    savings: 'Estimated plan saving',
     baseline_cost: 'Cost without control',
     planned_cost: 'Cost with the plan',
     charging: 'Charging',
