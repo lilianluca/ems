@@ -15,12 +15,18 @@ from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.timerange import STEP_HOURS, floor_to_step
+from src.core.timerange import STEP, STEP_HOURS, floor_to_step
 from src.devices.battery_state import read_latest_battery_state, write_battery_state
 from src.optimization.exceptions import OptimizationDataMissingError
 from src.optimization.model import InfeasiblePlanError
-from src.optimization.service import OptimizationService, battery_spec
+from src.optimization.service import (
+    OptimizationService,
+    battery_spec,
+    export_price_czk_kwh,
+    import_price_czk_kwh,
+)
 from src.ote.service import OTEService
+from src.savings.service import SavingsService
 from src.simulation.battery_model import BatterySample, feasible_setpoint, state_of_charge_at
 
 logger = logging.getLogger(__name__)
@@ -32,6 +38,7 @@ class BatterySimulationService:
     def __init__(self, db: AsyncSession, ote_service: OTEService):
         self.db = db
         self.optimization_service = OptimizationService(db, ote_service)
+        self.savings_service = SavingsService(db)
 
     async def simulate_step(self, site_id: int, now: datetime) -> BatterySample | None:
         """Bring the battery to the start of the current step and record its next setpoint.
@@ -69,6 +76,7 @@ class BatterySimulationService:
             discharge_kw=discharge_kw,
         )
         await write_battery_state(self.db, device_id=device.id, sample=sample)
+        await self._record_balance(site_id, step_start, charge_kw, discharge_kw)
         await self.db.commit()
         logger.info(
             f"Battery {device.id} at {state:.2f} kWh; "
@@ -97,3 +105,38 @@ class BatterySimulationService:
             return 0.0, 0.0
 
         return first.charge_kw, first.discharge_kw
+
+    async def _record_balance(
+        self, site_id: int, step_start: datetime, charge_kw: float, discharge_kw: float
+    ) -> None:
+        """Store what the step costs, so the savings of any period can be summed later.
+
+        Settled against the same forecast the simulated battery follows. Skipped
+        when the step has no price or forecast: the battery idles then, and a step
+        that cannot be priced would only distort the totals.
+        """
+        step_end = step_start + STEP
+        prices = await self.optimization_service.ote_service.get_prices(step_start, step_end)
+        forecast = await self.optimization_service.forecast_service.get_site_forecast(
+            site_id, step_start, step_end
+        )
+        if not prices or not forecast:
+            logger.warning(
+                f"No price or forecast for site {site_id} at {step_start}; step not settled."
+            )
+            return
+
+        spot = prices[0].price_czk_mwh
+        balance = await self.savings_service.record_step(
+            site_id=site_id,
+            time=step_start,
+            strategy=self.optimization_service.strategy,
+            pv_kw=forecast[0].pv_generation_kw or 0.0,
+            load_kw=forecast[0].load_kw or 0.0,
+            charge_kw=charge_kw,
+            discharge_kw=discharge_kw,
+            price_import_czk_kwh=import_price_czk_kwh(spot),
+            price_export_czk_kwh=export_price_czk_kwh(spot),
+            step_hours=STEP_HOURS,
+        )
+        logger.info(f"Site {site_id} step {step_start}: saved {balance.savings_czk:.2f} CZK.")

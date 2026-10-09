@@ -4,7 +4,7 @@ from sqlalchemy import select
 
 from src.appliances.service import ApplianceService
 from src.core.celery_app import celery_app
-from src.core.database import SessionLocal, engine
+from src.core.database import task_session
 from src.sites.models import Site
 
 
@@ -16,17 +16,14 @@ async def _forecast_all_sites() -> dict[int, int]:
 
     """
     results: dict[int, int] = {}
-    try:
-        async with SessionLocal() as db:
-            service = ApplianceService(db)
+    async with task_session() as db:
+        service = ApplianceService(db)
 
-            sites_result = await db.execute(select(Site))
-            sites = sites_result.scalars().all()
+        sites_result = await db.execute(select(Site))
+        sites = sites_result.scalars().all()
 
-            for site in sites:
-                results[site.id] = await service.generate_and_store_forecast(site.id)
-    finally:
-        await engine.dispose()
+        for site in sites:
+            results[site.id] = await service.generate_and_store_forecast(site.id)
 
     return results
 

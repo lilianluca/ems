@@ -121,3 +121,50 @@ function pragueMidnight(value: number, dayOffset: number): number {
 export function pragueMarketWindow(now: number): [number, number] {
   return [pragueMidnight(now, 0), pragueMidnight(now, 2) - STEP_DURATION_MS];
 }
+
+/** A calendar month, as `month` 1–12. */
+export interface CalendarMonth {
+  year: number;
+  month: number;
+}
+
+/** The month a Prague calendar day falls in. */
+export function pragueMonth(value: Date | number): CalendarMonth {
+  const [year, month] = pragueDayKey(value).split('-');
+  return { year: Number(year), month: Number(month) };
+}
+
+export function shiftMonth({ year, month }: CalendarMonth, by: number): CalendarMonth {
+  const index = year * 12 + (month - 1) + by;
+  return { year: Math.floor(index / 12), month: (index % 12) + 1 };
+}
+
+/**
+ * A whole month as a half-open [start, end) range of Prague midnights.
+ *
+ * Noon UTC on the 1st is the 1st in Prague too, whatever the offset, so it is a
+ * safe instant to take that day's midnight from.
+ */
+export function pragueMonthWindow({ year, month }: CalendarMonth): [number, number] {
+  const next = shiftMonth({ year, month }, 1);
+  return [
+    pragueMidnight(Date.UTC(year, month - 1, 1, 12), 0),
+    pragueMidnight(Date.UTC(next.year, next.month - 1, 1, 12), 0),
+  ];
+}
+
+/** Every day of a month as `YYYY-MM-DD`, the form the API uses for a calendar day. */
+export function monthDayKeys({ year, month }: CalendarMonth): string[] {
+  const days = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return Array.from(
+    { length: days },
+    (_, index) => `${year}-${String(month).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`,
+  );
+}
+
+/** How many steps a Prague calendar day has: 96, or 92 and 100 on the clock changes. */
+export function stepsInPragueDay(dayKey: string): number {
+  const [year, month, day] = dayKey.split('-').map(Number);
+  const noon = Date.UTC(year, month - 1, day, 12);
+  return Math.round((pragueMidnight(noon, 1) - pragueMidnight(noon, 0)) / STEP_DURATION_MS);
+}

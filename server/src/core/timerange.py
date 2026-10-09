@@ -6,6 +6,7 @@ those charts aligned: if each endpoint invented its own default, the series woul
 silently cover different spans.
 """
 
+from collections.abc import Callable
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -14,8 +15,10 @@ from src.core.exceptions import InvalidTimeRangeError
 PRAGUE_TZ = ZoneInfo("Europe/Prague")
 UTC_TZ = ZoneInfo("UTC")
 
-# Guards against a client asking for the whole history in one request.
-MAX_QUERY_RANGE = timedelta(days=31)
+# Guards against a client asking for the whole history in one request. Wide
+# enough for any calendar month in local time: October is 31 days and an hour
+# long, since the clocks go back in it.
+MAX_QUERY_RANGE = timedelta(days=32)
 
 # The step every series is sampled at. It follows the market: since October 2025
 # the day-ahead auction clears in quarter-hour blocks, and imbalance is settled
@@ -64,10 +67,24 @@ def default_market_window() -> tuple[datetime, datetime]:
     return start.astimezone(UTC_TZ), end.astimezone(UTC_TZ)
 
 
-def resolve_range(start: datetime | None, end: datetime | None) -> tuple[datetime, datetime]:
+def today_window() -> tuple[datetime, datetime]:
+    """Today alone, as the Czech market defines a day."""
+    today = datetime.now(PRAGUE_TZ).date()
+    tomorrow = today + timedelta(days=1)
+
+    start = datetime(today.year, today.month, today.day, tzinfo=PRAGUE_TZ)
+    end = datetime(tomorrow.year, tomorrow.month, tomorrow.day, tzinfo=PRAGUE_TZ)
+    return start.astimezone(UTC_TZ), end.astimezone(UTC_TZ)
+
+
+def resolve_range(
+    start: datetime | None,
+    end: datetime | None,
+    default: Callable[[], tuple[datetime, datetime]] = default_market_window,
+) -> tuple[datetime, datetime]:
     """Fill in the default window for missing bounds and validate the result."""
     if start is None or end is None:
-        default_start, default_end = default_market_window()
+        default_start, default_end = default()
         start = start or default_start
         end = end or default_end
 

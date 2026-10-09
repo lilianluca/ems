@@ -4,7 +4,7 @@ import logging
 from sqlalchemy import select
 
 from src.core.celery_app import celery_app
-from src.core.database import SessionLocal, engine
+from src.core.database import task_session
 from src.sites.models import Site
 from src.weather.client import WeatherClient
 from src.weather.exceptions import WeatherFetchError, WeatherFetchTooSoonError
@@ -21,27 +21,24 @@ async def _fetch_and_store_for_all_sites() -> dict[int, int]:
 
     """
     results: dict[int, int] = {}
-    try:
-        async with SessionLocal() as db:
-            client = WeatherClient()
-            service = WeatherService(client, db)
+    async with task_session() as db:
+        client = WeatherClient()
+        service = WeatherService(client, db)
 
-            sites_result = await db.execute(select(Site))
-            sites = sites_result.scalars().all()
+        sites_result = await db.execute(select(Site))
+        sites = sites_result.scalars().all()
 
-            for site in sites:
-                try:
-                    results[site.id] = await service.fetch_and_store_for_site(site)
-                except WeatherFetchTooSoonError:
-                    results[site.id] = 0
-                except WeatherFetchError as error:
-                    # Open-Meteo is down or rate-limiting. One site's failure must
-                    # not cost the others their forecast, and the next hourly run
-                    # picks this one up again.
-                    logger.warning(f"Weather fetch failed for site {site.id}: {error.message}")
-                    results[site.id] = 0
-    finally:
-        await engine.dispose()
+        for site in sites:
+            try:
+                results[site.id] = await service.fetch_and_store_for_site(site)
+            except WeatherFetchTooSoonError:
+                results[site.id] = 0
+            except WeatherFetchError as error:
+                # Open-Meteo is down or rate-limiting. One site's failure must
+                # not cost the others their forecast, and the next hourly run
+                # picks this one up again.
+                logger.warning(f"Weather fetch failed for site {site.id}: {error.message}")
+                results[site.id] = 0
 
     return results
 

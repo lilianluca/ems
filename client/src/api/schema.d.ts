@@ -397,6 +397,49 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/savings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Daily Savings
+         * @description Read what the battery saved per day, from the steps it has carried out.
+         *
+         *     The plan reports an estimate from now to the end of its horizon; this is the
+         *     record of what was actually decided, so it can be summed over any period.
+         */
+        get: operations["savings-get_daily_savings-get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/{site_id}/savings/total": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Total Savings
+         * @description Read everything the battery has saved since the first recorded step.
+         */
+        get: operations["savings-get_total_savings-get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ote/prices": {
         parameters: {
             query?: never;
@@ -862,6 +905,29 @@ export interface components {
             standbyMinutesMax: number;
         };
         /**
+         * DailySavings
+         * @description What the battery saved on one Czech calendar day, from the steps it carried out.
+         *
+         *     Unlike the plan's estimate, these are steps that have already been decided, so
+         *     days can be summed into weeks and months. `steps` tells a full day (96
+         *     quarter-hours) from one the simulation only partly covered.
+         */
+        DailySavings: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Savingsczk */
+            savingsCzk: number;
+            /** Costczk */
+            costCzk: number;
+            /** Baselinecostczk */
+            baselineCostCzk: number;
+            /** Steps */
+            steps: number;
+        };
+        /**
          * ErrorCode
          * @description Machine-readable error identifiers shared with API clients.
          *
@@ -1099,6 +1165,21 @@ export interface components {
             points: components["schemas"]["PVGenerationPoint"][];
             /** Total Energy Kwh */
             total_energy_kwh: number;
+        };
+        /**
+         * SavingsTotal
+         * @description Everything the battery has saved since the first recorded step.
+         *
+         *     `since` is the Czech calendar day of that step, or None while nothing has
+         *     been recorded.
+         */
+        SavingsTotal: {
+            /** Since */
+            since: string | null;
+            /** Savingsczk */
+            savingsCzk: number;
+            /** Steps */
+            steps: number;
         };
         /**
          * ScheduledConfig
@@ -2390,6 +2471,127 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OptimizationPlan"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "savings-get_daily_savings-get": {
+        parameters: {
+            query?: {
+                /** @description Inclusive lower bound; defaults to today in Czech local time. */
+                start?: string | null;
+                /** @description Exclusive upper bound; defaults to the end of today in Czech local time. */
+                end?: string | null;
+            };
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailySavings"][];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "savings-get_total_savings-get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavingsTotal"];
                 };
             };
             /** @description Not authenticated */

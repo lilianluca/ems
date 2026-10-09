@@ -8,6 +8,7 @@ import { optimizationQueryOptions } from '@/features/optimization/api';
 import { OptimizationChart } from '@/features/optimization/components/optimization-chart';
 import { spotPricesQueryOptions } from '@/features/ote/api';
 import { SpotPriceChart } from '@/features/ote/components/spot-price-chart';
+import { todaySavingsQueryOptions } from '@/features/savings/api';
 import { useNow } from '@/hooks/use-now';
 import { pragueMarketWindow } from '@/lib/datetime';
 
@@ -27,6 +28,7 @@ export const Route = createFileRoute('/_authenticated/sites/$siteId/dashboard')(
       context.queryClient
         .ensureQueryData(optimizationQueryOptions(params.siteId))
         .catch(() => null),
+      context.queryClient.ensureQueryData(todaySavingsQueryOptions(params.siteId)),
     ]),
   component: DashboardPage,
 });
