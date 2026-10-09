@@ -5,5 +5,5 @@
 3. Navrhněte architekturu a vývojový diagram aplikace.
 4. Implementujte aplikaci včetně modelu fotovoltaické elektrárny, tepelného čerpadla a rodinného domu.
 5. Vytvořte databázi pro ukládání, statistické zpracování a vizualizaci dat.
-6. Implementujte mechanismus pro efektivní řízení spotřeby elektrické energie.
+6. Implementujte algoritmus pro efektivní řízení spotřeby elektrické energie.
 7. Otestujte aplikaci na připraveném modelu a vyhodnoťte dosažené výsledky.
