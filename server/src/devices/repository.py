@@ -64,6 +64,7 @@ class DeviceRepository:
         min_state_of_charge: float,
         max_state_of_charge: float,
         round_trip_efficiency: float,
+        cycle_life: int,
     ) -> BatteryDevice:
         """Create a new battery energy storage device."""
         device = BatteryDevice(
@@ -75,6 +76,7 @@ class DeviceRepository:
             min_state_of_charge=min_state_of_charge,
             max_state_of_charge=max_state_of_charge,
             round_trip_efficiency=round_trip_efficiency,
+            cycle_life=cycle_life,
         )
         self.db.add(device)
         await self.db.flush()

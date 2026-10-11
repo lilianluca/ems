@@ -50,6 +50,10 @@ export const batteryDeviceSchema = z
       .number(vk('validation.percent_invalid'))
       .gt(0, vk('validation.percent_invalid'))
       .max(100, vk('validation.percent_invalid')),
+    cycleLife: z
+      .number(vk('validation.cycle_life_invalid'))
+      .int(vk('validation.cycle_life_invalid'))
+      .positive(vk('validation.cycle_life_invalid')),
   })
   .refine((values) => values.minStateOfChargePercent < values.maxStateOfChargePercent, {
     message: vk('validation.state_of_charge_range'),

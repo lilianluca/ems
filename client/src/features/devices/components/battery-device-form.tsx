@@ -43,6 +43,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
           minStateOfChargePercent: toPercent(device.minStateOfCharge),
           maxStateOfChargePercent: toPercent(device.maxStateOfCharge),
           roundTripEfficiencyPercent: toPercent(device.roundTripEfficiency),
+          cycleLife: device.cycleLife,
         }
       : {
           name: '',
@@ -54,6 +55,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
           minStateOfChargePercent: 10,
           maxStateOfChargePercent: 100,
           roundTripEfficiencyPercent: 90,
+          cycleLife: 6000,
         },
   });
 
@@ -69,6 +71,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
         minStateOfCharge: toFraction(values.minStateOfChargePercent),
         maxStateOfCharge: toFraction(values.maxStateOfChargePercent),
         roundTripEfficiency: toFraction(values.roundTripEfficiencyPercent),
+        cycleLife: values.cycleLife,
       },
       {
         onSuccess: (saved) => {
@@ -83,10 +86,11 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
   };
 
   const numericField = (
-    name: 'capacityKwh' | 'maxChargePowerKw' | 'maxDischargePowerKw',
+    name: 'capacityKwh' | 'maxChargePowerKw' | 'maxDischargePowerKw' | 'cycleLife',
     label: string,
     unit: string,
     placeholder: string,
+    hint?: string,
   ) => (
     <Controller
       control={control}
@@ -108,6 +112,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
             placeholder={placeholder}
             aria-invalid={fieldState.invalid}
           />
+          {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
           {fieldState.error && (
             <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
           )}
@@ -193,6 +198,14 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
               {percentField('roundTripEfficiencyPercent', t('devices.efficiency'))}
             </div>
             <p className="text-muted-foreground text-xs">{t('devices.hint_soc')}</p>
+
+            {numericField(
+              'cycleLife',
+              t('devices.cycle_life'),
+              t('devices.cycles_unit'),
+              '6000',
+              t('devices.hint_cycle_life'),
+            )}
 
             {formState.errors.root && (
               <p role="alert" className="text-destructive text-sm">

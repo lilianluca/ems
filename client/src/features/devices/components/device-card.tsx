@@ -64,6 +64,10 @@ export function DeviceCard({ siteId, device }: DeviceCardProps) {
             label: t('devices.efficiency'),
             value: formatFractionAsPercent(device.roundTripEfficiency, i18n.language),
           },
+          {
+            label: t('devices.cycle_life'),
+            value: `${new Intl.NumberFormat(i18n.language).format(device.cycleLife)} ${t('devices.cycles_unit')}`,
+          },
         ];
 
   return (

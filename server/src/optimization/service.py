@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import settings
 from src.core.timerange import STEP_HOURS, UTC_TZ, floor_to_step, resolve_range
-from src.devices.battery_state import read_latest_battery_state
+from src.devices.battery_state import read_battery_health, read_latest_battery_state
 from src.devices.models import BatteryDevice
 from src.devices.repository import DeviceRepository
 from src.forecasts.service import ForecastService
@@ -49,10 +49,15 @@ def export_price_czk_kwh(spot_czk_mwh: float) -> float:
     return spot_czk_mwh / 1000 * settings.export_factor
 
 
-def battery_spec(battery: BatteryDevice) -> BatterySpec:
-    """Convert a stored battery into the parameters the model computes with."""
+def battery_spec(battery: BatteryDevice, state_of_health: float = 1.0) -> BatterySpec:
+    """Convert a stored battery into the parameters the model computes with.
+
+    The capacity is what the battery can still hold, not what it was sold with:
+    the charge bounds are fractions of it, so a worn battery has a lower ceiling
+    in kilowatt-hours and a plan made for the rated capacity would overfill it.
+    """
     return BatterySpec(
-        capacity_kwh=battery.capacity_kwh,
+        capacity_kwh=battery.capacity_kwh * state_of_health,
         min_state_of_charge=battery.min_state_of_charge,
         max_state_of_charge=battery.max_state_of_charge,
         max_charge_power_kw=battery.max_charge_power_kw,
@@ -88,7 +93,8 @@ class OptimizationService:
             raise SiteNotFoundError(site_id)
 
         battery_device = await self.get_scheduled_battery(site_id)
-        battery = battery_spec(battery_device)
+        health = await read_battery_health(self.db, battery_device)
+        battery = battery_spec(battery_device, health.state_of_health)
         start, end = resolve_range(start, end)
 
         prices = await self._spot_prices(start, end)

@@ -67,6 +67,7 @@ export const en = {
     power_positive: 'Enter a positive number.',
     tilt_invalid: 'Tilt must be between 0 and 90°.',
     azimuth_invalid: 'Azimuth must be between 0 and 360°.',
+    cycle_life_invalid: 'Enter a positive whole number.',
     percent_invalid: 'Enter a percentage.',
     appliance_name_required: 'Appliance name is required.',
     power_not_negative: 'Enter a non-negative number.',
@@ -266,12 +267,16 @@ export const en = {
     min_soc: 'Minimum charge',
     max_soc: 'Maximum charge',
     efficiency: 'Round-trip efficiency',
+    cycle_life: 'Cycle life',
+    cycles_unit: 'cycles',
     usable_range: 'Usable range',
 
     hint_kwp: 'Peak panel power in kWp, from the installation documents.',
     hint_inverter: 'Usually somewhat lower than the panel power.',
     hint_tilt: '0° is flat, 90° is vertical. A pitched roof is usually 30–45°.',
     hint_azimuth: '0° north, 90° east, 180° south, 270° west.',
+    hint_cycle_life:
+      'Full cycles after which the battery holds 80 % of its original capacity. The datasheet gives it, usually 3,000–8,000.',
     hint_soc:
       'A battery is not cycled between empty and full. Usable energy is capacity × (max − min), and some is lost charging and discharging. Both values are on the datasheet.',
 
@@ -295,7 +300,7 @@ export const en = {
     delete: 'Delete',
     delete_title: 'Delete device {{name}}?',
     delete_description:
-      'Forecasts computed for this device stay in the measurement store without a device. This cannot be undone.',
+      'Forecasts and state history computed for this device are deleted as well. This cannot be undone.',
     deleted: 'Device {{name}} has been deleted.',
     created: 'Device {{name}} has been created.',
     updated: 'Device {{name}} has been updated.',
@@ -330,6 +335,11 @@ export const en = {
     measured_at: 'Recorded {{time}}',
     stale: 'Recorded {{time}}. The value may be out of date.',
     empty: 'No state of charge has been recorded for this battery yet.',
+    health: 'Battery health',
+    cycles: 'Full cycles',
+    outlook: 'Until 80 % health',
+    outlook_over: 'more than {{years}}',
+    outlook_hint: 'at the pace of the last 30 days',
   },
 
   forecasts: {

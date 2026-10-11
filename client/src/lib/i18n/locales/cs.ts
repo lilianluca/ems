@@ -68,6 +68,7 @@ export const cs = {
     tilt_invalid: 'Sklon musí být mezi 0 a 90°.',
     azimuth_invalid: 'Azimut musí být mezi 0 a 360°.',
     percent_invalid: 'Zadejte hodnotu v procentech.',
+    cycle_life_invalid: 'Zadejte kladné celé číslo.',
     appliance_name_required: 'Název spotřebiče je povinný.',
     power_not_negative: 'Zadejte nezáporné číslo.',
     priority_invalid: 'Priorita musí být 1 až 4.',
@@ -264,12 +265,16 @@ export const cs = {
     min_soc: 'Minimální nabití',
     max_soc: 'Maximální nabití',
     efficiency: 'Účinnost cyklu',
+    cycle_life: 'Životnost',
+    cycles_unit: 'cyklů',
     usable_range: 'Využitelný rozsah',
 
     hint_kwp: 'Špičkový výkon panelů v kWp podle projektu.',
     hint_inverter: 'Bývá o něco nižší než výkon panelů.',
     hint_tilt: '0° vodorovně, 90° svisle. Šikmá střecha obvykle 30–45°.',
     hint_azimuth: '0° sever, 90° východ, 180° jih, 270° západ.',
+    hint_cycle_life:
+      'Počet plných cyklů, po kterém má baterie 80 % původní kapacity. Výrobce ho uvádí v datovém listu, obvykle 3 000–8 000.',
     hint_soc:
       'Baterie se necykluje mezi nulou a plným nabitím. Využitelná energie je kapacita × (max − min), a část se navíc ztratí při nabíjení a vybíjení. Hodnoty najdete v datovém listu.',
 
@@ -293,7 +298,7 @@ export const cs = {
     delete: 'Smazat',
     delete_title: 'Smazat zařízení {{name}}?',
     delete_description:
-      'Predikce spočítané pro toto zařízení zůstanou v databázi měření bez vazby. Akci nelze vrátit.',
+      'Smažou se i predikce a historie stavu spočítané pro toto zařízení. Akci nelze vrátit.',
     deleted: 'Zařízení {{name}} bylo smazáno.',
     created: 'Zařízení {{name}} bylo vytvořeno.',
     updated: 'Zařízení {{name}} bylo upraveno.',
@@ -328,6 +333,11 @@ export const cs = {
     measured_at: 'Zaznamenáno {{time}}',
     stale: 'Zaznamenáno {{time}}. Hodnota může být zastaralá.',
     empty: 'Pro tuto baterii zatím není zaznamenaný žádný stav nabití.',
+    health: 'Zdraví baterie',
+    cycles: 'Počet cyklů',
+    outlook: 'Do 80 % zdraví',
+    outlook_over: 'více než {{years}}',
+    outlook_hint: 'při tempu posledních 30 dní',
   },
 
   forecasts: {

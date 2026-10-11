@@ -16,7 +16,11 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.timerange import STEP, STEP_HOURS, floor_to_step
-from src.devices.battery_state import read_latest_battery_state, write_battery_state
+from src.devices.battery_state import (
+    read_battery_health,
+    read_latest_battery_state,
+    write_battery_state,
+)
 from src.optimization.exceptions import OptimizationDataMissingError
 from src.optimization.model import InfeasiblePlanError
 from src.optimization.service import (
@@ -49,7 +53,10 @@ class BatterySimulationService:
         """
         step_start = floor_to_step(now)
         device = await self.optimization_service.get_scheduled_battery(site_id)
-        battery = battery_spec(device)
+        # The same worn capacity the plan is made for, so the two agree on where
+        # the ceiling is.
+        health = await read_battery_health(self.db, device)
+        battery = battery_spec(device, health.state_of_health)
 
         latest = await read_latest_battery_state(self.db, device.id)
         if latest is not None and latest.measured_at >= step_start:

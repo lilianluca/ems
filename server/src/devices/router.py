@@ -9,6 +9,7 @@ from src.devices.schemas import (
     BatteryDeviceCreate,
     BatteryDeviceRead,
     BatteryDeviceUpdate,
+    BatteryHealthRead,
     BatteryStateRead,
     DeviceRead,
     PVDeviceCreate,
@@ -88,6 +89,7 @@ async def create_battery_device(
         min_state_of_charge=payload.min_state_of_charge,
         max_state_of_charge=payload.max_state_of_charge,
         round_trip_efficiency=payload.round_trip_efficiency,
+        cycle_life=payload.cycle_life,
     )
 
 
@@ -113,6 +115,7 @@ async def update_battery_device(
         min_state_of_charge=payload.min_state_of_charge,
         max_state_of_charge=payload.max_state_of_charge,
         round_trip_efficiency=payload.round_trip_efficiency,
+        cycle_life=payload.cycle_life,
     )
 
 
@@ -134,6 +137,23 @@ async def get_battery_state(
     Answers `null` until a state has been recorded for the battery.
     """
     return await device_service.get_battery_state(site_id=site_id, device_id=device_id)
+
+
+@router.get(
+    "/battery/{device_id}/health",
+    response_model=BatteryHealthRead,
+    responses=errors(401, 403, 404, 409, 422),
+)
+async def get_battery_health(
+    site_id: int,
+    device_id: int,
+    _member: Annotated[
+        User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER, SiteRole.VIEWER))
+    ],
+    device_service: DeviceServiceDep,
+) -> BatteryHealthRead:
+    """Read how worn a battery is, from the cycles it has been through."""
+    return await device_service.get_battery_health(site_id=site_id, device_id=device_id)
 
 
 @router.get("", response_model=list[DeviceRead], responses=errors(401, 403, 404, 422))

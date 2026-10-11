@@ -13,6 +13,7 @@ export type PVDeviceInput = components['schemas']['PVDeviceCreate'];
 export type BatteryDeviceInput = components['schemas']['BatteryDeviceCreate'];
 
 export type BatteryState = components['schemas']['BatteryStateRead'];
+export type BatteryHealth = components['schemas']['BatteryHealthRead'];
 
 export const deviceKeys = {
   all: ['devices'] as const,
@@ -20,6 +21,9 @@ export const deviceKeys = {
   batteryStates: (siteId: number) => [...deviceKeys.all, 'battery-state', siteId] as const,
   batteryState: (siteId: number, deviceId: number) =>
     [...deviceKeys.batteryStates(siteId), deviceId] as const,
+  // Under the state's key, so whatever refreshes the state refreshes this too.
+  batteryHealth: (siteId: number, deviceId: number) =>
+    [...deviceKeys.batteryState(siteId, deviceId), 'health'] as const,
 };
 
 /** Shared by the hook and route loaders, so both agree on caching. */
@@ -88,6 +92,26 @@ export function batteryStateQueryOptions(siteId: number, deviceId: number) {
 
 export function useBatteryState(siteId: number, deviceId: number) {
   return useQuery(batteryStateQueryOptions(siteId, deviceId));
+}
+
+/** Health moves by a fraction of a percent a month, so it is fetched rarely. */
+export function batteryHealthQueryOptions(siteId: number, deviceId: number) {
+  return queryOptions({
+    queryKey: deviceKeys.batteryHealth(siteId, deviceId),
+    queryFn: async ({ signal }) => {
+      const { data, error, response } = await api.GET(
+        '/api/v1/sites/{site_id}/devices/battery/{device_id}/health',
+        { params: { path: { site_id: siteId, device_id: deviceId } }, signal },
+      );
+      if (error) throw new AppError(response.status, error);
+      return data;
+    },
+    staleTime: 60 * 60_000,
+  });
+}
+
+export function useBatteryHealth(siteId: number, deviceId: number) {
+  return useQuery(batteryHealthQueryOptions(siteId, deviceId));
 }
 
 /**
