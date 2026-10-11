@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, Enum, Float, ForeignKey, String
+from sqlalchemy import CheckConstraint, DateTime, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -78,6 +78,11 @@ class BatteryDevice(Device):
     # it the optimiser would count losses as savings.
     round_trip_efficiency: Mapped[float] = mapped_column(
         Float, nullable=False, default=0.9, server_default="0.9"
+    )
+    # Full cycles the manufacturer quotes until capacity has faded to 80 %. The
+    # one figure a datasheet gives about ageing; see `battery_health`.
+    cycle_life: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=6000, server_default="6000"
     )
 
     __mapper_args__ = {  # noqa: RUF012

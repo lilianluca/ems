@@ -278,6 +278,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/devices/battery/{device_id}/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Battery Health
+         * @description Read how worn a battery is, from the cycles it has been through.
+         */
+        get: operations["devices-get_battery_health-get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sites/{site_id}/devices": {
         parameters: {
             query?: never;
@@ -798,6 +818,11 @@ export interface components {
              * @default 0.9
              */
             roundTripEfficiency: number;
+            /**
+             * Cyclelife
+             * @default 6000
+             */
+            cycleLife: number;
         };
         /**
          * BatteryDeviceRead
@@ -827,6 +852,8 @@ export interface components {
             maxStateOfCharge: number;
             /** Roundtripefficiency */
             roundTripEfficiency: number;
+            /** Cyclelife */
+            cycleLife: number;
             /**
              * Createdat
              * Format: date-time
@@ -852,6 +879,29 @@ export interface components {
             maxStateOfCharge?: number | null;
             /** Roundtripefficiency */
             roundTripEfficiency?: number | null;
+            /** Cyclelife */
+            cycleLife?: number | null;
+        };
+        /**
+         * BatteryHealthRead
+         * @description How worn a battery is, from the cycles it has been through.
+         *
+         *     `years_to_end_of_life` is how long the recent pace of cycling takes to reach
+         *     80 % health. It is None for a battery with under a day of history or one that
+         *     is not being cycled, and an upper bound otherwise: ageing with time alone is
+         *     not modelled.
+         */
+        BatteryHealthRead: {
+            /** Deviceid */
+            deviceId: number;
+            /** Equivalentfullcycles */
+            equivalentFullCycles: number;
+            /** Stateofhealth */
+            stateOfHealth: number;
+            /** Effectivecapacitykwh */
+            effectiveCapacityKwh: number;
+            /** Yearstoendoflife */
+            yearsToEndOfLife: number | null;
         };
         /**
          * BatteryStateRead
@@ -2086,6 +2136,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BatteryStateRead"] | null;
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "devices-get_battery_health-get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+                device_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BatteryHealthRead"];
                 };
             };
             /** @description Not authenticated */

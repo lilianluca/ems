@@ -28,6 +28,8 @@ class BatteryDeviceCreate(APIBaseModel):
     min_state_of_charge: float = Field(default=0.1, ge=0, lt=1)
     max_state_of_charge: float = Field(default=1.0, gt=0, le=1)
     round_trip_efficiency: float = Field(default=0.9, gt=0, le=1)
+    # Full cycles until capacity has faded to 80 %, as a datasheet quotes it.
+    cycle_life: int = Field(default=6000, gt=0)
 
     @model_validator(mode="after")
     def validate_state_of_charge_range(self) -> "BatteryDeviceCreate":
@@ -74,6 +76,7 @@ class BatteryDeviceRead(APIBaseModel):
     min_state_of_charge: float
     max_state_of_charge: float
     round_trip_efficiency: float
+    cycle_life: int
     created_at: datetime
 
 
@@ -87,6 +90,7 @@ class BatteryDeviceUpdate(APIBaseModel):
     min_state_of_charge: float | None = Field(default=None, ge=0, lt=1)
     max_state_of_charge: float | None = Field(default=None, gt=0, le=1)
     round_trip_efficiency: float | None = Field(default=None, gt=0, le=1)
+    cycle_life: int | None = Field(default=None, gt=0)
 
 
 DeviceRead = Annotated[PVDeviceRead | BatteryDeviceRead, Field(discriminator="type")]
@@ -98,8 +102,25 @@ class BatteryStateRead(APIBaseModel):
     device_id: int
     measured_at: datetime
     state_of_charge_kwh: float
-    # A fraction of the capacity, so it compares directly with the charge bounds.
+    # A fraction of the capacity the battery still has, so it compares directly
+    # with the charge bounds.
     state_of_charge: float
     # The setpoint the battery runs from `measured_at` on; both zero when idle.
     charge_kw: float
     discharge_kw: float
+
+
+class BatteryHealthRead(APIBaseModel):
+    """How worn a battery is, from the cycles it has been through.
+
+    `years_to_end_of_life` is how long the recent pace of cycling takes to reach
+    80 % health. It is None for a battery with under a day of history or one that
+    is not being cycled, and an upper bound otherwise: ageing with time alone is
+    not modelled.
+    """
+
+    device_id: int
+    equivalent_full_cycles: float
+    state_of_health: float
+    effective_capacity_kwh: float
+    years_to_end_of_life: float | None

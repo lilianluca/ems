@@ -6,12 +6,13 @@ are kept apart from the battery's own table.
 
 from datetime import datetime, timedelta
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.timerange import UTC_TZ
+from src.core.timerange import STEP_HOURS, UTC_TZ
 from src.core.timeseries import upsert
-from src.devices.models import BatteryState
+from src.devices.battery_health import BatteryHealth, battery_health
+from src.devices.models import BatteryDevice, BatteryState
 from src.simulation.battery_model import BatterySample
 
 # A state older than this describes a battery nobody has heard from since, and
@@ -59,4 +60,38 @@ async def read_latest_battery_state(db: AsyncSession, device_id: int) -> Battery
         state_of_charge_kwh=latest.state_of_charge_kwh,
         charge_kw=latest.charge_kw,
         discharge_kw=latest.discharge_kw,
+    )
+
+
+async def read_discharged_kwh(
+    db: AsyncSession, device_id: int, since: datetime | None = None
+) -> float:
+    """Energy the battery has delivered, in all or from `since` on.
+
+    Each recorded setpoint is held for one step, so a sum of the discharge powers
+    times the step length is the energy. A single aggregate over one battery's
+    rows, which the primary key already orders.
+    """
+    query = select(func.coalesce(func.sum(BatteryState.discharge_kw), 0.0)).where(
+        BatteryState.device_id == device_id
+    )
+    if since is not None:
+        query = query.where(BatteryState.time >= since)
+    return (await db.execute(query)).scalar_one() * STEP_HOURS
+
+
+async def read_first_recorded_at(db: AsyncSession, device_id: int) -> datetime | None:
+    """When the battery's history begins, or None if it has none."""
+    result = await db.execute(
+        select(func.min(BatteryState.time)).where(BatteryState.device_id == device_id)
+    )
+    return result.scalar_one()
+
+
+async def read_battery_health(db: AsyncSession, device: BatteryDevice) -> BatteryHealth:
+    """Work out how worn the battery is from everything it has delivered so far."""
+    return battery_health(
+        discharged_kwh=await read_discharged_kwh(db, device.id),
+        capacity_kwh=device.capacity_kwh,
+        cycle_life=device.cycle_life,
     )

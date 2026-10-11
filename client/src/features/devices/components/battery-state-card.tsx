@@ -8,7 +8,7 @@ import { formatPragueDateTime, STEP_DURATION_MS } from '@/lib/datetime';
 import { formatFractionAsPercent, formatQuantity, formatWithUnit } from '@/lib/units';
 import { cn } from '@/lib/utils';
 
-import { type BatteryDevice, useBatteryState, useDevices } from '../api';
+import { type BatteryDevice, useBatteryHealth, useBatteryState, useDevices } from '../api';
 
 const NOW_REFRESH_MS = 60_000;
 
@@ -18,6 +18,12 @@ const NOW_REFRESH_MS = 60_000;
  * more useful than none, but it may no longer describe the battery.
  */
 const STALE_AFTER_MS = 2 * STEP_DURATION_MS;
+
+/**
+ * The outlook counts cycles only. Past this many years a battery is worn out by
+ * age whatever the cycle count says, so a longer figure would be false precision.
+ */
+const OUTLOOK_CAP_YEARS = 30;
 
 interface BatteryStateCardsProps {
   siteId: number;
@@ -49,6 +55,8 @@ interface BatteryStateCardProps {
 function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
   const { t, i18n } = useTranslation();
   const { data: state, isPending, error } = useBatteryState(siteId, battery.id);
+  // Secondary to the state: the card renders without it and fills it in.
+  const { data: health } = useBatteryHealth(siteId, battery.id);
   const now = useNow(NOW_REFRESH_MS);
 
   const measuredAt = state ? new Date(state.measuredAt).getTime() : null;
@@ -93,7 +101,13 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
                 <p className="text-muted-foreground text-xs">{t('battery_state.stored_energy')}</p>
                 <p className="tabular-nums">
                   {formatQuantity(state.stateOfChargeKwh, 'energy', i18n.language)} /{' '}
-                  {formatWithUnit(battery.capacityKwh, 'energy', i18n.language)}
+                  {/* Of what the battery can still hold, which is what the
+                      percentage beside it is a share of. */}
+                  {formatWithUnit(
+                    health?.effectiveCapacityKwh ?? battery.capacityKwh,
+                    'energy',
+                    i18n.language,
+                  )}
                 </p>
               </div>
               <div>
@@ -107,6 +121,38 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
                   {formatFractionAsPercent(battery.maxStateOfCharge, i18n.language)}
                 </p>
               </div>
+              {health && (
+                <>
+                  <div>
+                    <p className="text-muted-foreground text-xs">{t('battery_state.health')}</p>
+                    <p className="tabular-nums">
+                      {formatHealth(health.stateOfHealth, i18n.language)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-xs">{t('battery_state.cycles')}</p>
+                    <p className="tabular-nums">
+                      {formatCount(health.equivalentFullCycles, i18n.language)}
+                    </p>
+                  </div>
+                </>
+              )}
+              {/* Absent for a battery too young or too idle to project from. */}
+              {health?.yearsToEndOfLife != null && (
+                <div>
+                  <p className="text-muted-foreground text-xs">{t('battery_state.outlook')}</p>
+                  <p className="tabular-nums">
+                    {health.yearsToEndOfLife > OUTLOOK_CAP_YEARS
+                      ? t('battery_state.outlook_over', {
+                          years: formatYears(OUTLOOK_CAP_YEARS, i18n.language),
+                        })
+                      : formatYears(health.yearsToEndOfLife, i18n.language)}{' '}
+                    <span className="text-muted-foreground text-sm">
+                      {t('battery_state.outlook_hint')}
+                    </span>
+                  </p>
+                </div>
+              )}
             </div>
 
             <ChargeMeter
@@ -126,6 +172,32 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
       </CardContent>
     </Card>
   );
+}
+
+/**
+ * Health moves in hundredths of a percent a week, so it gets two decimals: at
+ * the usual one it would sit at 100 % for months and look like it is not tracked.
+ */
+function formatHealth(fraction: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'percent',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(fraction);
+}
+
+/** One decimal while small, none once the decimal stops meaning anything. */
+function formatCount(value: number, locale: string): string {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: value < 10 ? 1 : 0 }).format(value);
+}
+
+function formatYears(years: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'unit',
+    unit: 'year',
+    unitDisplay: 'long',
+    maximumFractionDigits: years < 10 ? 1 : 0,
+  }).format(years);
 }
 
 interface ChargeMeterProps {
