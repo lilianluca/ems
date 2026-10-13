@@ -339,7 +339,7 @@ export const en = {
     cycles: 'Full cycles',
     outlook: 'Until 80 % health',
     outlook_over: 'more than {{years}}',
-    outlook_hint: 'at the pace of the last 30 days',
+    outlook_hint: 'at the pace of the last year',
   },
 
   forecasts: {

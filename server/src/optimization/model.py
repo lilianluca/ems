@@ -3,7 +3,7 @@
 Deliberately free of database, HTTP and Celery concerns: it takes numbers and
 returns a plan, so it can be tested against inputs whose answer is known by hand.
 
-The formulation is documented in `docs/optimalizace/lp-model.md`.
+The formulation is documented in `docs/vypocty/plan-lp.md`.
 """
 
 import math
