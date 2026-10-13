@@ -24,9 +24,11 @@ from src.sites.repository import SiteRepository
 
 logger = logging.getLogger(__name__)
 
-# The stretch of recent history the outlook's pace of cycling is taken from: long
-# enough to even out cloudy and sunny days, short enough to follow the season.
-PACE_WINDOW = timedelta(days=30)
+# The stretch of history the outlook's pace of cycling is taken from. A whole
+# year, because a battery beside a PV array cycles far more in summer than in
+# winter: a shorter window would make the outlook swing with the month it is read
+# in, when nothing about the battery has changed.
+PACE_WINDOW = timedelta(days=365)
 
 
 class DeviceService:

@@ -337,7 +337,7 @@ export const cs = {
     cycles: 'Počet cyklů',
     outlook: 'Do 80 % zdraví',
     outlook_over: 'více než {{years}}',
-    outlook_hint: 'při tempu posledních 30 dní',
+    outlook_hint: 'při tempu za poslední rok',
   },
 
   forecasts: {
