@@ -1,5 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router';
-import { CheckIcon, ChevronsUpDownIcon, ZapIcon } from 'lucide-react';
+import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -14,6 +14,8 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSites } from '@/features/sites/api';
+
+import { LogoMark } from './logo-mark';
 
 export function SiteSwitcher() {
   const { t } = useTranslation();
@@ -33,9 +35,8 @@ export function SiteSwitcher() {
           <DropdownMenuTrigger
             render={
               <SidebarMenuButton size="lg">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <ZapIcon className="size-4" aria-hidden />
-                </div>
+                {/* `!` beats SidebarMenuButton's `[&_svg]:size-4`. */}
+                <LogoMark className="size-8!" />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
                     {current?.name ?? t('nav.select_site')}
