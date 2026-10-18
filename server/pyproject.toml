@@ -3,7 +3,7 @@ name = "ems"
 version = "0.1.0"
 description = "Energy Management System API"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.20.0",
     "asyncpg>=0.32.0",
@@ -31,7 +31,7 @@ pythonpath = ["."]
 testpaths = ["tests"]
 
 [tool.ruff]
-target-version = "py313"
+target-version = "py314"
 line-length = 100
 exclude = [".venv", "__pycache__", ".ruff_cache"]
 
@@ -64,6 +64,12 @@ ignore = [
     "D203",   # incompatible with D211 (no blank line before class docstring), which we use
     "D213",   # incompatible with D212 (summary on first line), which we use
     "ANN204", # missing type annotation for special method
+    # On Python 3.14 annotations are lazy, so these rules want annotation-only
+    # imports moved under TYPE_CHECKING. FastAPI, Pydantic and SQLAlchemy read
+    # annotations at runtime, so the imports must stay real.
+    "TC001",
+    "TC002",
+    "TC003",
 ]
 fixable = ["ALL"]
 unfixable = []

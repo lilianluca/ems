@@ -25,7 +25,7 @@ class CyclicConfig(APIBaseModel):
     standby_minutes_max: int = Field(ge=1)
 
     @model_validator(mode="after")
-    def validate_ranges(self) -> "CyclicConfig":
+    def validate_ranges(self) -> CyclicConfig:
         """Reject inverted ranges, which would skew the duty cycle."""
         if self.active_minutes_min > self.active_minutes_max:
             raise ValueError("activeMinutesMin must not exceed activeMinutesMax.")
@@ -49,7 +49,7 @@ class TimeWindow(APIBaseModel):
     duration_minutes_max: int = Field(ge=1)
 
     @model_validator(mode="after")
-    def validate_window(self) -> "TimeWindow":
+    def validate_window(self) -> TimeWindow:
         """Reject an ambiguous window and an inverted duration range."""
         if self.start_hour == self.end_hour:
             raise ValueError("startHour and endHour must differ.")

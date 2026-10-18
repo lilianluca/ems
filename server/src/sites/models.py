@@ -38,7 +38,7 @@ class Site(Base):
         nullable=False,
     )
 
-    memberships: Mapped[list["SiteMembership"]] = relationship(
+    memberships: Mapped[list[SiteMembership]] = relationship(
         back_populates="site", cascade="all, delete-orphan"
     )
 
@@ -76,4 +76,4 @@ class SiteMembership(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
-    site: Mapped["Site"] = relationship(back_populates="memberships")
+    site: Mapped[Site] = relationship(back_populates="memberships")
