@@ -29,4 +29,6 @@ class SiteForecastPoint(APIBaseModel):
 
     starts_at: datetime
     pv_generation_kw: float | None = None
+    # What the site's saving mode lets run, and what every appliance would draw.
     load_kw: float | None = None
+    unrestricted_load_kw: float | None = None

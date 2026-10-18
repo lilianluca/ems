@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import Field
 
 from src.core.schemas import APIBaseModel
-from src.sites.enums import SiteRole
+from src.sites.enums import SavingMode, SiteRole
 
 
 class SiteCreate(APIBaseModel):
@@ -24,6 +24,7 @@ class SiteRead(APIBaseModel):
     name: str
     latitude: float
     longitude: float
+    saving_mode: SavingMode
     created_at: datetime
 
 
@@ -52,6 +53,7 @@ class SiteUpdate(APIBaseModel):
     latitude: float | None = Field(default=None, ge=-90, le=90)
     # Longitude must be between -180 and 180 degrees.
     longitude: float | None = Field(default=None, ge=-180, le=180)
+    saving_mode: SavingMode | None = None
 
 
 class SiteMembershipUpdate(APIBaseModel):

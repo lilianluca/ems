@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { vk } from '@/lib/i18n/keys';
 
-import { APPLIANCE_BEHAVIORS } from './api';
+import { APPLIANCE_BEHAVIORS, APPLIANCE_PRIORITIES } from './api';
 
 export const timeWindowSchema = z
   .object({
@@ -39,8 +39,7 @@ export const applianceSchema = z
     name: z.string().trim().min(1, vk('validation.appliance_name_required')).max(255),
     powerW: z.number(vk('validation.power_positive')).positive(vk('validation.power_positive')),
     standbyPowerW: z.number(vk('validation.power_not_negative')).min(0),
-    priority: z.number(vk('validation.priority_invalid')).int().min(1).max(4),
-    isShiftable: z.boolean(),
+    priority: z.literal(APPLIANCE_PRIORITIES, vk('validation.priority_invalid')),
     behavior: z.enum(APPLIANCE_BEHAVIORS),
 
     activeMinutesMin: z.number().int().min(1).optional(),

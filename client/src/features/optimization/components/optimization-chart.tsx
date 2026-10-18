@@ -81,11 +81,24 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
               <div>
                 <p className="text-muted-foreground text-xs">{t('optimization.saved_today')}</p>
                 <p className="text-2xl font-semibold tabular-nums">
-                  {todaySavings ? formatMoney(todaySavings.savingsCzk, i18n.language) : '–'}{' '}
+                  {todaySavings
+                    ? formatMoney(
+                        todaySavings.savingsCzk + todaySavings.restrictionSavingsCzk,
+                        i18n.language,
+                      )
+                    : '–'}{' '}
                   <span className="text-muted-foreground text-sm font-normal">
                     {t('optimization.unit_money')}
                   </span>
                 </p>
+                {todaySavings && todaySavings.restrictionSavingsCzk !== 0 && (
+                  <p className="text-muted-foreground text-xs tabular-nums">
+                    {t('savings.split', {
+                      battery: `${formatMoney(todaySavings.savingsCzk, i18n.language)} ${t('optimization.unit_money')}`,
+                      restriction: `${formatMoney(todaySavings.restrictionSavingsCzk, i18n.language)} ${t('optimization.unit_money')}`,
+                    })}
+                  </p>
+                )}
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">{t('optimization.savings')}</p>

@@ -23,6 +23,7 @@ import { Route as AuthenticatedAdminUsersNewRouteImport } from './routes/_authen
 import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated/sites/$siteId/index'
 import { Route as AuthenticatedSitesSiteIdDashboardRouteImport } from './routes/_authenticated/sites/$siteId/dashboard'
 import { Route as AuthenticatedSitesSiteIdSavingsRouteImport } from './routes/_authenticated/sites/$siteId/savings'
+import { Route as AuthenticatedSitesSiteIdSettingsRouteImport } from './routes/_authenticated/sites/$siteId/settings'
 import { Route as AuthenticatedSitesSiteIdAppliancesIndexRouteImport } from './routes/_authenticated/sites/$siteId/appliances/index'
 import { Route as AuthenticatedSitesSiteIdAppliancesApplianceIdRouteImport } from './routes/_authenticated/sites/$siteId/appliances/$applianceId'
 import { Route as AuthenticatedSitesSiteIdAppliancesNewRouteImport } from './routes/_authenticated/sites/$siteId/appliances/new'
@@ -108,6 +109,12 @@ const AuthenticatedSitesSiteIdSavingsRoute =
     path: '/savings',
     getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
   } as any)
+const AuthenticatedSitesSiteIdSettingsRoute =
+  AuthenticatedSitesSiteIdSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
 const AuthenticatedSitesSiteIdAppliancesIndexRoute =
   AuthenticatedSitesSiteIdAppliancesIndexRouteImport.update({
     id: '/appliances/',
@@ -167,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
   '/sites/$siteId/savings': typeof AuthenticatedSitesSiteIdSavingsRoute
+  '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
   '/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -188,6 +196,7 @@ export interface FileRoutesByTo {
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
   '/sites/$siteId/savings': typeof AuthenticatedSitesSiteIdSavingsRoute
+  '/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
   '/admin/sites': typeof AuthenticatedAdminSitesIndexRoute
   '/admin/users': typeof AuthenticatedAdminUsersIndexRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -213,6 +222,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/_authenticated/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
   '/_authenticated/sites/$siteId/savings': typeof AuthenticatedSitesSiteIdSavingsRoute
+  '/_authenticated/sites/$siteId/settings': typeof AuthenticatedSitesSiteIdSettingsRoute
   '/_authenticated/admin/sites/': typeof AuthenticatedAdminSitesIndexRoute
   '/_authenticated/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
   '/_authenticated/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
     | '/sites/$siteId/savings'
+    | '/sites/$siteId/settings'
     | '/admin/sites/'
     | '/admin/users/'
     | '/sites/$siteId/'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
     | '/sites/$siteId/savings'
+    | '/sites/$siteId/settings'
     | '/admin/sites'
     | '/admin/users'
     | '/sites/$siteId'
@@ -282,6 +294,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users/new'
     | '/_authenticated/sites/$siteId/dashboard'
     | '/_authenticated/sites/$siteId/savings'
+    | '/_authenticated/sites/$siteId/settings'
     | '/_authenticated/admin/sites/'
     | '/_authenticated/admin/users/'
     | '/_authenticated/sites/$siteId/'
@@ -400,6 +413,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdSavingsRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
     }
+    '/_authenticated/sites/$siteId/settings': {
+      id: '/_authenticated/sites/$siteId/settings'
+      path: '/settings'
+      fullPath: '/sites/$siteId/settings'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdSettingsRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
     '/_authenticated/sites/$siteId/appliances/': {
       id: '/_authenticated/sites/$siteId/appliances/'
       path: '/appliances'
@@ -482,6 +502,7 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedSitesSiteIdRouteRouteChildren {
   AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
   AuthenticatedSitesSiteIdSavingsRoute: typeof AuthenticatedSitesSiteIdSavingsRoute
+  AuthenticatedSitesSiteIdSettingsRoute: typeof AuthenticatedSitesSiteIdSettingsRoute
   AuthenticatedSitesSiteIdIndexRoute: typeof AuthenticatedSitesSiteIdIndexRoute
   AuthenticatedSitesSiteIdAppliancesApplianceIdRoute: typeof AuthenticatedSitesSiteIdAppliancesApplianceIdRoute
   AuthenticatedSitesSiteIdAppliancesNewRoute: typeof AuthenticatedSitesSiteIdAppliancesNewRoute
@@ -498,6 +519,8 @@ const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteR
     AuthenticatedSitesSiteIdDashboardRoute:
       AuthenticatedSitesSiteIdDashboardRoute,
     AuthenticatedSitesSiteIdSavingsRoute: AuthenticatedSitesSiteIdSavingsRoute,
+    AuthenticatedSitesSiteIdSettingsRoute:
+      AuthenticatedSitesSiteIdSettingsRoute,
     AuthenticatedSitesSiteIdIndexRoute: AuthenticatedSitesSiteIdIndexRoute,
     AuthenticatedSitesSiteIdAppliancesApplianceIdRoute:
       AuthenticatedSitesSiteIdAppliancesApplianceIdRoute,
