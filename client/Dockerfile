@@ -1,7 +1,5 @@
-ARG NODE_VERSION=24
-
 # ---------- base ----------
-FROM node:${NODE_VERSION}-alpine AS base
+FROM node:24-alpine AS base
 WORKDIR /app
 
 # ---------- dependencies ----------
@@ -36,7 +34,7 @@ COPY . .
 RUN npm run build
 
 # ---------- production ----------
-FROM nginx:alpine AS production
+FROM nginx:1.31-alpine AS production
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80

@@ -10,6 +10,21 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # Types must match the Node runtime major (client/.nvmrc); bump manually with Node
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: docker
+    directories:
+      - /client
+      - /server
+    schedule:
+      interval: weekly
+    ignore:
+      # Node major is bumped manually together with client/.nvmrc
+      - dependency-name: node
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: uv
     directory: /server

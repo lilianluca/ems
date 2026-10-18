@@ -32,7 +32,7 @@ class BatteryDeviceCreate(APIBaseModel):
     cycle_life: int = Field(default=6000, gt=0)
 
     @model_validator(mode="after")
-    def validate_state_of_charge_range(self) -> "BatteryDeviceCreate":
+    def validate_state_of_charge_range(self) -> BatteryDeviceCreate:
         """Reject a range that cannot hold any energy."""
         if self.min_state_of_charge >= self.max_state_of_charge:
             raise ValueError("minStateOfCharge must be lower than maxStateOfCharge.")
