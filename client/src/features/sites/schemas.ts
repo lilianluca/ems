@@ -22,3 +22,8 @@ export const createSiteSchema = z.object({
 });
 
 export type CreateSiteFormValues = z.infer<typeof createSiteSchema>;
+
+/** The same fields as creating a site, less the owner, which is not changed here. */
+export const siteDetailsSchema = createSiteSchema.omit({ ownerId: true });
+
+export type SiteDetailsFormValues = z.infer<typeof siteDetailsSchema>;

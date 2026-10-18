@@ -30,7 +30,12 @@ class PVGenerationForecast(Base):
 
 
 class LoadForecast(Base):
-    """Forecast consumption of a whole site at one step."""
+    """Forecast consumption of a whole site at one step.
+
+    `load_kw` counts the appliances the site's saving mode allows; this is what
+    the plan works with. `unrestricted_load_kw` counts every appliance, so that
+    what the saving mode saved can be told apart from what the battery did.
+    """
 
     __tablename__ = "load_forecast"
 
@@ -39,3 +44,4 @@ class LoadForecast(Base):
     )
     time: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
     load_kw: Mapped[float] = mapped_column(Float, nullable=False)
+    unrestricted_load_kw: Mapped[float] = mapped_column(Float, nullable=False)
