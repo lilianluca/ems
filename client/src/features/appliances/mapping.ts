@@ -13,7 +13,6 @@ export function toApplianceInput(values: ApplianceFormValues): ApplianceInput {
     powerW: values.powerW,
     standbyPowerW: values.standbyPowerW,
     priority: values.priority,
-    isShiftable: values.isShiftable,
   };
 
   const windows = (values.windows ?? []).map((window) => ({
@@ -59,7 +58,6 @@ export function toFormValues(appliance: Appliance): ApplianceFormValues {
     powerW: appliance.powerW,
     standbyPowerW: appliance.standbyPowerW,
     priority: appliance.priority,
-    isShiftable: appliance.isShiftable,
   };
 
   const config = appliance.config;

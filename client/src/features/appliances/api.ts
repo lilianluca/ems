@@ -12,6 +12,14 @@ export type ApplianceTimeWindow = components['schemas']['TimeWindow'];
 
 export const APPLIANCE_BEHAVIORS = ['constant', 'cyclic', 'scheduled', 'on_demand'] as const;
 
+export type AppliancePriority = components['schemas']['AppliancePriority'];
+
+/** Most needed first, mirroring `AppliancePriority` on the server. */
+export const APPLIANCE_PRIORITIES = [1, 2, 3, 4] as const satisfies readonly AppliancePriority[];
+
+/** A new appliance is normal, so that stricter saving modes leave it out until told otherwise. */
+export const DEFAULT_APPLIANCE_PRIORITY: AppliancePriority = 3;
+
 export const applianceKeys = {
   all: ['appliances'] as const,
   list: (siteId: number) => [...applianceKeys.all, 'list', siteId] as const,

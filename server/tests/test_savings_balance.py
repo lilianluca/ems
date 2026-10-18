@@ -62,3 +62,33 @@ def test_a_quarter_hour_counts_a_quarter_of_the_energy() -> None:
     )
 
     assert balance.cost_czk == pytest.approx(6.0)
+
+
+def test_without_a_saving_mode_nothing_is_saved_by_restriction() -> None:
+    """An unrestricted step has no appliances left out, so restriction saves nothing."""
+    balance = step_balance(
+        pv_kw=0.0, load_kw=2.0, charge_kw=0.0, discharge_kw=2.0, step_hours=1.0, **PRICES
+    )
+
+    assert balance.unrestricted_baseline_cost_czk == pytest.approx(balance.baseline_cost_czk)
+    assert balance.restriction_savings_czk == pytest.approx(0.0)
+
+
+def test_savings_split_into_restriction_and_battery() -> None:
+    """The quarter-hour from the saving mode document: 1.55 by restriction, 0.39 by battery."""
+    balance = step_balance(
+        pv_kw=0.0,
+        load_kw=0.1804,
+        unrestricted_load_kw=0.9012,
+        charge_kw=0.0,
+        discharge_kw=0.1804,
+        price_import_czk_kwh=8.591,
+        price_export_czk_kwh=5.0,
+        step_hours=0.25,
+    )
+
+    assert balance.restriction_savings_czk == pytest.approx(1.548, abs=1e-3)
+    assert balance.savings_czk == pytest.approx(0.3875, abs=1e-4)
+    assert balance.unrestricted_baseline_cost_czk - balance.cost_czk == pytest.approx(
+        balance.restriction_savings_czk + balance.savings_czk
+    )

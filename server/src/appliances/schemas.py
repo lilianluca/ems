@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field, model_validator
 
-from src.appliances.enums import ApplianceBehavior
+from src.appliances.enums import ApplianceBehavior, AppliancePriority
 from src.core.schemas import APIBaseModel
 
 # --- Config Schemas ---
@@ -87,8 +87,7 @@ class ApplianceCreate(APIBaseModel):
     name: str = Field(min_length=1, max_length=255)
     power_w: float = Field(gt=0)
     standby_power_w: float = Field(ge=0, default=0)
-    priority: int = Field(ge=1, le=4, default=1)
-    is_shiftable: bool = False
+    priority: AppliancePriority = AppliancePriority.NORMAL
     config: ApplianceConfig
 
 
@@ -101,8 +100,7 @@ class ApplianceRead(APIBaseModel):
     behavior: ApplianceBehavior
     power_w: float
     standby_power_w: float
-    priority: int
-    is_shiftable: bool
+    priority: AppliancePriority
     config: ApplianceConfig
     created_at: datetime
 
@@ -113,6 +111,5 @@ class ApplianceUpdate(APIBaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=255)
     power_w: float | None = Field(default=None, gt=0)
     standby_power_w: float | None = Field(default=None, ge=0)
-    priority: int | None = Field(default=None, ge=1, le=4)
-    is_shiftable: bool | None = None
+    priority: AppliancePriority | None = None
     config: ApplianceConfig | None = None

@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Float, ForeignKey, String
+from sqlalchemy import DateTime, Enum, Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.database import Base
+from src.sites.enums import SavingMode
 
 
 class SiteEnergyBalance(Base):
@@ -26,6 +27,17 @@ class SiteEnergyBalance(Base):
     time: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
     # Which scheduler produced the step; see `PlanStrategy`.
     strategy: Mapped[str] = mapped_column(String(32), nullable=False)
+    # Which appliances the consumption below counts; see `SavingMode`.
+    saving_mode: Mapped[SavingMode] = mapped_column(
+        Enum(
+            SavingMode,
+            name="saving_mode",
+            native_enum=True,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
+        nullable=False,
+        server_default=SavingMode.LOW.value,
+    )
 
     pv_kw: Mapped[float] = mapped_column(Float, nullable=False)
     load_kw: Mapped[float] = mapped_column(Float, nullable=False)
@@ -38,3 +50,9 @@ class SiteEnergyBalance(Base):
     price_export_czk_kwh: Mapped[float] = mapped_column(Float, nullable=False)
     cost_czk: Mapped[float] = mapped_column(Float, nullable=False)
     baseline_cost_czk: Mapped[float] = mapped_column(Float, nullable=False)
+
+    # The same step as if every appliance had run. Kept with the step because the
+    # consumption forecast is rewritten every hour and could not be recovered
+    # later; the difference to the baseline is what the saving mode saved.
+    unrestricted_load_kw: Mapped[float] = mapped_column(Float, nullable=False)
+    unrestricted_baseline_cost_czk: Mapped[float] = mapped_column(Float, nullable=False)

@@ -31,13 +31,21 @@ interface DayPoint {
   dayKey: string;
   dayOfMonth: number;
   /**
-   * The day's saving, split by whether the simulation recorded every step: the
-   * two are drawn as one bar in two strengths. Null leaves a gap, not a zero.
+   * The day's two savings, each split by whether the simulation recorded every
+   * step: a day falls in exactly one of the two strengths, and the four series
+   * stack into one bar. Null leaves a gap, not a zero.
    */
-  completeCzk: number | null;
-  partialCzk: number | null;
+  batteryCompleteCzk: number | null;
+  batteryPartialCzk: number | null;
+  restrictionCompleteCzk: number | null;
+  restrictionPartialCzk: number | null;
   record: DailySavings | null;
   partial: boolean;
+}
+
+/** What the battery and the saving mode saved together. */
+function totalSavings(record: DailySavings): number {
+  return record.savingsCzk + record.restrictionSavingsCzk;
 }
 
 /** Day keys are calendar dates; formatting them at noon UTC keeps the date whatever the zone. */
@@ -60,8 +68,10 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
   const { data: total } = useTotalSavings(siteId);
 
   const chartConfig = {
-    completeCzk: { label: t('savings.saved'), color: 'var(--chart-3)' },
-    partialCzk: { label: t('savings.saved'), color: 'var(--chart-3)' },
+    batteryCompleteCzk: { label: t('savings.by_battery'), color: 'var(--chart-3)' },
+    batteryPartialCzk: { label: t('savings.by_battery'), color: 'var(--chart-3)' },
+    restrictionCompleteCzk: { label: t('savings.by_restriction'), color: 'var(--chart-1)' },
+    restrictionPartialCzk: { label: t('savings.by_restriction'), color: 'var(--chart-1)' },
   } satisfies ChartConfig;
 
   const points = useMemo<DayPoint[]>(() => {
@@ -72,8 +82,10 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
       return {
         dayKey,
         dayOfMonth: index + 1,
-        completeCzk: record && !partial ? record.savingsCzk : null,
-        partialCzk: record && partial ? record.savingsCzk : null,
+        batteryCompleteCzk: record && !partial ? record.savingsCzk : null,
+        batteryPartialCzk: record && partial ? record.savingsCzk : null,
+        restrictionCompleteCzk: record && !partial ? record.restrictionSavingsCzk : null,
+        restrictionPartialCzk: record && partial ? record.restrictionSavingsCzk : null,
         record,
         partial,
       };
@@ -81,9 +93,13 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
   }, [days, month]);
 
   const recorded = (days ?? []).toSorted((a, b) => a.day.localeCompare(b.day));
-  const monthTotal = recorded.reduce((sum, day) => sum + day.savingsCzk, 0);
+  const monthBattery = recorded.reduce((sum, day) => sum + day.savingsCzk, 0);
+  const monthRestriction = recorded.reduce((sum, day) => sum + day.restrictionSavingsCzk, 0);
+  const monthTotal = monthBattery + monthRestriction;
+  // A month spent in the normal mode has nothing to split, so it stays one series.
+  const hasRestriction = recorded.some((day) => day.restrictionSavingsCzk !== 0);
   const best = recorded.reduce<DailySavings | null>(
-    (top, day) => (top === null || day.savingsCzk > top.savingsCzk ? day : top),
+    (top, day) => (top === null || totalSavings(day) > totalSavings(top) ? day : top),
     null,
   );
 
@@ -142,6 +158,14 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
                 {t('optimization.unit_money')}
               </span>
             </p>
+            {hasRestriction && (
+              <p className="text-muted-foreground text-xs tabular-nums">
+                {t('savings.split', {
+                  battery: money(monthBattery),
+                  restriction: money(monthRestriction),
+                })}
+              </p>
+            )}
           </div>
           <div>
             <p className="text-muted-foreground text-xs">{t('savings.daily_average')}</p>
@@ -154,7 +178,7 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
             <p className="tabular-nums">
               {best ? (
                 <>
-                  {money(best.savingsCzk)}{' '}
+                  {money(totalSavings(best))}{' '}
                   <span className="text-muted-foreground text-sm">
                     {formatDay(best.day, { day: 'numeric', month: 'numeric' })}
                   </span>
@@ -171,7 +195,7 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
             <p className="tabular-nums">
               {total?.since ? (
                 <>
-                  {money(total.savingsCzk)}{' '}
+                  {money(total.savingsCzk + total.restrictionSavingsCzk)}{' '}
                   <span className="text-muted-foreground text-sm">
                     {t('savings.since', {
                       date: formatDay(total.since, {
@@ -197,8 +221,35 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
 
         {!isPending && recorded.length > 0 && (
           <>
+            {hasRestriction && (
+              <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="size-2.5 rounded-sm"
+                    style={{ background: 'var(--chart-3)' }}
+                    aria-hidden
+                  />
+                  {t('savings.by_battery')}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="size-2.5 rounded-sm"
+                    style={{ background: 'var(--chart-1)' }}
+                    aria-hidden
+                  />
+                  {t('savings.by_restriction')}
+                </span>
+              </div>
+            )}
             <ChartContainer config={chartConfig} className="aspect-auto h-56 w-full">
-              <BarChart data={points} margin={{ left: 4, right: 8, top: 8 }} barCategoryGap={2}>
+              {/* `sign` stacks a negative battery day below the axis and the
+                  saving mode's part above it, instead of one hiding the other. */}
+              <BarChart
+                data={points}
+                margin={{ left: 4, right: 8, top: 8 }}
+                barCategoryGap={2}
+                stackOffset="sign"
+              >
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="dayOfMonth"
@@ -231,11 +282,18 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
                       }}
                       formatter={(_value, _name, item) => {
                         const point = item.payload as DayPoint;
-                        // Only one of the two series holds the day's value.
-                        const series = point.partial ? 'partialCzk' : 'completeCzk';
+                        // The tooltip is drawn once per day, on the battery series
+                        // that holds the day's value; the other three add nothing.
+                        const series = point.partial ? 'batteryPartialCzk' : 'batteryCompleteCzk';
                         if (!point.record || item.dataKey !== series) return null;
                         const rows = [
-                          [t('savings.saved'), point.record.savingsCzk],
+                          ...(hasRestriction
+                            ? ([
+                                [t('savings.by_battery'), point.record.savingsCzk],
+                                [t('savings.by_restriction'), point.record.restrictionSavingsCzk],
+                              ] as const)
+                            : []),
+                          [t('savings.saved'), totalSavings(point.record)],
                           [t('savings.baseline_cost'), point.record.baselineCostCzk],
                           [t('savings.cost'), point.record.costCzk],
                         ] as const;
@@ -265,23 +323,42 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
                   }
                 />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-                {/* One bar per day: a day is in exactly one of the two series, and
-                    stacking them puts both in the same slot. */}
+                {/* One bar per day. The battery's part sits on the axis, the saving
+                    mode's on top of it, and only the top end is rounded. */}
                 <Bar
-                  dataKey="completeCzk"
+                  dataKey="batteryCompleteCzk"
                   stackId="day"
-                  fill="var(--color-completeCzk)"
-                  radius={[4, 4, 0, 0]}
+                  fill="var(--color-batteryCompleteCzk)"
+                  radius={hasRestriction ? 0 : [4, 4, 0, 0]}
                   isAnimationActive={false}
                 />
                 <Bar
-                  dataKey="partialCzk"
+                  dataKey="batteryPartialCzk"
                   stackId="day"
-                  fill="var(--color-partialCzk)"
+                  fill="var(--color-batteryPartialCzk)"
                   fillOpacity={0.55}
-                  radius={[4, 4, 0, 0]}
+                  radius={hasRestriction ? 0 : [4, 4, 0, 0]}
                   isAnimationActive={false}
                 />
+                {hasRestriction && (
+                  <>
+                    <Bar
+                      dataKey="restrictionCompleteCzk"
+                      stackId="day"
+                      fill="var(--color-restrictionCompleteCzk)"
+                      radius={[4, 4, 0, 0]}
+                      isAnimationActive={false}
+                    />
+                    <Bar
+                      dataKey="restrictionPartialCzk"
+                      stackId="day"
+                      fill="var(--color-restrictionPartialCzk)"
+                      fillOpacity={0.55}
+                      radius={[4, 4, 0, 0]}
+                      isAnimationActive={false}
+                    />
+                  </>
+                )}
               </BarChart>
             </ChartContainer>
 

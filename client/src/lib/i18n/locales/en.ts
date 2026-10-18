@@ -193,7 +193,16 @@ export const en = {
     standby_power: 'Standby draw',
     behavior: 'Behaviour',
     priority: 'Priority',
-    shiftable: 'Can be shifted in time',
+    priority_1: 'Essential',
+    priority_2: 'Important',
+    priority_3: 'Normal',
+    priority_4: 'Comfort',
+    priority_hint_1: 'Runs in every saving mode. Fridge, router.',
+    priority_hint_2: 'Only the extreme saving mode turns it off. Cooking, lighting.',
+    priority_hint_3:
+      'The very economical and extreme modes turn it off. Washing machine, dishwasher.',
+    priority_hint_4: 'Every mode but the normal one turns it off. Television, games console.',
+    off_in_mode: 'Off in {{mode}} mode',
     cycle: 'Cycle',
     cycle_value: 'runs {{activeMin}}–{{activeMax}} min, idles {{standbyMin}}–{{standbyMax}} min',
     active_min: 'Run from (min)',
@@ -225,7 +234,6 @@ export const en = {
     hint_power_empty: 'In watts. Note that everything else here is in kilowatts.',
     hint_windows:
       'The forecast spreads the expected runtime across the whole window, so the chart shows a flat draw rather than a spike. Write an overnight window as 22 → 6; "until midnight" is 0.',
-    hint_future_use: 'Does not affect the forecast yet — the optimisation will use it.',
 
     create_title: 'New appliance',
     edit_title: 'Edit appliance',
@@ -365,10 +373,40 @@ export const en = {
     empty_description: 'Ask an administrator to add you to one.',
   },
 
+  settings: {
+    title: 'Settings',
+    description: 'Settings of this site.',
+    save: 'Save',
+    saving: 'Saving…',
+    details_title: 'General',
+    details_description:
+      'The coordinates pick the weather forecast the PV generation is computed from.',
+    details_saved: 'Site {{name}} has been saved.',
+    saving_mode_title: 'Saving mode',
+    saving_mode_description:
+      'How far the household is willing to cut its consumption. A stricter mode turns off appliances of lower priority.',
+    saving_mode_saved: 'Saving mode set to {{mode}}. The consumption forecast has been recomputed.',
+    saving_mode_note:
+      'The system does not control appliances. The mode shows what the household would save if it did not use the ones turned off. Set appliance priorities on the Appliances page.',
+  },
+
+  saving_mode: {
+    low: 'Normal',
+    medium: 'Economical',
+    high: 'Very economical',
+    extreme: 'Extreme',
+    hint_low: 'Every appliance runs, as without a saving mode.',
+    hint_medium: 'Comfort appliances such as the television are turned off.',
+    hint_high:
+      'The washing machine and dishwasher go too. Only essential and important appliances run.',
+    hint_extreme: 'Only essential appliances run, such as the fridge and router.',
+    running: 'Runs: {{priorities}}',
+  },
+
   savings: {
     history_title: 'Savings history',
     history_description:
-      'What the battery saved in the quarter-hours that have passed. Simulated from forecasts for now, not measured.',
+      'What the battery and the saving mode saved in the quarter-hours that have passed. Simulated from forecasts for now, not measured.',
     month_total: 'Saved this month',
     daily_average: 'Daily average',
     best_day: 'Best day',
@@ -378,6 +416,9 @@ export const en = {
     next_month: 'Next month',
     empty: 'The battery has no recorded step in this month yet.',
     saved: 'Saving',
+    by_battery: 'Saved by the battery',
+    by_restriction: 'Saved by restriction',
+    split: '{{battery}} by the battery, {{restriction}} by restriction',
     baseline_cost: 'Cost without battery',
     cost: 'Cost with battery',
     partial_day: 'Incomplete day: {{steps}} of {{total}} quarter-hours',
@@ -390,6 +431,7 @@ export const en = {
     savings: 'Savings',
     devices: 'Devices',
     appliances: 'Appliances',
+    settings: 'Settings',
     users: 'Users',
     sites: 'Sites',
     select_site: 'Select Site',
