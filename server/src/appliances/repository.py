@@ -3,7 +3,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.appliances.enums import ApplianceBehavior
+from src.appliances.enums import ApplianceBehavior, AppliancePriority
 from src.appliances.models import Appliance
 
 
@@ -32,8 +32,7 @@ class ApplianceRepository:
         behavior: ApplianceBehavior,
         power_w: float,
         standby_power_w: float,
-        priority: int,
-        is_shiftable: bool,
+        priority: AppliancePriority,
         config: dict[str, Any],
     ) -> Appliance:
         """Create a new appliance in the database."""
@@ -44,7 +43,6 @@ class ApplianceRepository:
             power_w=power_w,
             standby_power_w=standby_power_w,
             priority=priority,
-            is_shiftable=is_shiftable,
             config=config,
         )
         self.db.add(appliance)

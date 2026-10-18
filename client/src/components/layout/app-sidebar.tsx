@@ -4,6 +4,7 @@ import {
   MapPinIcon,
   PiggyBankIcon,
   PlugIcon,
+  SettingsIcon,
   UsersIcon,
   WashingMachineIcon,
 } from 'lucide-react';
@@ -97,6 +98,19 @@ export function AppSidebar() {
                       <Link to="/sites/$siteId/appliances" params={siteParams}>
                         <WashingMachineIcon aria-hidden />
                         <span>{t('nav.appliances')}</span>
+                      </Link>
+                    }
+                  />
+                </SidebarMenuItem>
+
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={t('nav.settings')}
+                    isActive={!!matchRoute({ to: '/sites/$siteId/settings', params: siteParams })}
+                    render={
+                      <Link to="/sites/$siteId/settings" params={siteParams}>
+                        <SettingsIcon aria-hidden />
+                        <span>{t('nav.settings')}</span>
                       </Link>
                     }
                   />

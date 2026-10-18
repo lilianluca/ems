@@ -12,9 +12,13 @@ class DailySavings(APIBaseModel):
     """
 
     day: date
+    # What the battery saved, as before saving modes existed.
     savings_czk: float
+    # What leaving appliances out saved; zero on a day spent in the LOW mode.
+    restriction_savings_czk: float
     cost_czk: float
     baseline_cost_czk: float
+    unrestricted_baseline_cost_czk: float
     steps: int
 
 
@@ -27,4 +31,5 @@ class SavingsTotal(APIBaseModel):
 
     since: date | None
     savings_czk: float
+    restriction_savings_czk: float
     steps: int

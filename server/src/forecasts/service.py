@@ -43,7 +43,9 @@ class ForecastService:
             .group_by(PVGenerationForecast.time)
         )
         load_rows = await self.db.execute(
-            select(LoadForecast.time, LoadForecast.load_kw).where(
+            select(
+                LoadForecast.time, LoadForecast.load_kw, LoadForecast.unrestricted_load_kw
+            ).where(
                 LoadForecast.site_id == site_id,
                 LoadForecast.time >= start,
                 LoadForecast.time < end,
@@ -53,8 +55,10 @@ class ForecastService:
         merged: dict[datetime, dict[str, float]] = {}
         for time, pv_generation_kw in pv_rows:
             merged.setdefault(time, {})["pv_generation_kw"] = pv_generation_kw
-        for time, load_kw in load_rows:
-            merged.setdefault(time, {})["load_kw"] = load_kw
+        for time, load_kw, unrestricted_load_kw in load_rows:
+            point = merged.setdefault(time, {})
+            point["load_kw"] = load_kw
+            point["unrestricted_load_kw"] = unrestricted_load_kw
 
         return [
             SiteForecastPoint(starts_at=timestamp, **values)

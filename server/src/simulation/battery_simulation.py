@@ -32,6 +32,7 @@ from src.optimization.service import (
 from src.ote.service import OTEService
 from src.savings.service import SavingsService
 from src.simulation.battery_model import BatterySample, feasible_setpoint, state_of_charge_at
+from src.sites.enums import SavingMode
 
 logger = logging.getLogger(__name__)
 
@@ -134,12 +135,18 @@ class BatterySimulationService:
             return
 
         spot = prices[0].price_czk_mwh
+        site = await self.optimization_service.site_repo.get_by_id(site_id)
+        saving_mode = SavingMode.LOW if site is None else site.saving_mode
+        load_kw = forecast[0].load_kw or 0.0
+        unrestricted_load_kw = forecast[0].unrestricted_load_kw or load_kw
         balance = await self.savings_service.record_step(
             site_id=site_id,
             time=step_start,
             strategy=self.optimization_service.strategy,
+            saving_mode=saving_mode,
             pv_kw=forecast[0].pv_generation_kw or 0.0,
-            load_kw=forecast[0].load_kw or 0.0,
+            load_kw=load_kw,
+            unrestricted_load_kw=unrestricted_load_kw,
             charge_kw=charge_kw,
             discharge_kw=discharge_kw,
             price_import_czk_kwh=import_price_czk_kwh(spot),
