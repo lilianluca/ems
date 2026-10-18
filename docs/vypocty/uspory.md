@@ -270,6 +270,16 @@ zanedbatelné.
 - **Stránka Úspory:** sloupcový graf po dnech pro zvolený měsíc, součet za měsíc,
   průměr na den, nejlepší den a součet od začátku provozu.
 
+## Úspora baterií a úspora omezením
+
+Tento dokument popisuje úsporu **baterií**: kolik ušetřila při dané spotřebě.
+Když má lokalita zapnutý přísnější [režim úspor](rezim-uspor.md), mění se i
+spotřeba samotná. Bilance čtvrthodiny proto ukládá i náklad, který by vznikl bez
+baterie a bez omezení, a z něj se počítá druhá část, **úspora omezením**.
+
+Aplikace ukazuje obě části i jejich součet. Jak se úspora omezením počítá,
+popisuje dokument o režimu úspor.
+
 ## Kde to je v kódu
 
 | Co                   | Kde                                                                                                       |

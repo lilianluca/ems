@@ -67,13 +67,15 @@ Dokument o [predikci výroby](vypocty/fve-vyroba.md) zatím není napsaný.
 
 ## Spotřeba
 
-| Pojem                | Význam                                                                                                                  |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **Spotřeba**         | Výkon, který domácnost právě odebírá ze všech zdrojů dohromady.                                                         |
-| **Spotřebič**        | Zařízení v domácnosti zadané v aplikaci: jeho příkon a to, kdy obvykle běží. Ze spotřebičů se skládá predikce spotřeby. |
-| **Přebytek**         | Výroba je větší než spotřeba. Rozdíl jde do baterie nebo do sítě.                                                       |
-| **Nedostatek**       | Spotřeba je větší než výroba. Rozdíl pokryje baterie nebo síť.                                                          |
-| **Vlastní spotřeba** | Část vyrobené elektřiny, kterou domácnost sama spotřebuje, místo aby ji prodala.                                        |
+| Pojem                   | Význam                                                                                                                                    |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Spotřeba**            | Výkon, který domácnost právě odebírá ze všech zdrojů dohromady.                                                                           |
+| **Spotřebič**           | Zařízení v domácnosti zadané v aplikaci: jeho příkon a to, kdy obvykle běží. Ze spotřebičů se skládá predikce spotřeby.                   |
+| **Přebytek**            | Výroba je větší než spotřeba. Rozdíl jde do baterie nebo do sítě.                                                                         |
+| **Nedostatek**          | Spotřeba je větší než výroba. Rozdíl pokryje baterie nebo síť.                                                                            |
+| **Vlastní spotřeba**    | Část vyrobené elektřiny, kterou domácnost sama spotřebuje, místo aby ji prodala.                                                          |
+| **Priorita spotřebiče** | Jak moc je spotřebič pro domácnost důležitý, od 1 (nezbytný) po 4 (komfortní). Podle ní režim úspor rozhoduje, co vypne.                  |
+| **Režim úspor**         | Jak moc je domácnost ochotná omezit spotřebu: běžný, úsporný, velmi úsporný, nebo extrémní. Vedoucí práce ho označuje jako úrovně rizika. |
 
 Dokument o [predikci spotřeby](vypocty/spotreba.md) zatím není napsaný.
 
@@ -188,3 +190,5 @@ jmenuje v kódu a v databázi.
 | lokalita                            | `Site`, `site_id`                               |
 | zařízení                            | `Device`, `device_id`                           |
 | spotřebič                           | `Appliance`                                     |
+| režim úspor                         | `saving_mode`, `SavingMode`                     |
+| priorita spotřebiče                 | `priority`                                      |

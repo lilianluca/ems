@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SAVING_MODE_MAX_PRIORITY, useSite } from '@/features/sites/api';
 import { formatWithUnit } from '@/lib/units';
 
 import type { Appliance } from '../api';
@@ -18,8 +19,19 @@ interface ApplianceCardProps {
 export function ApplianceCard({ siteId, appliance }: ApplianceCardProps) {
   const { t, i18n } = useTranslation();
   const config = appliance.config;
+  const { data: site } = useSite(siteId);
+  const savingMode = site?.savingMode;
+  // The mode it is turned off in, if any.
+  const offIn =
+    savingMode !== undefined && appliance.priority > SAVING_MODE_MAX_PRIORITY[savingMode]
+      ? savingMode
+      : null;
 
   const specs: { label: string; value: string }[] = [
+    {
+      label: t('appliances.priority'),
+      value: t(`appliances.priority_${appliance.priority}`),
+    },
     {
       label: t('appliances.power'),
       value: formatWithUnit(appliance.powerW, 'wattPower', i18n.language),
@@ -56,9 +68,17 @@ export function ApplianceCard({ siteId, appliance }: ApplianceCardProps) {
       <CardHeader className="flex flex-row items-start justify-between gap-2">
         <div className="flex flex-col gap-1">
           <CardTitle>{appliance.name}</CardTitle>
-          <Badge variant="secondary" className="w-fit">
-            {t(`appliances.behavior_${appliance.behavior}`)}
-          </Badge>
+          <div className="flex flex-wrap gap-1">
+            <Badge variant="secondary" className="w-fit">
+              {t(`appliances.behavior_${appliance.behavior}`)}
+            </Badge>
+            {/* Shown only when it bites: a list of "runs" badges would say nothing. */}
+            {offIn && (
+              <Badge variant="outline" className="w-fit">
+                {t('appliances.off_in_mode', { mode: t(`saving_mode.${offIn}`) })}
+              </Badge>
+            )}
+          </div>
         </div>
         <div className="flex gap-1">
           <Button

@@ -3,7 +3,8 @@ import logging
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.sites.enums import SiteRole
+from src.appliances.service import ApplianceService
+from src.sites.enums import SavingMode, SiteRole
 from src.sites.exceptions import MembershipNotFoundError, SiteNotFoundError, UserAlreadyMemberError
 from src.sites.models import Site, SiteMembership
 from src.sites.repository import SiteRepository
@@ -69,6 +70,7 @@ class SiteService:
         name: str | None,
         latitude: float | None,
         longitude: float | None,
+        saving_mode: SavingMode | None = None,
     ) -> Site:
         """Update site details, ensuring the site exists."""
         logger.info(f"Updating site with ID {site_id}.")
@@ -80,9 +82,17 @@ class SiteService:
             site.latitude = latitude
         if longitude is not None:
             site.longitude = longitude
+        mode_changed = saving_mode is not None and saving_mode != site.saving_mode
+        if saving_mode is not None:
+            site.saving_mode = saving_mode
 
         await self.db.commit()
         await self.db.refresh(site)
+
+        # The change applies from now on: the forecast the next plan reads is
+        # rebuilt straight away instead of at the next hourly run.
+        if mode_changed:
+            await ApplianceService(self.db).generate_and_store_forecast(site_id)
         logger.info(f"Site with ID {site_id} updated.")
         return site
 

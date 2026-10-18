@@ -731,19 +731,21 @@ export interface components {
              * @default 0
              */
             standbyPowerW: number;
-            /**
-             * Priority
-             * @default 1
-             */
-            priority: number;
-            /**
-             * Isshiftable
-             * @default false
-             */
-            isShiftable: boolean;
+            /** @default 3 */
+            priority: components["schemas"]["AppliancePriority"];
             /** Config */
             config: components["schemas"]["ConstantConfig"] | components["schemas"]["CyclicConfig"] | components["schemas"]["ScheduledConfig"] | components["schemas"]["OnDemandConfig"];
         };
+        /**
+         * AppliancePriority
+         * @description How much the household needs an appliance, from essential to comfort.
+         *
+         *     Stored as a number because it is compared, not just matched: a saving mode
+         *     allows every appliance up to a priority, which reads directly as `<=`. The
+         *     names are what keep the number from being a riddle — lower is more needed.
+         * @enum {integer}
+         */
+        AppliancePriority: 1 | 2 | 3 | 4;
         /**
          * ApplianceRead
          * @description Schema for reading an appliance from the database.
@@ -760,10 +762,7 @@ export interface components {
             powerW: number;
             /** Standbypowerw */
             standbyPowerW: number;
-            /** Priority */
-            priority: number;
-            /** Isshiftable */
-            isShiftable: boolean;
+            priority: components["schemas"]["AppliancePriority"];
             /** Config */
             config: components["schemas"]["ConstantConfig"] | components["schemas"]["CyclicConfig"] | components["schemas"]["ScheduledConfig"] | components["schemas"]["OnDemandConfig"];
             /**
@@ -783,10 +782,7 @@ export interface components {
             powerW?: number | null;
             /** Standbypowerw */
             standbyPowerW?: number | null;
-            /** Priority */
-            priority?: number | null;
-            /** Isshiftable */
-            isShiftable?: boolean | null;
+            priority?: components["schemas"]["AppliancePriority"] | null;
             /** Config */
             config?: (components["schemas"]["ConstantConfig"] | components["schemas"]["CyclicConfig"] | components["schemas"]["ScheduledConfig"] | components["schemas"]["OnDemandConfig"]) | null;
         };
@@ -970,10 +966,14 @@ export interface components {
             day: string;
             /** Savingsczk */
             savingsCzk: number;
+            /** Restrictionsavingsczk */
+            restrictionSavingsCzk: number;
             /** Costczk */
             costCzk: number;
             /** Baselinecostczk */
             baselineCostCzk: number;
+            /** Unrestrictedbaselinecostczk */
+            unrestrictedBaselineCostCzk: number;
             /** Steps */
             steps: number;
         };
@@ -1217,6 +1217,15 @@ export interface components {
             total_energy_kwh: number;
         };
         /**
+         * SavingMode
+         * @description How far a household is willing to cut its consumption to save money.
+         *
+         *     Called risk levels by the thesis supervisor. Each mode allows the appliances
+         *     up to one priority and leaves the rest out of the consumption forecast.
+         * @enum {string}
+         */
+        SavingMode: "low" | "medium" | "high" | "extreme";
+        /**
          * SavingsTotal
          * @description Everything the battery has saved since the first recorded step.
          *
@@ -1228,6 +1237,8 @@ export interface components {
             since: string | null;
             /** Savingsczk */
             savingsCzk: number;
+            /** Restrictionsavingsczk */
+            restrictionSavingsCzk: number;
             /** Steps */
             steps: number;
         };
@@ -1277,6 +1288,8 @@ export interface components {
             pvGenerationKw?: number | null;
             /** Loadkw */
             loadKw?: number | null;
+            /** Unrestrictedloadkw */
+            unrestrictedLoadKw?: number | null;
         };
         /**
          * SiteListResponse
@@ -1339,6 +1352,7 @@ export interface components {
             latitude: number;
             /** Longitude */
             longitude: number;
+            savingMode: components["schemas"]["SavingMode"];
             /**
              * Createdat
              * Format: date-time
@@ -1362,6 +1376,7 @@ export interface components {
             latitude?: number | null;
             /** Longitude */
             longitude?: number | null;
+            savingMode?: components["schemas"]["SavingMode"] | null;
         };
         /**
          * TimeWindow
@@ -1706,13 +1721,40 @@ export interface operations {
                     "application/json": components["schemas"]["SiteRead"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

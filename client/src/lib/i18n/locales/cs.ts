@@ -192,7 +192,15 @@ export const cs = {
     standby_power: 'Pohotovostní příkon',
     behavior: 'Chování',
     priority: 'Priorita',
-    shiftable: 'Lze posunout v čase',
+    priority_1: 'Nezbytné',
+    priority_2: 'Důležité',
+    priority_3: 'Běžné',
+    priority_4: 'Komfortní',
+    priority_hint_1: 'Běží v každém režimu úspor. Lednice, router.',
+    priority_hint_2: 'Vypne ho jen extrémní režim úspor. Vaření, osvětlení.',
+    priority_hint_3: 'Vypne ho velmi úsporný a extrémní režim. Pračka, myčka.',
+    priority_hint_4: 'Vypne ho každý režim kromě běžného. Televize, herní konzole.',
+    off_in_mode: 'Vypnutý v režimu {{mode}}',
     cycle: 'Cyklus',
     cycle_value: 'běh {{activeMin}}–{{activeMax}} min, klid {{standbyMin}}–{{standbyMax}} min',
     active_min: 'Běh od (min)',
@@ -223,7 +231,6 @@ export const cs = {
     hint_power_empty: 'Ve wattech. Pozor, jinde v aplikaci jsou kilowatty.',
     hint_windows:
       'Predikce rozprostře očekávanou dobu běhu přes celé okno, takže v grafu uvidíte plochý odběr, ne špičku. Okno přes půlnoc zapište jako 22 → 6; „do půlnoci“ je 0.',
-    hint_future_use: 'Zatím neovlivňuje predikci, počítá s tím až optimalizace.',
 
     create_title: 'Nový spotřebič',
     edit_title: 'Úprava spotřebiče',
@@ -363,10 +370,38 @@ export const cs = {
     empty_description: 'Požádejte správce, aby vás k lokalitě přidal.',
   },
 
+  settings: {
+    title: 'Nastavení',
+    description: 'Nastavení této lokality.',
+    save: 'Uložit',
+    saving: 'Ukládám…',
+    details_title: 'Obecné',
+    details_description: 'Podle souřadnic se stahuje předpověď počasí pro výrobu fotovoltaiky.',
+    details_saved: 'Lokalita {{name}} byla uložena.',
+    saving_mode_title: 'Režim úspor',
+    saving_mode_description:
+      'Jak moc je domácnost ochotná omezit spotřebu. Přísnější režim vypne spotřebiče s nižší prioritou.',
+    saving_mode_saved: 'Režim úspor nastaven na {{mode}}. Predikce spotřeby je přepočítaná.',
+    saving_mode_note:
+      'Systém spotřebiče neovládá. Režim ukazuje, co by domácnost ušetřila, kdyby vypnuté spotřebiče nepoužívala. Prioritu spotřebičů nastavíte na stránce Spotřebiče.',
+  },
+
+  saving_mode: {
+    low: 'Běžný',
+    medium: 'Úsporný',
+    high: 'Velmi úsporný',
+    extreme: 'Extrémní',
+    hint_low: 'Běží všechny spotřebiče, jako bez režimu úspor.',
+    hint_medium: 'Vypnou se komfortní spotřebiče, třeba televize.',
+    hint_high: 'Vypne se i pračka nebo myčka. Běží jen nezbytné a důležité spotřebiče.',
+    hint_extreme: 'Běží jen nezbytné spotřebiče, třeba lednice a router.',
+    running: 'Běží: {{priorities}}',
+  },
+
   savings: {
     history_title: 'Historie úspor',
     history_description:
-      'Co baterie ušetřila v čtvrthodinách, které už proběhly. Zatím ze simulace podle predikcí, ne z měření.',
+      'Co baterie a režim úspor ušetřily v čtvrthodinách, které už proběhly. Zatím ze simulace podle predikcí, ne z měření.',
     month_total: 'Ušetřeno za měsíc',
     daily_average: 'Průměr na den',
     best_day: 'Nejlepší den',
@@ -376,6 +411,9 @@ export const cs = {
     next_month: 'Další měsíc',
     empty: 'V tomto měsíci zatím baterie nemá zaznamenaný žádný krok.',
     saved: 'Úspora',
+    by_battery: 'Ušetřeno baterií',
+    by_restriction: 'Ušetřeno omezením',
+    split: 'z toho baterií {{battery}}, omezením {{restriction}}',
     baseline_cost: 'Náklad bez baterie',
     cost: 'Náklad s baterií',
     partial_day: 'Neúplný den: {{steps}} z {{total}} čtvrthodin',
@@ -388,6 +426,7 @@ export const cs = {
     savings: 'Úspory',
     devices: 'Zařízení',
     appliances: 'Spotřebiče',
+    settings: 'Nastavení',
     users: 'Uživatelé',
     sites: 'Lokality',
     select_site: 'Vyberte lokalitu',

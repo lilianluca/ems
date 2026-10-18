@@ -1,14 +1,32 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pandas as pd
 
 from src.appliances.enums import ApplianceBehavior
-from src.appliances.models import Appliance
 from src.appliances.schemas import CyclicConfig, OnDemandConfig, ScheduledConfig, TimeWindow
+
+# Only for annotations: importing the model would load the database settings,
+# and this module is pure arithmetic that tests can run without them.
+if TYPE_CHECKING:
+    from src.appliances.models import Appliance
+    from src.sites.enums import SavingMode
 
 HOURS_PER_DAY = 24
 
 WEEKDAY_PEAKS = [(6, 8), (17, 20)]
 WEEKEND_PEAKS = [(8, 10), (11, 13), (17, 20)]
 PEAK_FACTOR = 1.3
+
+
+def appliances_running_in(appliances: list[Appliance], mode: SavingMode) -> list[Appliance]:
+    """Keep the appliances a saving mode lets run: everything up to its priority.
+
+    The rest are left out of the forecast altogether, all day. The saving mode
+    is a simulation of a household that goes without them, not a control.
+    """
+    return [appliance for appliance in appliances if appliance.priority <= mode.max_priority]
 
 
 def _is_peak_hour(hour: int, is_weekend: bool) -> bool:

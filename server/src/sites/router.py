@@ -37,7 +37,7 @@ async def get_site(
     return await site_service.get_site(site_id)
 
 
-@router.patch("/{site_id}", response_model=SiteRead)
+@router.patch("/{site_id}", response_model=SiteRead, responses=errors(401, 403, 404, 422))
 async def update_site(
     site_id: int,
     payload: SiteUpdate,
@@ -50,6 +50,7 @@ async def update_site(
         name=payload.name,
         latitude=payload.latitude,
         longitude=payload.longitude,
+        saving_mode=payload.saving_mode,
     )
 
 
