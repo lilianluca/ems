@@ -17,14 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { numberFromInput, toInputValue } from '@/lib/form';
 import type { ValidationKey } from '@/lib/i18n/keys';
 
 import {
   type Appliance,
   APPLIANCE_BEHAVIORS,
+  APPLIANCE_PRIORITIES,
   type ApplianceBehavior,
+  type AppliancePriority,
+  DEFAULT_APPLIANCE_PRIORITY,
   useCreateAppliance,
   useUpdateAppliance,
 } from '../api';
@@ -52,8 +54,7 @@ export function ApplianceForm({ siteId, appliance }: ApplianceFormProps) {
           name: '',
           powerW: undefined,
           standbyPowerW: 0,
-          priority: 1,
-          isShiftable: false,
+          priority: DEFAULT_APPLIANCE_PRIORITY,
           behavior: 'constant',
           windows: [],
         },
@@ -244,58 +245,37 @@ export function ApplianceForm({ siteId, appliance }: ApplianceFormProps) {
               </div>
             )}
 
-            {/* Neither field reaches the forecast yet; both are inputs the
-                optimisation will need, so they are labelled as such. */}
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Controller
-                control={control}
-                name="priority"
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="priority">{t('appliances.priority')}</FieldLabel>
-                    <Input
-                      {...field}
-                      value={toInputValue(field.value)}
-                      onChange={(event) => {
-                        field.onChange(numberFromInput(event));
-                      }}
-                      id="priority"
-                      type="number"
-                      min={1}
-                      max={4}
-                      step="1"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <p className="text-muted-foreground text-xs">
-                      {t('appliances.hint_future_use')}
-                    </p>
-                    {fieldState.error && (
-                      <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="isShiftable"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel htmlFor="isShiftable">{t('appliances.shiftable')}</FieldLabel>
-                    <Switch
-                      id="isShiftable"
-                      checked={field.value}
-                      onCheckedChange={(checked) => {
-                        field.onChange(checked);
-                      }}
-                    />
-                    <p className="text-muted-foreground text-xs">
-                      {t('appliances.hint_future_use')}
-                    </p>
-                  </Field>
-                )}
-              />
-            </div>
+            <Controller
+              control={control}
+              name="priority"
+              render={({ field }) => (
+                <Field className="sm:max-w-sm">
+                  <FieldLabel htmlFor="priority">{t('appliances.priority')}</FieldLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => {
+                      if (value !== null) field.onChange(value);
+                    }}
+                  >
+                    <SelectTrigger id="priority" className="w-full" onBlur={field.onBlur}>
+                      <SelectValue>
+                        {(value: AppliancePriority) => t(`appliances.priority_${value}`)}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {APPLIANCE_PRIORITIES.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {t(`appliances.priority_${option}`)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-muted-foreground text-xs">
+                    {t(`appliances.priority_hint_${field.value}`)}
+                  </p>
+                </Field>
+              )}
+            />
 
             {formState.errors.root && (
               <p role="alert" className="text-destructive text-sm">

@@ -9,6 +9,7 @@ from src.optimization.enums import PlanStrategy
 from src.savings.balance import StepBalance, step_balance
 from src.savings.models import SiteEnergyBalance
 from src.savings.schemas import DailySavings, SavingsTotal
+from src.sites.enums import SavingMode
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
 
@@ -26,8 +27,10 @@ class SavingsService:
         site_id: int,
         time: datetime,
         strategy: PlanStrategy,
+        saving_mode: SavingMode,
         pv_kw: float,
         load_kw: float,
+        unrestricted_load_kw: float,
         charge_kw: float,
         discharge_kw: float,
         price_import_czk_kwh: float,
@@ -43,6 +46,7 @@ class SavingsService:
             price_import_czk_kwh=price_import_czk_kwh,
             price_export_czk_kwh=price_export_czk_kwh,
             step_hours=step_hours,
+            unrestricted_load_kw=unrestricted_load_kw,
         )
         await upsert(
             self.db,
@@ -52,6 +56,7 @@ class SavingsService:
                     "site_id": site_id,
                     "time": time,
                     "strategy": strategy.value,
+                    "saving_mode": saving_mode,
                     "pv_kw": pv_kw,
                     "load_kw": load_kw,
                     "charge_kw": charge_kw,
@@ -62,6 +67,8 @@ class SavingsService:
                     "price_export_czk_kwh": price_export_czk_kwh,
                     "cost_czk": balance.cost_czk,
                     "baseline_cost_czk": balance.baseline_cost_czk,
+                    "unrestricted_load_kw": unrestricted_load_kw,
+                    "unrestricted_baseline_cost_czk": balance.unrestricted_baseline_cost_czk,
                 }
             ],
         )
@@ -83,14 +90,22 @@ class SavingsService:
                 func.coalesce(
                     func.sum(SiteEnergyBalance.baseline_cost_czk - SiteEnergyBalance.cost_czk), 0.0
                 ),
+                func.coalesce(
+                    func.sum(
+                        SiteEnergyBalance.unrestricted_baseline_cost_czk
+                        - SiteEnergyBalance.baseline_cost_czk
+                    ),
+                    0.0,
+                ),
                 func.count(),
             ).where(SiteEnergyBalance.site_id == site_id)
         )
-        first, savings, steps = result.one()
+        first, savings, restriction_savings, steps = result.one()
 
         return SavingsTotal(
             since=None if first is None else first.astimezone(PRAGUE_TZ).date(),
             savings_czk=savings,
+            restriction_savings_czk=restriction_savings,
             steps=steps,
         )
 
@@ -115,6 +130,9 @@ class SavingsService:
                 day,
                 func.sum(SiteEnergyBalance.cost_czk).label("cost_czk"),
                 func.sum(SiteEnergyBalance.baseline_cost_czk).label("baseline_cost_czk"),
+                func.sum(SiteEnergyBalance.unrestricted_baseline_cost_czk).label(
+                    "unrestricted_baseline_cost_czk"
+                ),
                 func.count().label("steps"),
             )
             .where(
@@ -130,8 +148,10 @@ class SavingsService:
             DailySavings(
                 day=row.day,
                 savings_czk=row.baseline_cost_czk - row.cost_czk,
+                restriction_savings_czk=row.unrestricted_baseline_cost_czk - row.baseline_cost_czk,
                 cost_czk=row.cost_czk,
                 baseline_cost_czk=row.baseline_cost_czk,
+                unrestricted_baseline_cost_czk=row.unrestricted_baseline_cost_czk,
                 steps=row.steps,
             )
             for row in result

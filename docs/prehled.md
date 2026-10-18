@@ -126,6 +126,7 @@ tečou systémem.
 | Nákupní a prodejní cena ze spotu | [ceny.md](vypocty/ceny.md)                       | [optimization/service.py](../server/src/optimization/service.py)                   |
 | Predikce výroby fotovoltaiky     | [fve-vyroba.md](vypocty/fve-vyroba.md)           | [simulation/pv_model.py](../server/src/simulation/pv_model.py)                     |
 | Predikce spotřeby                | [spotreba.md](vypocty/spotreba.md)               | [appliances/forecast.py](../server/src/appliances/forecast.py)                     |
+| Režim úspor                      | [rezim-uspor.md](vypocty/rezim-uspor.md)         | [sites/enums.py](../server/src/sites/enums.py)                                     |
 | Model baterie                    | [model-baterie.md](vypocty/model-baterie.md)     | [simulation/battery_model.py](../server/src/simulation/battery_model.py)           |
 | Plán podle pravidel              | [plan-rule-based.md](vypocty/plan-rule-based.md) | [optimization/rule_based.py](../server/src/optimization/rule_based.py)             |
 | Plán optimalizací                | [plan-lp.md](vypocty/plan-lp.md)                 | [optimization/model.py](../server/src/optimization/model.py)                       |

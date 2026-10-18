@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.appliances.exceptions import ApplianceNotFoundError
-from src.appliances.forecast import generate_load_forecast
+from src.appliances.forecast import appliances_running_in, generate_load_forecast
 from src.appliances.models import Appliance
 from src.appliances.repository import ApplianceRepository
 from src.appliances.schemas import ApplianceCreate, ApplianceUpdate
@@ -36,7 +36,6 @@ class ApplianceService:
             power_w=data.power_w,
             standby_power_w=data.standby_power_w,
             priority=data.priority,
-            is_shiftable=data.is_shiftable,
             config=data.config.model_dump(mode="json"),
         )
         await self.db.commit()
@@ -66,8 +65,6 @@ class ApplianceService:
             appliance.standby_power_w = data.standby_power_w
         if data.priority is not None:
             appliance.priority = data.priority
-        if data.is_shiftable is not None:
-            appliance.is_shiftable = data.is_shiftable
         if data.config is not None:
             appliance.behavior = data.config.behavior
             appliance.config = data.config.model_dump(mode="json")
@@ -83,8 +80,14 @@ class ApplianceService:
         await self.db.commit()
 
     async def generate_and_store_forecast(self, site_id: int, hours: int = 48) -> int:
-        """Generate and store the load forecast for a specific site."""
-        await self._ensure_site_exists(site_id)
+        """Generate and store the load forecast for a specific site.
+
+        Two series from one pass: what the site's saving mode lets run, and what
+        every appliance together would draw.
+        """
+        site = await self.site_repo.get_by_id(site_id)
+        if site is None:
+            raise SiteNotFoundError(site_id)
 
         appliances = await self.repo.list_for_site(site_id)
 
@@ -96,11 +99,17 @@ class ApplianceService:
             start=start, periods=round(hours / STEP_HOURS), freq=STEP_FREQ, tz=UTC
         )
 
-        load_kw = generate_load_forecast(appliances, times)
+        load_kw = generate_load_forecast(appliances_running_in(appliances, site.saving_mode), times)
+        unrestricted_load_kw = generate_load_forecast(appliances, times)
 
         rows = [
-            {"site_id": site_id, "time": ts.to_pydatetime(), "load_kw": float(value)}
-            for ts, value in load_kw.items()
+            {
+                "site_id": site_id,
+                "time": ts.to_pydatetime(),
+                "load_kw": float(load_kw[ts]),
+                "unrestricted_load_kw": float(unrestricted_load_kw[ts]),
+            }
+            for ts in times
         ]
         written = await upsert(self.db, LoadForecast, rows)
         await self.db.commit()

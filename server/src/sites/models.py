@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from src.core.database import Base
-from src.sites.enums import SiteRole
+from src.sites.enums import SavingMode, SiteRole
 
 
 class Site(Base):
@@ -21,6 +21,17 @@ class Site(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     latitude: Mapped[float] = mapped_column(nullable=True)
     longitude: Mapped[float] = mapped_column(nullable=True)
+    saving_mode: Mapped[SavingMode] = mapped_column(
+        Enum(
+            SavingMode,
+            name="saving_mode",
+            native_enum=True,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
+        nullable=False,
+        default=SavingMode.LOW,
+        server_default=SavingMode.LOW.value,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
