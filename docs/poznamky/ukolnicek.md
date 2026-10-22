@@ -50,3 +50,16 @@ spotových cen od 10. 7. 2026**, takže všechno níž jde udělat bez jediného
       duty cycle své lednice zpaměti.
 - [ ] `pragueMarketWindow` v klientovi duplikuje `default_market_window` ze
       serveru – čistší by bylo vracet okno v odpovědi API.
+
+## Schůzky
+
+- [x] Uložit odhadovanou úsporu
+- [x] Implementovat úrovně rizika (výběr různých úrovní [LOW, MEDIUM, HIGH nebo EXTREME]) podle kterého
+      se plánuje nabíjení.
+- [x] Implementovat degradaci baterie
+- [ ] Svícení
+- [ ] Přidat náhodu do predikce spotřeby (neomezeno žádným řežimem)
+- [ ] Tepelné čerpadlo (vzduch-vzduch), predikce spotřeby (teplo)
+- [ ] Zahrnovat do predikce - topení v krbu
+- [ ] Studovat více jak funguje pod kapotou pvlib
+- [ ] Doporučení pro uživatele
