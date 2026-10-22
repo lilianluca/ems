@@ -1,10 +1,10 @@
+import { cn } from 'cn';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { translateError } from '@/api/errors';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { APPLIANCE_PRIORITIES } from '@/features/appliances/api';
-import { cn } from '@/lib/utils';
 
 import {
   SAVING_MODE_MAX_PRIORITY,

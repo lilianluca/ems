@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from 'cn';
 
 /** Brand mark — keep in sync with public/favicon.svg. */
 export function LogoMark({ className }: { className?: string }) {

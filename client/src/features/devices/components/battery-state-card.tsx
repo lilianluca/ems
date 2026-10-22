@@ -1,3 +1,4 @@
+import { cn } from 'cn';
 import { useTranslation } from 'react-i18next';
 
 import { translateError } from '@/api/errors';
@@ -6,7 +7,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useNow } from '@/hooks/use-now';
 import { formatPragueDateTime, STEP_DURATION_MS } from '@/lib/datetime';
 import { formatFractionAsPercent, formatQuantity, formatWithUnit } from '@/lib/units';
-import { cn } from '@/lib/utils';
 
 import { type BatteryDevice, useBatteryHealth, useBatteryState, useDevices } from '../api';
 
