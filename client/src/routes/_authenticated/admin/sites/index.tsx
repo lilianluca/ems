@@ -42,7 +42,7 @@ function AdminSitesPage() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-lg font-semibold">{t('sites.title')}</h1>
-          <p className="text-muted-foreground text-sm">{t('sites.description')}</p>
+          <p className="text-sm text-muted-foreground">{t('sites.description')}</p>
         </div>
         <Button render={<Link to="/admin/sites/new" />}>
           <MapPinPlusIcon />
@@ -53,7 +53,7 @@ function AdminSitesPage() {
       <AdminSitesTable sites={data?.items ?? []} isLoading={isPending} />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {t('sites.pagination', { from: firstOnPage, to: lastOnPage, total })}
         </p>
         <div className="flex gap-2">

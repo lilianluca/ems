@@ -98,7 +98,7 @@ export function SiteDetailsForm({ site }: SiteDetailsFormProps) {
             </div>
 
             {formState.errors.root && (
-              <p role="alert" className="text-destructive text-sm">
+              <p role="alert" className="text-sm text-destructive">
                 {formState.errors.root.message}
               </p>
             )}

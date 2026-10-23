@@ -17,7 +17,13 @@
  */
 
 export type Quantity =
-  'power' | 'wattPower' | 'peakPower' | 'energy' | 'percent' | 'angle' | 'minutes';
+  | 'power'
+  | 'wattPower'
+  | 'peakPower'
+  | 'energy'
+  | 'percent'
+  | 'angle'
+  | 'minutes';
 
 /** Chosen so the smallest difference that matters is still visible. */
 const DECIMALS: Record<Quantity, number> = {

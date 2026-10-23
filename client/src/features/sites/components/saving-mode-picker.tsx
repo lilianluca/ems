@@ -64,7 +64,7 @@ export function SavingModePicker({ site }: SavingModePickerProps) {
                 key={mode}
                 className={cn(
                   'flex cursor-pointer flex-col gap-1 rounded-lg border p-4 transition-colors',
-                  'has-focus-visible:ring-ring has-focus-visible:ring-2',
+                  'has-focus-visible:ring-2 has-focus-visible:ring-ring',
                   selected === mode ? 'border-primary bg-primary/5' : 'hover:bg-muted/50',
                 )}
               >
@@ -79,10 +79,10 @@ export function SavingModePicker({ site }: SavingModePickerProps) {
                   className="sr-only"
                 />
                 <span className="font-medium">{t(`saving_mode.${mode}`)}</span>
-                <span className="text-muted-foreground text-sm">
+                <span className="text-sm text-muted-foreground">
                   {t(`saving_mode.hint_${mode}`)}
                 </span>
-                <span className="text-muted-foreground text-xs">
+                <span className="text-xs text-muted-foreground">
                   {t('saving_mode.running', {
                     priorities: running
                       .map((priority) => t(`appliances.priority_${priority}`).toLowerCase())
@@ -93,7 +93,7 @@ export function SavingModePicker({ site }: SavingModePickerProps) {
             );
           })}
         </fieldset>
-        <p className="text-muted-foreground text-xs">{t('settings.saving_mode_note')}</p>
+        <p className="text-xs text-muted-foreground">{t('settings.saving_mode_note')}</p>
       </CardContent>
     </Card>
   );

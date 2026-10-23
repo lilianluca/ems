@@ -80,17 +80,17 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
       <CardContent>
         {isPending && <Skeleton className="h-24 w-full" />}
 
-        {error && <p className="text-muted-foreground py-6 text-center">{translateError(error)}</p>}
+        {error && <p className="py-6 text-center text-muted-foreground">{translateError(error)}</p>}
 
         {!isPending && !error && state === null && (
-          <p className="text-muted-foreground py-6 text-center">{t('battery_state.empty')}</p>
+          <p className="py-6 text-center text-muted-foreground">{t('battery_state.empty')}</p>
         )}
 
         {state && measuredAt !== null && (
           <div className="flex flex-col gap-3">
             <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
               <div>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   {t('battery_state.state_of_charge')}
                 </p>
                 <p className="text-2xl font-semibold tabular-nums">
@@ -98,7 +98,7 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">{t('battery_state.stored_energy')}</p>
+                <p className="text-xs text-muted-foreground">{t('battery_state.stored_energy')}</p>
                 <p className="tabular-nums">
                   {formatQuantity(state.stateOfChargeKwh, 'energy', i18n.language)} /{' '}
                   {/* Of what the battery can still hold, which is what the
@@ -111,11 +111,11 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">{t('battery_state.setpoint')}</p>
+                <p className="text-xs text-muted-foreground">{t('battery_state.setpoint')}</p>
                 <p className="tabular-nums">{setpoint}</p>
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">{t('devices.usable_range')}</p>
+                <p className="text-xs text-muted-foreground">{t('devices.usable_range')}</p>
                 <p className="tabular-nums">
                   {formatFractionAsPercent(battery.minStateOfCharge, i18n.language)} –{' '}
                   {formatFractionAsPercent(battery.maxStateOfCharge, i18n.language)}
@@ -124,13 +124,13 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
               {health && (
                 <>
                   <div>
-                    <p className="text-muted-foreground text-xs">{t('battery_state.health')}</p>
+                    <p className="text-xs text-muted-foreground">{t('battery_state.health')}</p>
                     <p className="tabular-nums">
                       {formatHealth(health.stateOfHealth, i18n.language)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">{t('battery_state.cycles')}</p>
+                    <p className="text-xs text-muted-foreground">{t('battery_state.cycles')}</p>
                     <p className="tabular-nums">
                       {formatCount(health.equivalentFullCycles, i18n.language)}
                     </p>
@@ -140,14 +140,14 @@ function BatteryStateCard({ siteId, battery }: BatteryStateCardProps) {
               {/* Absent for a battery too young or too idle to project from. */}
               {health?.yearsToEndOfLife != null && (
                 <div>
-                  <p className="text-muted-foreground text-xs">{t('battery_state.outlook')}</p>
+                  <p className="text-xs text-muted-foreground">{t('battery_state.outlook')}</p>
                   <p className="tabular-nums">
                     {health.yearsToEndOfLife > OUTLOOK_CAP_YEARS
                       ? t('battery_state.outlook_over', {
                           years: formatYears(OUTLOOK_CAP_YEARS, i18n.language),
                         })
                       : formatYears(health.yearsToEndOfLife, i18n.language)}{' '}
-                    <span className="text-muted-foreground text-sm">
+                    <span className="text-sm text-muted-foreground">
                       {t('battery_state.outlook_hint')}
                     </span>
                   </p>
@@ -227,18 +227,18 @@ function ChargeMeter({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(stateOfCharge * 100)}
-      className="bg-muted relative h-3 w-full overflow-hidden rounded-full"
+      className="relative h-3 w-full overflow-hidden rounded-full bg-muted"
     >
       <div
         className="absolute inset-y-0 left-0"
         style={{ width: percent(stateOfCharge), background: 'var(--chart-3)' }}
       />
       <div
-        className="bg-foreground/60 absolute inset-y-0 w-px"
+        className="absolute inset-y-0 w-px bg-foreground/60"
         style={{ left: percent(minStateOfCharge) }}
       />
       <div
-        className="bg-foreground/60 absolute inset-y-0 w-px"
+        className="absolute inset-y-0 w-px bg-foreground/60"
         style={{ left: percent(maxStateOfCharge) }}
       />
     </div>

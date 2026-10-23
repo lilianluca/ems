@@ -59,7 +59,7 @@ export function UserMenu() {
                   <span className="truncate font-medium">
                     {user.firstName} {user.lastName}
                   </span>
-                  <span className="text-muted-foreground truncate text-xs">{user.email}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                 </div>
                 <MoreVerticalIcon className="ml-auto size-4" aria-hidden />
               </SidebarMenuButton>
@@ -76,7 +76,7 @@ export function UserMenu() {
                 <span className="truncate font-medium">
                   {user.firstName} {user.lastName}
                 </span>
-                <span className="text-muted-foreground truncate text-xs">{user.email}</span>
+                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
               </div>
             </div>
 

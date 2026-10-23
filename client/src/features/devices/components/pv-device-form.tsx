@@ -113,7 +113,7 @@ export function PVDeviceForm({ siteId, device }: PVDeviceFormProps) {
                       placeholder="9.8"
                       aria-invalid={fieldState.invalid}
                     />
-                    <p className="text-muted-foreground text-xs">{t('devices.hint_kwp')}</p>
+                    <p className="text-xs text-muted-foreground">{t('devices.hint_kwp')}</p>
                     {fieldState.error && (
                       <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
                     )}
@@ -139,7 +139,7 @@ export function PVDeviceForm({ siteId, device }: PVDeviceFormProps) {
                       placeholder="8"
                       aria-invalid={fieldState.invalid}
                     />
-                    <p className="text-muted-foreground text-xs">{t('devices.hint_inverter')}</p>
+                    <p className="text-xs text-muted-foreground">{t('devices.hint_inverter')}</p>
                     {fieldState.error && (
                       <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
                     )}
@@ -165,7 +165,7 @@ export function PVDeviceForm({ siteId, device }: PVDeviceFormProps) {
                       placeholder="35"
                       aria-invalid={fieldState.invalid}
                     />
-                    <p className="text-muted-foreground text-xs">{t('devices.hint_tilt')}</p>
+                    <p className="text-xs text-muted-foreground">{t('devices.hint_tilt')}</p>
                     {fieldState.error && (
                       <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
                     )}
@@ -194,12 +194,12 @@ export function PVDeviceForm({ siteId, device }: PVDeviceFormProps) {
                     {/* Reads the entered angle back as a compass direction: this is
                         the field where a wrong convention produces a plausible but
                         completely wrong forecast. */}
-                    <p className="text-muted-foreground text-xs">
+                    <p className="text-xs text-muted-foreground">
                       {t('devices.hint_azimuth')}
                       {typeof azimuth === 'number' && !Number.isNaN(azimuth) && (
                         <>
                           {' · '}
-                          <span className="text-foreground font-medium">
+                          <span className="font-medium text-foreground">
                             {t(`devices.compass_${compassPoint(azimuth)}`)}
                           </span>
                         </>
@@ -214,7 +214,7 @@ export function PVDeviceForm({ siteId, device }: PVDeviceFormProps) {
             </div>
 
             {formState.errors.root && (
-              <p role="alert" className="text-destructive text-sm">
+              <p role="alert" className="text-sm text-destructive">
                 {formState.errors.root.message}
               </p>
             )}

@@ -114,21 +114,21 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
         {isPending && <Skeleton className="h-80 w-full" />}
 
         {isError && (
-          <p className="text-muted-foreground py-12 text-center">{t('ote.load_error')}</p>
+          <p className="py-12 text-center text-muted-foreground">{t('ote.load_error')}</p>
         )}
 
         {!isPending && !isError && points.length === 0 && (
-          <p className="text-muted-foreground py-12 text-center">{t('ote.empty')}</p>
+          <p className="py-12 text-center text-muted-foreground">{t('ote.empty')}</p>
         )}
 
         {!isPending && !isError && points.length > 0 && (
           <>
             <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
               <div>
-                <p className="text-muted-foreground text-xs">{t('ote.current')}</p>
+                <p className="text-xs text-muted-foreground">{t('ote.current')}</p>
                 <p className="text-2xl font-semibold tabular-nums">
                   {currentBlock ? priceFormatter.format(currentBlock[field]) : '—'}{' '}
-                  <span className="text-muted-foreground text-sm font-normal">{unit}</span>
+                  <span className="text-sm font-normal text-muted-foreground">{unit}</span>
                 </p>
               </div>
               <Stat
@@ -222,7 +222,7 @@ export function SpotPriceChart({ window }: SpotPriceChartProps) {
             {/* Tomorrow's auction result is published in the early afternoon; until
                 then the chart simply ends at midnight, which looks like a fault. */}
             {points[points.length - 1].timestamp < window[1] - STEP_DURATION_MS && (
-              <p className="text-muted-foreground text-sm">{t('ote.tomorrow_pending')}</p>
+              <p className="text-sm text-muted-foreground">{t('ote.tomorrow_pending')}</p>
             )}
           </>
         )}
@@ -246,11 +246,11 @@ function Stat({ label, points, field, pick, formatter, locale }: StatProps) {
 
   return (
     <div>
-      <p className="text-muted-foreground text-xs">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className="tabular-nums">
         {formatter.format(value)}{' '}
         {at && (
-          <span className="text-muted-foreground text-xs">
+          <span className="text-xs text-muted-foreground">
             · {formatPragueTime(at.timestamp, locale)}
           </span>
         )}

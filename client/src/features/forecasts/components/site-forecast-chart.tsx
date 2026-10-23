@@ -85,11 +85,11 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
         {isPending && <Skeleton className="h-64 w-full" />}
 
         {isError && (
-          <p className="text-muted-foreground py-12 text-center">{t('forecasts.load_error')}</p>
+          <p className="py-12 text-center text-muted-foreground">{t('forecasts.load_error')}</p>
         )}
 
         {!isPending && !isError && points.length === 0 && (
-          <p className="text-muted-foreground py-12 text-center">{t('forecasts.empty')}</p>
+          <p className="py-12 text-center text-muted-foreground">{t('forecasts.empty')}</p>
         )}
 
         {!isPending && !isError && points.length > 0 && (
@@ -98,21 +98,21 @@ export function SiteForecastChart({ siteId, window }: SiteForecastChartProps) {
               {/* Named as predictions, never as measurements: nothing here was
                   measured, it is all model output. */}
               <div>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   {t('forecasts.expected_generation')}
                 </p>
                 <p className="tabular-nums">
                   {formatQuantity(totals.generation, 'energy', i18n.language)}{' '}
-                  <span className="text-muted-foreground text-xs">{UNIT.energy}</span>
+                  <span className="text-xs text-muted-foreground">{UNIT.energy}</span>
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   {t('forecasts.expected_consumption')}
                 </p>
                 <p className="tabular-nums">
                   {formatQuantity(totals.consumption, 'energy', i18n.language)}{' '}
-                  <span className="text-muted-foreground text-xs">{UNIT.energy}</span>
+                  <span className="text-xs text-muted-foreground">{UNIT.energy}</span>
                 </p>
               </div>
             </div>

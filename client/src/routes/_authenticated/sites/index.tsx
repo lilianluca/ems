@@ -24,7 +24,7 @@ function MySitesPage() {
     <div className="flex flex-col gap-4">
       <div>
         <h1 className="text-lg font-semibold">{t('my_sites.title')}</h1>
-        <p className="text-muted-foreground text-sm">{t('my_sites.description')}</p>
+        <p className="text-sm text-muted-foreground">{t('my_sites.description')}</p>
       </div>
 
       {isPending && <Skeleton className="h-24 w-full" />}
@@ -32,7 +32,7 @@ function MySitesPage() {
       {!isPending && (sites?.length ?? 0) === 0 && (
         <div className="py-12 text-center">
           <p className="font-medium">{t('my_sites.empty_title')}</p>
-          <p className="text-muted-foreground text-sm">{t('my_sites.empty_description')}</p>
+          <p className="text-sm text-muted-foreground">{t('my_sites.empty_description')}</p>
         </div>
       )}
 
@@ -42,9 +42,9 @@ function MySitesPage() {
             key={site.id}
             to="/sites/$siteId/dashboard"
             params={{ siteId: site.id }}
-            className="focus-visible:ring-ring rounded-xl focus-visible:ring-2 focus-visible:outline-none"
+            className="rounded-xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
-            <Card className="hover:bg-muted/50 h-full transition-colors">
+            <Card className="h-full transition-colors hover:bg-muted/50">
               <CardHeader className="flex flex-row items-center justify-between gap-2">
                 <div className="flex min-w-0 flex-col gap-1">
                   <CardTitle className="truncate">{site.name}</CardTitle>
@@ -53,7 +53,7 @@ function MySitesPage() {
                     {site.latitude.toFixed(4)}, {site.longitude.toFixed(4)}
                   </CardDescription>
                 </div>
-                <ChevronRightIcon className="text-muted-foreground size-4 shrink-0" aria-hidden />
+                <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
               </CardHeader>
             </Card>
           </Link>

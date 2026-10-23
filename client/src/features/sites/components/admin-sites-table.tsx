@@ -99,7 +99,7 @@ export function AdminSitesTable({ sites, isLoading }: AdminSitesTableProps) {
 
         {!isLoading && rows.length === 0 && (
           <TableRow>
-            <TableCell colSpan={columns.length} className="text-muted-foreground py-8 text-center">
+            <TableCell colSpan={columns.length} className="py-8 text-center text-muted-foreground">
               {t('sites.empty')}
             </TableCell>
           </TableRow>

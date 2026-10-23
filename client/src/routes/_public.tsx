@@ -13,11 +13,11 @@ export const Route = createFileRoute('/_public')({
 
 function PublicLayout() {
   return (
-    <div className="bg-muted/30 flex min-h-svh items-center justify-center p-4">
+    <div className="flex min-h-svh items-center justify-center bg-muted/30 p-4">
       <div className="w-full max-w-sm">
         <div className="mb-6 flex items-center justify-center gap-2.5">
           <LogoMark className="size-10" />
-          <span className="text-primary text-2xl font-bold tracking-wide">EMS</span>
+          <span className="text-2xl font-bold tracking-wide text-primary">EMS</span>
         </div>
         <Outlet />
       </div>
