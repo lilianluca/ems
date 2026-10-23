@@ -70,7 +70,7 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
         {/* A site with no battery or no forecasts answers 422 with a reason, and
             that reason is more useful than a generic failure. */}
         {error && (
-          <p className="text-muted-foreground py-12 text-center">{translateError(error)}</p>
+          <p className="py-12 text-center text-muted-foreground">{translateError(error)}</p>
         )}
 
         {!isPending && !error && points.length > 0 && (
@@ -79,7 +79,7 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
               {/* What the steps carried out so far today saved, next to what the
                   plan expects from here on. Only the first adds up over days. */}
               <div>
-                <p className="text-muted-foreground text-xs">{t('optimization.saved_today')}</p>
+                <p className="text-xs text-muted-foreground">{t('optimization.saved_today')}</p>
                 <p className="text-2xl font-semibold tabular-nums">
                   {todaySavings
                     ? formatMoney(
@@ -87,12 +87,12 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
                         i18n.language,
                       )
                     : '–'}{' '}
-                  <span className="text-muted-foreground text-sm font-normal">
+                  <span className="text-sm font-normal text-muted-foreground">
                     {t('optimization.unit_money')}
                   </span>
                 </p>
                 {todaySavings && todaySavings.restrictionSavingsCzk !== 0 && (
-                  <p className="text-muted-foreground text-xs tabular-nums">
+                  <p className="text-xs text-muted-foreground tabular-nums">
                     {t('savings.split', {
                       battery: `${formatMoney(todaySavings.savingsCzk, i18n.language)} ${t('optimization.unit_money')}`,
                       restriction: `${formatMoney(todaySavings.restrictionSavingsCzk, i18n.language)} ${t('optimization.unit_money')}`,
@@ -101,20 +101,20 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
                 )}
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">{t('optimization.savings')}</p>
+                <p className="text-xs text-muted-foreground">{t('optimization.savings')}</p>
                 <p className="text-2xl font-semibold tabular-nums">
                   {formatMoney(plan.savingsCzk, i18n.language)}{' '}
-                  <span className="text-muted-foreground text-sm font-normal">
+                  <span className="text-sm font-normal text-muted-foreground">
                     {t('optimization.unit_money')}
                   </span>
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">{t('optimization.baseline_cost')}</p>
+                <p className="text-xs text-muted-foreground">{t('optimization.baseline_cost')}</p>
                 <p className="tabular-nums">{formatMoney(plan.baselineCostCzk, i18n.language)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">{t('optimization.planned_cost')}</p>
+                <p className="text-xs text-muted-foreground">{t('optimization.planned_cost')}</p>
                 <p className="tabular-nums">{formatMoney(plan.costCzk, i18n.language)}</p>
               </div>
             </div>
@@ -163,9 +163,9 @@ export function OptimizationChart({ siteId, window }: OptimizationChartProps) {
                         return (
                           <div className="flex flex-1 items-center justify-between gap-4">
                             <span className="text-muted-foreground">{t(action)}</span>
-                            <span className="text-foreground font-mono font-medium tabular-nums">
+                            <span className="font-mono font-medium text-foreground tabular-nums">
                               {formatQuantity(Math.abs(power), 'power', i18n.language)}{' '}
-                              <span className="text-muted-foreground font-normal">
+                              <span className="font-normal text-muted-foreground">
                                 {UNIT.power}
                               </span>
                             </span>

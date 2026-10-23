@@ -8,13 +8,15 @@ import { ApplianceForm } from '@/features/appliances/components/appliance-form';
 const applianceIdSchema = z.coerce.number().int().positive();
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/appliances/$applianceId')({
-  parseParams: (params) => {
-    // A non-numeric segment is a bad URL, not a crash: 404 rather than throw.
-    const applianceId = applianceIdSchema.safeParse(params.applianceId);
-    if (!applianceId.success) throw notFound();
-    return { applianceId: applianceId.data };
+  params: {
+    parse: (params) => {
+      // A non-numeric segment is a bad URL, not a crash: 404 rather than throw.
+      const applianceId = applianceIdSchema.safeParse(params.applianceId);
+      if (!applianceId.success) throw notFound();
+      return { applianceId: applianceId.data };
+    },
+    stringify: ({ applianceId }) => ({ applianceId: String(applianceId) }),
   },
-  stringifyParams: ({ applianceId }) => ({ applianceId: String(applianceId) }),
   loader: ({ context, params }) =>
     context.queryClient.ensureQueryData(appliancesQueryOptions(params.siteId)),
   component: EditAppliancePage,

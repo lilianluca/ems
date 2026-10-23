@@ -28,17 +28,17 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: client/.nvmrc
+          node-version-file: client/.node-version
           cache: npm
           cache-dependency-path: client/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
-      - name: ESLint
+      - name: Oxlint (incl. type check)
         run: npm run lint
 
-      - name: Prettier check
+      - name: Oxfmt check
         run: npm run format:check
 
   tests:
@@ -51,7 +51,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: client/.nvmrc
+          node-version-file: client/.node-version
           cache: npm
           cache-dependency-path: client/package-lock.json
 
@@ -79,7 +79,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: client/.nvmrc
+          node-version-file: client/.node-version
           cache: npm
           cache-dependency-path: client/package-lock.json
 

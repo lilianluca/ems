@@ -27,7 +27,7 @@ export function TimeWindowsField({ control, error }: TimeWindowsFieldProps) {
         <p className="text-sm font-medium">{t('appliances.windows')}</p>
         {/* The forecast spreads the expected runtime across the window rather
             than placing it at one moment, which is worth saying out loud. */}
-        <p className="text-muted-foreground text-xs">{t('appliances.hint_windows')}</p>
+        <p className="text-xs text-muted-foreground">{t('appliances.hint_windows')}</p>
       </div>
 
       {fields.map((field, index) => (
@@ -81,7 +81,7 @@ export function TimeWindowsField({ control, error }: TimeWindowsFieldProps) {
       ))}
 
       {error && (
-        <p role="alert" className="text-destructive text-sm">
+        <p role="alert" className="text-sm text-destructive">
           {error}
         </p>
       )}
@@ -106,7 +106,11 @@ interface WindowNumberProps {
   control: Control<ApplianceFormValues>;
   index: number;
   name:
-    'startHour' | 'endHour' | 'probabilityPercent' | 'durationMinutesMin' | 'durationMinutesMax';
+    | 'startHour'
+    | 'endHour'
+    | 'probabilityPercent'
+    | 'durationMinutesMin'
+    | 'durationMinutesMax';
   label: string;
 }
 

@@ -92,7 +92,7 @@ export function ApplianceForm({ siteId, appliance }: ApplianceFormProps) {
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={name}>
-            {label} {unit && <span className="text-muted-foreground font-normal">({unit})</span>}
+            {label} {unit && <span className="font-normal text-muted-foreground">({unit})</span>}
           </FieldLabel>
           <Input
             {...field}
@@ -105,7 +105,7 @@ export function ApplianceForm({ siteId, appliance }: ApplianceFormProps) {
             step="any"
             aria-invalid={fieldState.invalid}
           />
-          {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
+          {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
           {fieldState.error && (
             <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
           )}
@@ -212,7 +212,7 @@ export function ApplianceForm({ siteId, appliance }: ApplianceFormProps) {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     {t(`appliances.behavior_hint_${behavior}`)}
                   </p>
                 </Field>
@@ -270,7 +270,7 @@ export function ApplianceForm({ siteId, appliance }: ApplianceFormProps) {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     {t(`appliances.priority_hint_${field.value}`)}
                   </p>
                 </Field>
@@ -278,7 +278,7 @@ export function ApplianceForm({ siteId, appliance }: ApplianceFormProps) {
             />
 
             {formState.errors.root && (
-              <p role="alert" className="text-destructive text-sm">
+              <p role="alert" className="text-sm text-destructive">
                 {formState.errors.root.message}
               </p>
             )}

@@ -23,7 +23,7 @@ function DevicesPage() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-lg font-semibold">{t('devices.title')}</h1>
-          <p className="text-muted-foreground text-sm">{t('devices.description')}</p>
+          <p className="text-sm text-muted-foreground">{t('devices.description')}</p>
         </div>
         {/* Two explicit actions rather than one form with a type switch: the two
             field sets have nothing in common. */}
@@ -45,7 +45,7 @@ function DevicesPage() {
       {isPending && <Skeleton className="h-40 w-full" />}
 
       {!isPending && (devices?.length ?? 0) === 0 && (
-        <p className="text-muted-foreground py-12 text-center">{t('devices.empty')}</p>
+        <p className="py-12 text-center text-muted-foreground">{t('devices.empty')}</p>
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">

@@ -176,7 +176,7 @@ export function CreateUserForm() {
             />
 
             {errors.root && (
-              <p role="alert" className="text-destructive text-sm">
+              <p role="alert" className="text-sm text-destructive">
                 {errors.root.message}
               </p>
             )}

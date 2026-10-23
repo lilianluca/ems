@@ -151,15 +151,15 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
           <div>
-            <p className="text-muted-foreground text-xs">{t('savings.month_total')}</p>
+            <p className="text-xs text-muted-foreground">{t('savings.month_total')}</p>
             <p className="text-2xl font-semibold tabular-nums">
               {recorded.length > 0 ? formatMoney(monthTotal, i18n.language) : '–'}{' '}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-sm font-normal text-muted-foreground">
                 {t('optimization.unit_money')}
               </span>
             </p>
             {hasRestriction && (
-              <p className="text-muted-foreground text-xs tabular-nums">
+              <p className="text-xs text-muted-foreground tabular-nums">
                 {t('savings.split', {
                   battery: money(monthBattery),
                   restriction: money(monthRestriction),
@@ -168,18 +168,18 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
             )}
           </div>
           <div>
-            <p className="text-muted-foreground text-xs">{t('savings.daily_average')}</p>
+            <p className="text-xs text-muted-foreground">{t('savings.daily_average')}</p>
             <p className="tabular-nums">
               {recorded.length > 0 ? money(monthTotal / recorded.length) : '–'}
             </p>
           </div>
           <div>
-            <p className="text-muted-foreground text-xs">{t('savings.best_day')}</p>
+            <p className="text-xs text-muted-foreground">{t('savings.best_day')}</p>
             <p className="tabular-nums">
               {best ? (
                 <>
                   {money(totalSavings(best))}{' '}
-                  <span className="text-muted-foreground text-sm">
+                  <span className="text-sm text-muted-foreground">
                     {formatDay(best.day, { day: 'numeric', month: 'numeric' })}
                   </span>
                 </>
@@ -191,12 +191,12 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
           {/* Not tied to the month shown: the one figure that answers whether the
               battery is paying for itself. */}
           <div>
-            <p className="text-muted-foreground text-xs">{t('savings.since_start')}</p>
+            <p className="text-xs text-muted-foreground">{t('savings.since_start')}</p>
             <p className="tabular-nums">
               {total?.since ? (
                 <>
                   {money(total.savingsCzk + total.restrictionSavingsCzk)}{' '}
-                  <span className="text-muted-foreground text-sm">
+                  <span className="text-sm text-muted-foreground">
                     {t('savings.since', {
                       date: formatDay(total.since, {
                         day: 'numeric',
@@ -216,13 +216,13 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
         {isPending && <Skeleton className="h-56 w-full" />}
 
         {!isPending && recorded.length === 0 && (
-          <p className="text-muted-foreground py-12 text-center">{t('savings.empty')}</p>
+          <p className="py-12 text-center text-muted-foreground">{t('savings.empty')}</p>
         )}
 
         {!isPending && recorded.length > 0 && (
           <>
             {hasRestriction && (
-              <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <span
                     className="size-2.5 rounded-sm"
@@ -303,7 +303,7 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
                             {rows.map(([label, value]) => (
                               <div key={label} className="flex items-center justify-between gap-4">
                                 <span className="text-muted-foreground">{label}</span>
-                                <span className="text-foreground font-mono font-medium tabular-nums">
+                                <span className="font-mono font-medium text-foreground tabular-nums">
                                   {money(value)}
                                 </span>
                               </div>
@@ -363,7 +363,7 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
             </ChartContainer>
 
             {points.some((point) => point.partial) && (
-              <p className="text-muted-foreground text-xs">{t('savings.partial_note')}</p>
+              <p className="text-xs text-muted-foreground">{t('savings.partial_note')}</p>
             )}
           </>
         )}

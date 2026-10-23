@@ -23,7 +23,7 @@ function AppliancesPage() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-lg font-semibold">{t('appliances.title')}</h1>
-          <p className="text-muted-foreground text-sm">{t('appliances.description')}</p>
+          <p className="text-sm text-muted-foreground">{t('appliances.description')}</p>
         </div>
         <Button render={<Link to="/sites/$siteId/appliances/new" params={{ siteId }} />}>
           <PlusIcon />
@@ -34,7 +34,7 @@ function AppliancesPage() {
       {isPending && <Skeleton className="h-40 w-full" />}
 
       {!isPending && (appliances?.length ?? 0) === 0 && (
-        <p className="text-muted-foreground py-12 text-center">{t('appliances.empty')}</p>
+        <p className="py-12 text-center text-muted-foreground">{t('appliances.empty')}</p>
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">

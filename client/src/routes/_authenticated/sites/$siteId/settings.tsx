@@ -20,7 +20,7 @@ function SiteSettingsPage() {
     <div className="flex max-w-3xl flex-col gap-4">
       <div>
         <h1 className="text-lg font-semibold">{t('settings.title')}</h1>
-        <p className="text-muted-foreground text-sm">{t('settings.description')}</p>
+        <p className="text-sm text-muted-foreground">{t('settings.description')}</p>
       </div>
 
       {isPending && <Skeleton className="h-64 w-full" />}

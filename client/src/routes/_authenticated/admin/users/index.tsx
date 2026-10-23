@@ -41,7 +41,7 @@ function UsersPage() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-lg font-semibold">{t('users.title')}</h1>
-          <p className="text-muted-foreground text-sm">{t('users.description')}</p>
+          <p className="text-sm text-muted-foreground">{t('users.description')}</p>
         </div>
         <Button render={<Link to="/admin/users/new" />}>
           <UserPlusIcon />
@@ -52,7 +52,7 @@ function UsersPage() {
       <UsersTable users={data?.items ?? []} isLoading={isPending} />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {t('users.pagination', { from: firstOnPage, to: lastOnPage, total })}
         </p>
         <div className="flex gap-2">

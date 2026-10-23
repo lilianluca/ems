@@ -4,27 +4,26 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "dev": "vp dev",
+    "build": "tsc -b && vp build",
+    "preview": "vp preview",
+    "lint": "vp lint .",
+    "lint:fix": "vp lint . --fix",
+    "format": "vp fmt .",
+    "format:check": "vp fmt --check .",
     "typecheck": "tsc -b --noEmit",
     "check": "npm run typecheck && npm run lint && npm run format:check",
-    "test": "vitest --run --passWithNoTests",
-    "test:watch": "vitest",
-    "test:coverage": "vitest --run --coverage --passWithNoTests",
+    "test": "vp test --run --passWithNoTests",
+    "test:watch": "vp test",
+    "test:coverage": "vp test --run --coverage --passWithNoTests",
     "gen:api": "openapi-typescript http://localhost:8000/openapi.json -o src/api/schema.d.ts"
   },
   "overrides": {
-    "eslint-plugin-jsx-a11y": {
-      "eslint": "$eslint"
-    },
     "openapi-typescript": {
       "typescript": "$typescript"
-    }
+    },
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
+    "vitest": "5.0.5"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -53,7 +52,6 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
     "@tanstack/eslint-plugin-query": "^5.104.1",
     "@tanstack/eslint-plugin-router": "^1.162.0",
     "@tanstack/react-query-devtools": "^5.101.4",
@@ -62,27 +60,24 @@
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.1",
-    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
-    "@types/node": "^24.19.2",
+    "@types/node": "^26.6.5",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.0.4",
-    "@vitest/coverage-v8": "^4.1.10",
-    "eslint": "^10.12.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.6",
-    "eslint-plugin-simple-import-sort": "^14.0.0",
-    "globals": "^17.11.0",
+    "@vitest/coverage-v8": "5.0.5",
     "jiti": "^2.7.0",
     "jsdom": "^30.0.1",
     "openapi-typescript": "^7.13.0",
-    "prettier": "^3.9.6",
-    "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.1",
-    "vite": "^8.3.4",
-    "vitest": "^4.1.11"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
+    "vite-plus": "1.4.0",
+    "vitest": "5.0.5"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "11.20.0",
+      "onFail": "download"
+    }
   }
 }

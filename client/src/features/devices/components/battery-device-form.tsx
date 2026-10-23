@@ -98,7 +98,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={name}>
-            {label} <span className="text-muted-foreground font-normal">({unit})</span>
+            {label} <span className="font-normal text-muted-foreground">({unit})</span>
           </FieldLabel>
           <Input
             {...field}
@@ -112,7 +112,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
             placeholder={placeholder}
             aria-invalid={fieldState.invalid}
           />
-          {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
+          {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
           {fieldState.error && (
             <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
           )}
@@ -132,7 +132,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={name}>
-            {label} <span className="text-muted-foreground font-normal">(%)</span>
+            {label} <span className="font-normal text-muted-foreground">(%)</span>
           </FieldLabel>
           <Input
             {...field}
@@ -145,7 +145,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
             step="any"
             aria-invalid={fieldState.invalid}
           />
-          {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
+          {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
           {fieldState.error && (
             <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
           )}
@@ -197,7 +197,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
               {percentField('maxStateOfChargePercent', t('devices.max_soc'))}
               {percentField('roundTripEfficiencyPercent', t('devices.efficiency'))}
             </div>
-            <p className="text-muted-foreground text-xs">{t('devices.hint_soc')}</p>
+            <p className="text-xs text-muted-foreground">{t('devices.hint_soc')}</p>
 
             {numericField(
               'cycleLife',
@@ -208,7 +208,7 @@ export function BatteryDeviceForm({ siteId, device }: BatteryDeviceFormProps) {
             )}
 
             {formState.errors.root && (
-              <p role="alert" className="text-destructive text-sm">
+              <p role="alert" className="text-sm text-destructive">
                 {formState.errors.root.message}
               </p>
             )}

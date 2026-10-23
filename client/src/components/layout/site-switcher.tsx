@@ -42,7 +42,7 @@ export function SiteSwitcher() {
                     {current?.name ?? t('nav.select_site')}
                   </span>
                   {/* TODO: Display actual city name */}
-                  <span className="text-muted-foreground truncate text-xs">City</span>
+                  <span className="truncate text-xs text-muted-foreground">City</span>
                 </div>
                 <ChevronsUpDownIcon className="ml-auto size-4" aria-hidden />
               </SidebarMenuButton>
@@ -51,7 +51,7 @@ export function SiteSwitcher() {
 
           <DropdownMenuContent align="start">
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-muted-foreground text-xs">
+              <DropdownMenuLabel className="text-xs text-muted-foreground">
                 {t('nav.sites')}
               </DropdownMenuLabel>
 
