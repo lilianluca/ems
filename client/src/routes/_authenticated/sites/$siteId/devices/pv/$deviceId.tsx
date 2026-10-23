@@ -8,13 +8,15 @@ import { PVDeviceForm } from '@/features/devices/components/pv-device-form';
 const deviceIdSchema = z.coerce.number().int().positive();
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/devices/pv/$deviceId')({
-  parseParams: (params) => {
-    // A non-numeric segment is a bad URL, not a crash: 404 rather than throw.
-    const deviceId = deviceIdSchema.safeParse(params.deviceId);
-    if (!deviceId.success) throw notFound();
-    return { deviceId: deviceId.data };
+  params: {
+    parse: (params) => {
+      // A non-numeric segment is a bad URL, not a crash: 404 rather than throw.
+      const deviceId = deviceIdSchema.safeParse(params.deviceId);
+      if (!deviceId.success) throw notFound();
+      return { deviceId: deviceId.data };
+    },
+    stringify: ({ deviceId }) => ({ deviceId: String(deviceId) }),
   },
-  stringifyParams: ({ deviceId }) => ({ deviceId: String(deviceId) }),
   loader: ({ context, params }) =>
     context.queryClient.ensureQueryData(devicesQueryOptions(params.siteId)),
   component: EditPVDevicePage,

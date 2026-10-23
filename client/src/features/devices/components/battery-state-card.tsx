@@ -222,6 +222,8 @@ function ChargeMeter({
 
   return (
     <div
+      // A native <meter> renders no children, so it cannot draw the min/max markers
+      // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
       role="meter"
       aria-label={label}
       aria-valuemin={0}
