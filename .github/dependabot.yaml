@@ -11,9 +11,14 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     ignore:
-      # Types must match the Node runtime major (client/.nvmrc); bump manually with Node
+      # Types must match the Node runtime major (client/.node-version); bump manually with Node
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # Vite+ pins vite (aliased to vite-plus-core) and vitest in package.json#overrides,
+      # which Dependabot does not update; bump all three together via vp
+      - dependency-name: vite-plus
+      - dependency-name: vite
+      - dependency-name: vitest
 
   - package-ecosystem: docker
     directories:
@@ -22,7 +27,7 @@ updates:
     schedule:
       interval: weekly
     ignore:
-      # Node major is bumped manually together with client/.nvmrc
+      # Node major is bumped manually together with client/.node-version
       - dependency-name: node
         update-types: ["version-update:semver-major"]
 
