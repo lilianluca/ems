@@ -24,7 +24,7 @@ systémem.
 | ----------------------------------------------------- | ----------------------------------------------------------------- |
 | [Ceny elektřiny](vypocty/ceny.md)                     | Kolik stojí kilowatthodina ze sítě a kolik se dostane za dodanou? |
 | [Predikce výroby fotovoltaiky](vypocty/fve-vyroba.md) | Kolik fotovoltaika vyrobí? _(zatím nenapsáno)_                    |
-| [Predikce spotřeby](vypocty/spotreba.md)              | Kolik domácnost spotřebuje? _(zatím nenapsáno)_                   |
+| [Predikce spotřeby](vypocty/spotreba.md)              | Kolik domácnost spotřebuje?                                       |
 | [Režim úspor](vypocty/rezim-uspor.md)                 | Co se stane, když domácnost omezí spotřebiče?                     |
 | [Model baterie](vypocty/model-baterie.md)             | Kolik energie bude v baterii za čtvrthodinu?                      |
 | [Plán podle pravidel](vypocty/plan-rule-based.md)     | Co má baterie dělat, když se řídí jen přebytkem a nedostatkem?    |
@@ -37,15 +37,14 @@ systémem.
 
 Pracovní podklady. Nejsou součástí popisu systému a nemusí být aktuální.
 
-| Dokument                           | Obsah                                                      |
-| ---------------------------------- | ---------------------------------------------------------- |
-| [Zadání](poznamky/zadani.md)       | zadání diplomové práce                                     |
-| [Schůzky](poznamky/schuzky.md)     | úkoly ze schůzek                                           |
-| [Úkolníček](poznamky/ukolnicek.md) | co zbývá udělat ve vyhodnocení, provozu, modelu a aplikaci |
+| Dokument                           | Obsah                                    |
+| ---------------------------------- | ---------------------------------------- |
+| [Zadání](poznamky/zadani.md)       | zadání diplomové práce                   |
+| [Úkolníček](poznamky/ukolnicek.md) | co zbývá udělat, včetně úkolů ze schůzek |
 
 ## Co v dokumentaci ještě chybí
 
-- **Tři výpočty** označené výše jako nenapsané.
+- **Dva výpočty** označené výše jako nenapsané.
 - **Rozhodnutí** – proč je systém postavený tak, jak je.
 - **Omezení** – všechna zjednodušení na jednom místě. Zatím je má každý výpočet
   na svém konci.

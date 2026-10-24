@@ -40,7 +40,7 @@ def expected_hourly_power_w(appliance: Appliance, hour: int, is_weekend: bool) -
     behavior = appliance.behavior
 
     if behavior == ApplianceBehavior.CONSTANT:
-        return appliance.power_w * 0.95
+        return appliance.power_w
 
     if behavior == ApplianceBehavior.CYCLIC:
         cfg = CyclicConfig.model_validate(appliance.config)
