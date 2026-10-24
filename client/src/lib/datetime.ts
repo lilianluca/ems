@@ -3,7 +3,7 @@
  *
  * Spot prices, forecasts and optimisation schedules are all anchored to
  * `Europe/Prague`, so rendering them in the viewer's own timezone would show the
- * wrong hours to anyone abroad. Local `Date` getters are banned by ESLint for
+ * wrong hours to anyone abroad. Local `Date` getters are banned by the linter for
  * exactly this reason — go through these helpers instead.
  */
 export const PRAGUE_TIME_ZONE = 'Europe/Prague';
