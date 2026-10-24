@@ -12,7 +12,6 @@ export default {
     { name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' },
     '@tanstack/eslint-plugin-query',
     '@tanstack/eslint-plugin-router',
-    './lint-rules/ems.js',
   ],
   categories: {
     correctness: 'error',
@@ -135,6 +134,17 @@ export default {
       'error',
       { paths: [{ name: 'moment', message: 'Use date-fns instead.' }] },
     ],
+    // Timezone safety: local Date getters silently use the machine timezone
+    'no-restricted-properties': [
+      'warn',
+      ...['getHours', 'getMinutes', 'getDate', 'getMonth', 'getDay', 'getFullYear'].map(
+        (property) => ({
+          property,
+          message:
+            'Local Date getters ignore the timezone. Use TZDate or Intl.DateTimeFormat with Europe/Prague.',
+        }),
+      ),
+    ],
 
     // React
     'react/rules-of-hooks': 'error',
@@ -154,7 +164,6 @@ export default {
     '@tanstack/router/create-route-property-order': 'warn',
     '@tanstack/router/route-param-names': 'error',
     'vite-plus/prefer-vite-plus-imports': 'error',
-    'ems/no-local-date-getters': 'warn',
   },
   overrides: [
     // File-based routes export `Route` next to their component, and TanStack

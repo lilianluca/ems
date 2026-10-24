@@ -17,7 +17,7 @@ export const Route = createFileRoute('/_authenticated/admin/sites/')({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
   loader: ({ context, deps }) =>
-    context.queryClient.ensureQueryData(adminSitesQueryOptions(deps.page)),
+    context.queryClient.query({ ...adminSitesQueryOptions(deps.page), staleTime: 'static' }),
   component: AdminSitesPage,
 });
 

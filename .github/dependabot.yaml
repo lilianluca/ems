@@ -19,6 +19,9 @@ updates:
       - dependency-name: vite-plus
       - dependency-name: vite
       - dependency-name: vitest
+      # openapi-typescript officially supports only TypeScript 5; bump once it supports 6+
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: docker
     directories:
