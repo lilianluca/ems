@@ -18,17 +18,23 @@ const WINDOW_REFRESH_MS = 10 * 60_000;
 export const Route = createFileRoute('/_authenticated/sites/$siteId/dashboard')({
   loader: ({ context, params }) =>
     Promise.all([
-      context.queryClient.ensureQueryData(spotPricesQueryOptions()),
-      context.queryClient.ensureQueryData(siteForecastQueryOptions(params.siteId)),
+      context.queryClient.query({ ...spotPricesQueryOptions(), staleTime: 'static' }),
+      context.queryClient.query({
+        ...siteForecastQueryOptions(params.siteId),
+        staleTime: 'static',
+      }),
       // Loaded up front so the battery cards appear with the page rather than
       // popping in above the charts and pushing them down.
-      context.queryClient.ensureQueryData(devicesQueryOptions(params.siteId)),
+      context.queryClient.query({ ...devicesQueryOptions(params.siteId), staleTime: 'static' }),
       // The plan answers 422 for a site with no battery, which is a normal
       // state rather than a failed route.
       context.queryClient
-        .ensureQueryData(optimizationQueryOptions(params.siteId))
+        .query({ ...optimizationQueryOptions(params.siteId), staleTime: 'static' })
         .catch(() => null),
-      context.queryClient.ensureQueryData(todaySavingsQueryOptions(params.siteId)),
+      context.queryClient.query({
+        ...todaySavingsQueryOptions(params.siteId),
+        staleTime: 'static',
+      }),
     ]),
   component: DashboardPage,
 });

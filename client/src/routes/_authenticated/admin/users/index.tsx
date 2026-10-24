@@ -16,7 +16,8 @@ const searchSchema = z.object({
 export const Route = createFileRoute('/_authenticated/admin/users/')({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(usersQueryOptions(deps.page)),
+  loader: ({ context, deps }) =>
+    context.queryClient.query({ ...usersQueryOptions(deps.page), staleTime: 'static' }),
   component: UsersPage,
 });
 

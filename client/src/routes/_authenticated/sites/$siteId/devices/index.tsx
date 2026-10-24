@@ -9,7 +9,7 @@ import { DeviceCard } from '@/features/devices/components/device-card';
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/devices/')({
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(devicesQueryOptions(params.siteId)),
+    context.queryClient.query({ ...devicesQueryOptions(params.siteId), staleTime: 'static' }),
   component: DevicesPage,
 });
 

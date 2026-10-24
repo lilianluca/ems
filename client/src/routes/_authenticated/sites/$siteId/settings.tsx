@@ -7,7 +7,8 @@ import { SavingModePicker } from '@/features/sites/components/saving-mode-picker
 import { SiteDetailsForm } from '@/features/sites/components/site-details-form';
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/settings')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(sitesQueryOptions()),
+  loader: ({ context }) =>
+    context.queryClient.query({ ...sitesQueryOptions(), staleTime: 'static' }),
   component: SiteSettingsPage,
 });
 
