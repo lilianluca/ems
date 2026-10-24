@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_authenticated/sites/$siteId/devices/batt
     stringify: ({ deviceId }) => ({ deviceId: String(deviceId) }),
   },
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(devicesQueryOptions(params.siteId)),
+    context.queryClient.query({ ...devicesQueryOptions(params.siteId), staleTime: 'static' }),
   component: EditBatteryDevicePage,
 });
 
