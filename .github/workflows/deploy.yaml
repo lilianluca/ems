@@ -112,7 +112,9 @@ jobs:
     needs: [resolve, build]
     # Runs after a successful build, or straight away on a rollback dispatch.
     if: ${{ always() && needs.resolve.result == 'success' && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
-    environment: production
+    environment:
+      name: production
+      url: https://ems.lilianluca.com
     env:
       DEPLOY_USER: deploy
       DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
