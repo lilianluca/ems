@@ -7,10 +7,14 @@ import { pragueMonth } from '@/lib/datetime';
 export const Route = createFileRoute('/_authenticated/sites/$siteId/savings')({
   loader: ({ context, params }) =>
     Promise.all([
-      context.queryClient.ensureQueryData(
-        monthSavingsQueryOptions(params.siteId, pragueMonth(Date.now())),
-      ),
-      context.queryClient.ensureQueryData(totalSavingsQueryOptions(params.siteId)),
+      context.queryClient.query({
+        ...monthSavingsQueryOptions(params.siteId, pragueMonth(Date.now())),
+        staleTime: 'static',
+      }),
+      context.queryClient.query({
+        ...totalSavingsQueryOptions(params.siteId),
+        staleTime: 'static',
+      }),
     ]),
   component: SavingsPage,
 });
