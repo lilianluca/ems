@@ -134,8 +134,8 @@ tečou systémem.
 | Bilance a úspory                 | [uspory.md](vypocty/uspory.md)                   | [savings/balance.py](../server/src/savings/balance.py)                             |
 | Zdraví baterie                   | [zdravi-baterie.md](vypocty/zdravi-baterie.md)   | [devices/battery_health.py](../server/src/devices/battery_health.py)               |
 
-Tři z nich zatím nejsou napsané a obsahují jen poznámku TODO: predikce výroby,
-predikce spotřeby a plán optimalizací. U nich platí kód a jeho komentáře.
+Dva z nich zatím nejsou napsané a obsahují jen poznámku TODO: predikce výroby a
+plán optimalizací. U nich platí kód a jeho komentáře.
 
 ## Příklad: dvě čtvrthodiny
 

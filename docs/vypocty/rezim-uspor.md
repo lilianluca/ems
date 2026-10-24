@@ -104,7 +104,7 @@ všední den.
 | Spotřebič   | Priorita |   Za den |
 | ----------- | -------: | -------: |
 | Lednice     |        1 | 1,17 kWh |
-| Router      |        1 | 0,23 kWh |
+| Router      |        1 | 0,24 kWh |
 | Varná deska |        2 | 2,50 kWh |
 | Osvětlení   |        2 | 0,68 kWh |
 | Pračka      |        3 | 1,80 kWh |
@@ -115,10 +115,10 @@ Spotřeba v jednotlivých úrovních:
 
 | Úroveň    | Započítané spotřebiče             |   Za den | V 19 hodin |
 | --------- | --------------------------------- | -------: | ---------: |
-| `LOW`     | všech sedm                        | 8,77 kWh |    0,90 kW |
-| `MEDIUM`  | bez televize                      | 8,52 kWh |    0,86 kW |
-| `HIGH`    | lednice, router, deska, osvětlení | 4,57 kWh |    0,18 kW |
-| `EXTREME` | lednice, router                   | 1,40 kWh |    0,07 kW |
+| `LOW`     | všech sedm                        | 8,78 kWh |    0,90 kW |
+| `MEDIUM`  | bez televize                      | 8,53 kWh |    0,86 kW |
+| `HIGH`    | lednice, router, deska, osvětlení | 4,58 kWh |    0,18 kW |
+| `EXTREME` | lednice, router                   | 1,41 kWh |    0,07 kW |
 
 Rozdíl mezi úrovněmi závisí na tom, kolik spotřeby mají spotřebiče s nízkou
 prioritou. V příkladu ušetří přechod z LOW na MEDIUM jen televizi, tedy málo.
