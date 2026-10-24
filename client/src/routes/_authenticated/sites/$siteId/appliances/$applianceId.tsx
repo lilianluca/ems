@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_authenticated/sites/$siteId/appliances/$
     stringify: ({ applianceId }) => ({ applianceId: String(applianceId) }),
   },
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(appliancesQueryOptions(params.siteId)),
+    context.queryClient.query({ ...appliancesQueryOptions(params.siteId), staleTime: 'static' }),
   component: EditAppliancePage,
 });
 

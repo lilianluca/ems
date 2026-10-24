@@ -9,7 +9,7 @@ import { ApplianceCard } from '@/features/appliances/components/appliance-card';
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/appliances/')({
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(appliancesQueryOptions(params.siteId)),
+    context.queryClient.query({ ...appliancesQueryOptions(params.siteId), staleTime: 'static' }),
   component: AppliancesPage,
 });
 

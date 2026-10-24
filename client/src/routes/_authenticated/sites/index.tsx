@@ -7,7 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { sitesQueryOptions, useSites } from '@/features/sites/api';
 
 export const Route = createFileRoute('/_authenticated/sites/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(sitesQueryOptions()),
+  loader: ({ context }) =>
+    context.queryClient.query({ ...sitesQueryOptions(), staleTime: 'static' }),
   component: MySitesPage,
 });
 

@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_authenticated/')({
   beforeLoad: async ({ context, location }) => {
     let sites;
     try {
-      sites = await context.queryClient.ensureQueryData(sitesQueryOptions());
+      sites = await context.queryClient.query({ ...sitesQueryOptions(), staleTime: 'static' });
     } catch (error) {
       // The store can still report authenticated after a refresh token expires;
       // the failed request is the first hard proof the session is gone.
