@@ -1072,6 +1072,19 @@ export interface components {
             level: string;
         };
         /**
+         * OccupancyWindow
+         * @description A part of the day when someone is at home and awake, the same every day.
+         *
+         *     Like an appliance window, one that ends before it starts wraps past
+         *     midnight, and equal bounds are rejected as ambiguous.
+         */
+        OccupancyWindow: {
+            /** Starthour */
+            startHour: number;
+            /** Endhour */
+            endHour: number;
+        };
+        /**
          * OnDemandConfig
          * @description Schema for appliances with on-demand behavior.
          */
@@ -1353,6 +1366,10 @@ export interface components {
             /** Longitude */
             longitude: number;
             savingMode: components["schemas"]["SavingMode"];
+            /** Lightingpowerw */
+            lightingPowerW: number;
+            /** Occupancywindows */
+            occupancyWindows: components["schemas"]["OccupancyWindow"][];
             /**
              * Createdat
              * Format: date-time
@@ -1377,6 +1394,10 @@ export interface components {
             /** Longitude */
             longitude?: number | null;
             savingMode?: components["schemas"]["SavingMode"] | null;
+            /** Lightingpowerw */
+            lightingPowerW?: number | null;
+            /** Occupancywindows */
+            occupancyWindows?: components["schemas"]["OccupancyWindow"][] | null;
         };
         /**
          * TimeWindow

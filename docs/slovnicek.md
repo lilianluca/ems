@@ -76,8 +76,12 @@ Dokument o [predikci výroby](vypocty/fve-vyroba.md) zatím není napsaný.
 | **Vlastní spotřeba**    | Část vyrobené elektřiny, kterou domácnost sama spotřebuje, místo aby ji prodala.                                                          |
 | **Priorita spotřebiče** | Jak moc je spotřebič pro domácnost důležitý, od 1 (nezbytný) po 4 (komfortní). Podle ní režim úspor rozhoduje, co vypne.                  |
 | **Režim úspor**         | Jak moc je domácnost ochotná omezit spotřebu: běžný, úsporný, velmi úsporný, nebo extrémní. Vedoucí práce ho označuje jako úrovně rizika. |
+| **Dům**                 | Nastavení lokality, které nepatří k žádnému spotřebiči: zatím výkon osvětlení a doba, kdy je někdo doma.                                  |
+| **Obsazenost**          | Zda je někdo doma a vzhůru. Zadává se jako okna v celých hodinách, stejná pro všechny dny.                                                |
+| **Tma**                 | Číslo od 0 do 1 podle výšky slunce nad obzorem: 0 ve dne, 1 po skončení občanského soumraku. Určuje, jakou část osvětlení svítí.          |
 
-Dokument o [predikci spotřeby](vypocty/spotreba.md) zatím není napsaný.
+Víc v dokumentech o [predikci spotřeby](vypocty/spotreba.md) a
+[osvětlení](vypocty/osvetleni.md).
 
 ## Baterie
 
@@ -192,3 +196,6 @@ jmenuje v kódu a v databázi.
 | spotřebič                           | `Appliance`                                     |
 | režim úspor                         | `saving_mode`, `SavingMode`                     |
 | priorita spotřebiče                 | `priority`                                      |
+| výkon osvětlení                     | `lighting_power_w`                              |
+| okna obsazenosti                    | `occupancy_windows`, `OccupancyWindow`          |
+| tma                                 | `darkness`                                      |

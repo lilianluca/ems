@@ -184,6 +184,13 @@ $$
 Rozhoduje **pražská** hodina a den v týdnu. Čtyři čtvrthodiny jedné hodiny mají
 stejnou hodnotu, protože všechny parametry modelu jsou po hodinách.
 
+### Krok 3: osvětlení
+
+K součtu se přičte [osvětlení](osvetleni.md) domu. Do neomezené spotřeby vždy,
+do omezené jen v režimech, které svícení nechávají, tedy ve všech kromě
+extrémního. Osvětlení jako jediné mění hodnotu i uvnitř hodiny, protože se řídí
+soumrakem.
+
 ## Příklad: domácnost se čtyřmi spotřebiči
 
 Lednice, router, bojler a myčka z příkladů výše, všední den. Hodnoty jsou v
@@ -209,7 +216,7 @@ táhne bojler, večer myčka, přes den skoro nic.
 ## Kdy se predikce počítá
 
 - **Každou hodinu v :15** pro všechny lokality.
-- **Hned po změně režimu úspor** lokality.
+- **Hned po změně režimu úspor**, nastavení domu nebo souřadnic lokality.
 - **Ručně** tlačítkem pro přepočet predikcí.
 
 Pokaždé se spočítá 48 hodin od aktuální čtvrthodiny a přepíše předchozí hodnoty
@@ -225,19 +232,21 @@ pro tytéž čtvrthodiny. Ukládá se do tabulky `load_forecast`, sloupce `load_
 | Hodiny špiček                           | `WEEKDAY_PEAKS`, `WEEKEND_PEAKS`, `PEAK_FACTOR` tamtéž                                                           |
 | Součet za lokalitu                      | `generate_load_forecast` tamtéž                                                                                  |
 | Výběr podle režimu úspor                | `appliances_running_in` tamtéž                                                                                   |
+| Osvětlení                               | `generate_lighting_forecast` v [appliances/lighting.py](../../server/src/appliances/lighting.py)                 |
 | Výpočet a uložení                       | `ApplianceService.generate_and_store_forecast` v [appliances/service.py](../../server/src/appliances/service.py) |
 | Pravidelné spouštění                    | `forecast-load` v [core/celery_app.py](../../server/src/core/celery_app.py)                                      |
 | Parametry chování                       | [appliances/schemas.py](../../server/src/appliances/schemas.py)                                                  |
 
-Výpočet příkonu spotřebičů zatím nemá vlastní testy. Testovaný je jen výběr
-spotřebičů podle režimu úspor.
+Výpočet příkonu spotřebičů zatím nemá vlastní testy. Testovaný je výběr
+spotřebičů podle režimu úspor a osvětlení.
 
 ## Předpoklady a omezení
 
 - **Spotřeba je jen tak dobrá, jak dobře jsou zadané spotřebiče.** Co uživatel
   nezadá, v predikci není. Typicky drobné spotřebiče, které nikdo nepočítá.
-- **Neznáme roční období ani počasí.** Spotřeba je v lednu stejná jako v
-  červenci. To neplatí hlavně pro osvětlení a topení.
+- **Spotřebiče neznají roční období ani počasí.** Spotřebič odebírá v lednu
+  stejně jako v červenci. Roční období zná jen [osvětlení](osvetleni.md); topení
+  zatím chybí úplně.
 - **Víkend ovlivňuje jen cyklické spotřebiče**, a to jen tím, že mají jiné hodiny
   špiček. Plánované spotřebiče a spotřebiče na vyžádání mají stejná okna každý
   den.
