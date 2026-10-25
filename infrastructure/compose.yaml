@@ -51,7 +51,8 @@ services:
     # (prices, forecasts, battery states) as hypertables. The library has to be
     # preloaded; the image only configures that for a freshly initialised data
     # directory, so it is set here to cover an existing one too.
-    image: timescale/timescaledb:latest-pg18
+    # Pinned to the production version; keep in step with compose.prod.yaml.
+    image: timescale/timescaledb:2.31.0-pg18
     command: ["postgres", "-c", "shared_preload_libraries=timescaledb", "-c", "timescaledb.telemetry_level=off"]
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
