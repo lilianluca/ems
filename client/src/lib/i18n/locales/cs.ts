@@ -77,6 +77,7 @@ export const cs = {
     minutes_range: 'Horní mez musí být alespoň tak velká jako dolní.',
     window_bounds_equal: 'Začátek a konec okna se musí lišit.',
     window_required: 'Přidejte alespoň jedno časové okno.',
+    lighting_power_max: 'Zadejte nejvýše 10 000 W.',
     uses_invalid: 'Zadejte alespoň jedno spuštění.',
     state_of_charge_range: 'Maximální nabití musí být vyšší než minimální.',
   },
@@ -384,6 +385,15 @@ export const cs = {
     saving_mode_saved: 'Režim úspor nastaven na {{mode}}. Predikce spotřeby je přepočítaná.',
     saving_mode_note:
       'Systém spotřebiče neovládá. Režim ukazuje, co by domácnost ušetřila, kdyby vypnuté spotřebiče nepoužívala. Prioritu spotřebičů nastavíte na stránce Spotřebiče.',
+    house_title: 'Dům',
+    house_description:
+      'Svítí se, když je někdo doma a venku je tma. Kdy je tma, se počítá z polohy slunce podle souřadnic lokality. Svícení vypne jen extrémní režim úspor.',
+    house_saved: 'Nastavení domu bylo uloženo. Predikce spotřeby je přepočítaná.',
+    lighting_power: 'Výkon osvětlení (W)',
+    lighting_power_hint: 'Součet příkonů světel, která večer obvykle svítí zároveň.',
+    occupancy: 'Kdy je někdo doma',
+    occupancy_hint:
+      'Hodiny, kdy je někdo doma a vzhůru, stejné pro všechny dny. Okno může přecházet přes půlnoc, například 22 až 1.',
   },
 
   saving_mode: {

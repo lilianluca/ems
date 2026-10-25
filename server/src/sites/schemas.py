@@ -1,9 +1,27 @@
 from datetime import datetime
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from src.core.schemas import APIBaseModel
 from src.sites.enums import SavingMode, SiteRole
+
+
+class OccupancyWindow(APIBaseModel):
+    """A part of the day when someone is at home and awake, the same every day.
+
+    Like an appliance window, one that ends before it starts wraps past
+    midnight, and equal bounds are rejected as ambiguous.
+    """
+
+    start_hour: int = Field(ge=0, le=23)
+    end_hour: int = Field(ge=0, le=23)
+
+    @model_validator(mode="after")
+    def validate_window(self) -> OccupancyWindow:
+        """Reject a window whose bounds could mean nothing or the whole day."""
+        if self.start_hour == self.end_hour:
+            raise ValueError("startHour and endHour must differ.")
+        return self
 
 
 class SiteCreate(APIBaseModel):
@@ -25,6 +43,8 @@ class SiteRead(APIBaseModel):
     latitude: float
     longitude: float
     saving_mode: SavingMode
+    lighting_power_w: int
+    occupancy_windows: list[OccupancyWindow]
     created_at: datetime
 
 
@@ -54,6 +74,8 @@ class SiteUpdate(APIBaseModel):
     # Longitude must be between -180 and 180 degrees.
     longitude: float | None = Field(default=None, ge=-180, le=180)
     saving_mode: SavingMode | None = None
+    lighting_power_w: int | None = Field(default=None, ge=0, le=10_000)
+    occupancy_windows: list[OccupancyWindow] | None = None
 
 
 class SiteMembershipUpdate(APIBaseModel):

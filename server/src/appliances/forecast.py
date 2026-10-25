@@ -12,6 +12,7 @@ from src.appliances.schemas import CyclicConfig, OnDemandConfig, ScheduledConfig
 if TYPE_CHECKING:
     from src.appliances.models import Appliance
     from src.sites.enums import SavingMode
+    from src.sites.schemas import OccupancyWindow
 
 HOURS_PER_DAY = 24
 
@@ -68,7 +69,7 @@ def _window_length_hours(window: TimeWindow) -> int:
     return span if span > 0 else span + HOURS_PER_DAY
 
 
-def _hour_in_window(hour: int, window: TimeWindow) -> bool:
+def hour_in_window(hour: int, window: TimeWindow | OccupancyWindow) -> bool:
     """Whether the hour falls inside the window, which may wrap past midnight.
 
     "From 22 to 6" is the natural way to describe a boiler or a car charger, so
@@ -88,7 +89,7 @@ def _windowed_expected_power(
     """
     total = appliance.standby_power_w
     for w in windows:
-        if not _hour_in_window(hour, w):
+        if not hour_in_window(hour, w):
             continue
         window_hours = _window_length_hours(w)
         duration_mean_h = ((w.duration_minutes_min + w.duration_minutes_max) / 2) / 60

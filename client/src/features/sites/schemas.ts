@@ -27,3 +27,25 @@ export type CreateSiteFormValues = z.infer<typeof createSiteSchema>;
 export const siteDetailsSchema = createSiteSchema.omit({ ownerId: true });
 
 export type SiteDetailsFormValues = z.infer<typeof siteDetailsSchema>;
+
+/** Mirrors `OccupancyWindow` on the server: whole hours, wrapping past midnight. */
+const occupancyWindowSchema = z
+  .object({
+    startHour: z.number(vk('validation.hour_invalid')).int().min(0).max(23),
+    endHour: z.number(vk('validation.hour_invalid')).int().min(0).max(23),
+  })
+  .refine((window) => window.startHour !== window.endHour, {
+    message: vk('validation.window_bounds_equal'),
+    path: ['endHour'],
+  });
+
+export const houseSchema = z.object({
+  lightingPowerW: z
+    .number(vk('validation.power_not_negative'))
+    .int(vk('validation.power_not_negative'))
+    .min(0, vk('validation.power_not_negative'))
+    .max(10_000, vk('validation.lighting_power_max')),
+  occupancyWindows: z.array(occupancyWindowSchema),
+});
+
+export type HouseFormValues = z.infer<typeof houseSchema>;

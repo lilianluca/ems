@@ -15,7 +15,7 @@ Pojmy, které se v dokumentaci opakují, jsou vysvětlené ve
 
 1. **Zjistí, co ho čeká.** Stáhne předpověď počasí a ceny elektřiny na dnešek a
    zítřek. Z počasí spočítá, kolik vyrobí fotovoltaika. Ze seznamu spotřebičů
-   odhadne, kolik domácnost spotřebuje.
+   a z toho, kdy je doma a kdy je tma, odhadne, kolik domácnost spotřebuje.
 2. **Naplánuje baterii.** Pro každou čtvrthodinu rozhodne, jestli má baterie
    nabíjet, vybíjet, nebo stát.
 3. **Plán provede a vyúčtuje.** Každou čtvrthodinu vezme první krok plánu,
@@ -69,12 +69,14 @@ flowchart TD
     subgraph nastaveni["Nastavení lokality"]
         fve["Fotovoltaika<br/>výkon, sklon, orientace"]
         spotrebice["Spotřebiče<br/>příkon, kdy běží"]
+        dum["Dům<br/>osvětlení, kdy je doma"]
         baterie["Baterie<br/>kapacita, výkony, účinnost"]
     end
 
     meteo --> vyroba["Predikce výroby"]
     fve --> vyroba
     spotrebice --> spotreba["Predikce spotřeby"]
+    dum --> spotreba
     ote --> ceny["Nákupní a prodejní cena"]
 
     vyroba --> plan["Plán baterie"]
@@ -126,6 +128,7 @@ tečou systémem.
 | Nákupní a prodejní cena ze spotu | [ceny.md](vypocty/ceny.md)                       | [optimization/service.py](../server/src/optimization/service.py)                   |
 | Predikce výroby fotovoltaiky     | [fve-vyroba.md](vypocty/fve-vyroba.md)           | [simulation/pv_model.py](../server/src/simulation/pv_model.py)                     |
 | Predikce spotřeby                | [spotreba.md](vypocty/spotreba.md)               | [appliances/forecast.py](../server/src/appliances/forecast.py)                     |
+| Osvětlení                        | [osvetleni.md](vypocty/osvetleni.md)             | [appliances/lighting.py](../server/src/appliances/lighting.py)                     |
 | Režim úspor                      | [rezim-uspor.md](vypocty/rezim-uspor.md)         | [sites/enums.py](../server/src/sites/enums.py)                                     |
 | Model baterie                    | [model-baterie.md](vypocty/model-baterie.md)     | [simulation/battery_model.py](../server/src/simulation/battery_model.py)           |
 | Plán podle pravidel              | [plan-rule-based.md](vypocty/plan-rule-based.md) | [optimization/rule_based.py](../server/src/optimization/rule_based.py)             |

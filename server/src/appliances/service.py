@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.appliances.exceptions import ApplianceNotFoundError
 from src.appliances.forecast import appliances_running_in, generate_load_forecast
+from src.appliances.lighting import generate_lighting_forecast, lighting_runs_in
 from src.appliances.models import Appliance
 from src.appliances.repository import ApplianceRepository
 from src.appliances.schemas import ApplianceCreate, ApplianceUpdate
@@ -13,6 +14,7 @@ from src.core.timeseries import upsert
 from src.forecasts.models import LoadForecast
 from src.sites.exceptions import SiteNotFoundError
 from src.sites.repository import SiteRepository
+from src.sites.schemas import OccupancyWindow
 
 
 class ApplianceService:
@@ -83,7 +85,8 @@ class ApplianceService:
         """Generate and store the load forecast for a specific site.
 
         Two series from one pass: what the site's saving mode lets run, and what
-        every appliance together would draw.
+        every appliance together would draw. The house's lighting always counts
+        towards the second, and towards the first while the mode keeps it on.
         """
         site = await self.site_repo.get_by_id(site_id)
         if site is None:
@@ -101,6 +104,19 @@ class ApplianceService:
 
         load_kw = generate_load_forecast(appliances_running_in(appliances, site.saving_mode), times)
         unrestricted_load_kw = generate_load_forecast(appliances, times)
+
+        if site.latitude is not None and site.longitude is not None:
+            lighting_kw = generate_lighting_forecast(
+                power_w=site.lighting_power_w,
+                windows=[OccupancyWindow.model_validate(w) for w in site.occupancy_windows],
+                latitude=site.latitude,
+                longitude=site.longitude,
+                times=times,
+                step=pd.Timedelta(STEP_FREQ),
+            )
+            unrestricted_load_kw += lighting_kw
+            if lighting_runs_in(site.saving_mode):
+                load_kw += lighting_kw
 
         rows = [
             {

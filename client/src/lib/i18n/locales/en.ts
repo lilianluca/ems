@@ -77,6 +77,7 @@ export const en = {
     minutes_range: 'The upper bound must be at least the lower one.',
     window_bounds_equal: 'The start and end of the window must differ.',
     window_required: 'Add at least one time window.',
+    lighting_power_max: 'Enter at most 10,000 W.',
     uses_invalid: 'Enter at least one run.',
     state_of_charge_range: 'Maximum charge must be higher than minimum charge.',
   },
@@ -388,6 +389,16 @@ export const en = {
     saving_mode_saved: 'Saving mode set to {{mode}}. The consumption forecast has been recomputed.',
     saving_mode_note:
       'The system does not control appliances. The mode shows what the household would save if it did not use the ones turned off. Set appliance priorities on the Appliances page.',
+    house_title: 'House',
+    house_description:
+      'The lights are on while someone is home and it is dark outside. When it gets dark is computed from the position of the sun at the site coordinates. Only the extreme saving mode turns lighting off.',
+    house_saved: 'House settings have been saved. The consumption forecast has been recomputed.',
+    lighting_power: 'Lighting power (W)',
+    lighting_power_hint:
+      'The total power of the lights that are usually on together in the evening.',
+    occupancy: 'When someone is home',
+    occupancy_hint:
+      'Hours when someone is home and awake, the same every day. A window may wrap past midnight, for example 22 to 1.',
   },
 
   saving_mode: {

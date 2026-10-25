@@ -8,6 +8,7 @@ from src.sites.enums import SavingMode, SiteRole
 from src.sites.exceptions import MembershipNotFoundError, SiteNotFoundError, UserAlreadyMemberError
 from src.sites.models import Site, SiteMembership
 from src.sites.repository import SiteRepository
+from src.sites.schemas import OccupancyWindow
 from src.users.exceptions import UserNotFoundError
 from src.users.repository import UserRepository
 
@@ -71,6 +72,8 @@ class SiteService:
         latitude: float | None,
         longitude: float | None,
         saving_mode: SavingMode | None = None,
+        lighting_power_w: int | None = None,
+        occupancy_windows: list[OccupancyWindow] | None = None,
     ) -> Site:
         """Update site details, ensuring the site exists."""
         logger.info(f"Updating site with ID {site_id}.")
@@ -85,13 +88,22 @@ class SiteService:
         mode_changed = saving_mode is not None and saving_mode != site.saving_mode
         if saving_mode is not None:
             site.saving_mode = saving_mode
+        if lighting_power_w is not None:
+            site.lighting_power_w = lighting_power_w
+        if occupancy_windows is not None:
+            site.occupancy_windows = [w.model_dump(mode="json") for w in occupancy_windows]
+        # The lighting forecast reads the location too: it sets when it gets dark.
+        house_changed = any(
+            value is not None
+            for value in (lighting_power_w, occupancy_windows, latitude, longitude)
+        )
 
         await self.db.commit()
         await self.db.refresh(site)
 
         # The change applies from now on: the forecast the next plan reads is
         # rebuilt straight away instead of at the next hourly run.
-        if mode_changed:
+        if mode_changed or house_changed:
             await ApplianceService(self.db).generate_and_store_forecast(site_id)
         logger.info(f"Site with ID {site_id} updated.")
         return site

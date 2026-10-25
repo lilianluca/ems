@@ -1,6 +1,16 @@
 from datetime import datetime
+from typing import Any
 
-from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey, String, UniqueConstraint
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -15,6 +25,7 @@ class Site(Base):
     __table_args__ = (
         CheckConstraint("latitude >= -90 AND latitude <= 90", name="chk_site_latitude"),
         CheckConstraint("longitude >= -180 AND longitude <= 180", name="chk_site_longitude"),
+        CheckConstraint("lighting_power_w >= 0", name="chk_site_lighting_power"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -31,6 +42,14 @@ class Site(Base):
         nullable=False,
         default=SavingMode.LOW,
         server_default=SavingMode.LOW.value,
+    )
+    # The house: lights that go on when someone is home and it is dark. Zero
+    # watts and no windows leave lighting out of the forecast.
+    lighting_power_w: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    occupancy_windows: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB, nullable=False, default=list, server_default="[]"
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

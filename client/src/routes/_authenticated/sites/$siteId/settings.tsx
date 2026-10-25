@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { sitesQueryOptions, useSite } from '@/features/sites/api';
+import { HouseForm } from '@/features/sites/components/house-form';
 import { SavingModePicker } from '@/features/sites/components/saving-mode-picker';
 import { SiteDetailsForm } from '@/features/sites/components/site-details-form';
 
@@ -29,7 +30,8 @@ function SiteSettingsPage() {
       {site && (
         <>
           <SavingModePicker site={site} />
-          {/* Keyed by the site, so switching sites starts the form from the new one. */}
+          {/* Keyed by the site, so switching sites starts the forms from the new one. */}
+          <HouseForm key={`house-${site.id}`} site={site} />
           <SiteDetailsForm key={site.id} site={site} />
         </>
       )}
