@@ -98,7 +98,10 @@ services:
     # (prices, forecasts, battery states) as hypertables. The library has to be
     # preloaded; the image only configures that for a freshly initialised data
     # directory, so it is set here to cover an existing one too.
-    image: timescale/timescaledb:latest-pg18
+    # Pinned: a dump restores only into the same TimescaleDB version, and the
+    # image must never go below the extension version stored in the database.
+    # Keep in step with compose.yaml.
+    image: timescale/timescaledb:2.31.0-pg18
     command: ["postgres", "-c", "shared_preload_libraries=timescaledb", "-c", "timescaledb.telemetry_level=off"]
     restart: unless-stopped
     logging: *logging

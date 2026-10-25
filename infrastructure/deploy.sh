@@ -45,6 +45,14 @@ echo "==> Bringing the database up to date"
 # be in place before the migrations that rely on it.
 compose up -d --wait db
 
+echo "==> Updating the TimescaleDB extension"
+# A newer image only ships the library; the extension in the database stays at
+# the version it was created with until it is updated. Keeping the two equal
+# lets a dump restore into a fresh database, which creates the image's version.
+# A no-op when they already match. -X skips psqlrc: the update has to be the
+# first command of its session. -T and </dev/null for the same reason as below.
+compose exec -T db sh -c 'psql -X -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "ALTER EXTENSION timescaledb UPDATE;"' < /dev/null
+
 echo "==> Applying database migrations"
 # This script is piped into `bash -s` over SSH, so stdin *is* the script.
 # `compose run` attaches stdin to the container by default, which would swallow
