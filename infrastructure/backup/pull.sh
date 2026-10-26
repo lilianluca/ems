@@ -35,4 +35,5 @@ rotate() {
 rotate scheduled 90
 rotate pre-deploy 10
 
-echo "Newest: $(find "$dest" -maxdepth 1 -name 'ems-*.dump' -printf '%f\n' | sort | tail -n 1)"
+# By time, not by name: the names sort by label first.
+echo "Newest: $(find "$dest" -maxdepth 1 -name 'ems-*.dump' -printf '%T@ %f\n' | sort -n | tail -n 1 | cut -d' ' -f2-)"
