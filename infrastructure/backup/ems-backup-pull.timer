@@ -1,0 +1,16 @@
+# Installed once on the PC:
+#   mkdir -p ~/.config/systemd/user
+#   cp ems-backup-pull.service ems-backup-pull.timer ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now ems-backup-pull.timer
+[Unit]
+Description=Pull the EMS database backups every hour
+
+[Timer]
+# Hourly rather than after each server backup: a pull with nothing new costs
+# nothing, and a PC that was off catches up within the hour it is back on.
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
