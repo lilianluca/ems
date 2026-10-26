@@ -1,0 +1,14 @@
+# Installed once by hand on the server:
+#   sudo cp ems-backup.service ems-backup.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now ems-backup.timer
+[Unit]
+Description=Back up the EMS database three times a day
+
+[Timer]
+OnCalendar=*-*-* 00/8:00:00
+# A run missed while the server was down happens as soon as it is back.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

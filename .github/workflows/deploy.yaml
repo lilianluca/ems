@@ -130,10 +130,12 @@ jobs:
           printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
           printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
-      - name: Sync compose file
+      # The backup script ships with every deploy; its systemd units are
+      # installed once by hand (see infrastructure/backup/ems-backup.timer).
+      - name: Sync compose file and backup script
         run: |
-          scp -o BatchMode=yes infrastructure/compose.prod.yaml \
-            "$DEPLOY_USER@$DEPLOY_HOST:/srv/ems/compose.prod.yaml"
+          scp -o BatchMode=yes infrastructure/compose.prod.yaml infrastructure/backup/backup.sh \
+            "$DEPLOY_USER@$DEPLOY_HOST:/srv/ems/"
 
       - name: Run deployment
         env:

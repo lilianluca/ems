@@ -45,6 +45,11 @@ echo "==> Bringing the database up to date"
 # be in place before the migrations that rely on it.
 compose up -d --wait db
 
+echo "==> Backing up the database"
+# Before anything below changes it, so a migration gone wrong can be undone.
+# A failed backup stops the deploy.
+bash backup.sh pre-deploy < /dev/null
+
 echo "==> Updating the TimescaleDB extension"
 # A newer image only ships the library; the extension in the database stays at
 # the version it was created with until it is updated. Keeping the two equal

@@ -1,0 +1,12 @@
+# Installed once by hand into /etc/systemd/system; see ems-backup.timer.
+[Unit]
+Description=Back up the EMS database
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=deploy
+Group=deploy
+# Through bash, so the script needs no executable bit after being copied over.
+ExecStart=/bin/bash /srv/ems/backup.sh scheduled

@@ -1,0 +1,9 @@
+# Installed once on the PC as a user unit; see ems-backup-pull.timer.
+[Unit]
+Description=Pull the EMS database backups from the server
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash %h/Projects/ems/infrastructure/backup/pull.sh
