@@ -34,6 +34,14 @@ systémem.
 | [Bilance a úspory](vypocty/uspory.md)                 | Kolik baterie ušetřila?                                           |
 | [Zdraví baterie](vypocty/zdravi-baterie.md)           | Kolik kapacity baterii zbývá?                                     |
 
+## Provoz
+
+Jak systém běží na serveru a jak se o něj starat.
+
+| Dokument                              | Na co odpovídá                                        |
+| ------------------------------------- | ----------------------------------------------------- |
+| [Zálohy databáze](provoz/zalohy.md)   | Jak se data zálohují, jak to ověřit a jak je obnovit? |
+
 ## Poznámky
 
 Pracovní podklady. Nejsou součástí popisu systému a nemusí být aktuální.
@@ -50,7 +58,7 @@ Pracovní podklady. Nejsou součástí popisu systému a nemusí být aktuální
 - **Omezení** – všechna zjednodušení na jednom místě. Zatím je má každý výpočet
   na svém konci.
 - **Architektura** – moduly, databáze, úlohy na pozadí, frontend.
-- **Provoz** – nasazení, migrace, zálohy.
+- **Provoz** – nasazení a migrace. Zálohy už jsou popsané výše.
 
 ## Jak se dokumentace píše
 
