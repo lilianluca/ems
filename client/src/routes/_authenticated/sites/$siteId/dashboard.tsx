@@ -16,6 +16,7 @@ import { pragueMarketWindow } from '@/lib/datetime';
 const WINDOW_REFRESH_MS = 10 * 60_000;
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/dashboard')({
+  staticData: { breadcrumb: 'nav.dashboard' },
   loader: ({ context, params }) =>
     Promise.all([
       context.queryClient.query({ ...spotPricesQueryOptions(), staleTime: 'static' }),

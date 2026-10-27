@@ -93,8 +93,6 @@ export const en = {
   },
 
   users: {
-    title: 'Users',
-    description: 'Accounts are created here — the system has no public registration.',
     new: 'New user',
     empty: 'No users yet.',
     pagination: '{{from}}–{{to}} of {{total}}',
@@ -126,8 +124,6 @@ export const en = {
   },
 
   sites: {
-    title: 'Sites',
-    description: 'Sites are created by an administrator and assigned an owner.',
     new: 'New site',
     empty: 'No sites yet.',
     pagination: '{{from}}–{{to}} of {{total}}',
@@ -183,8 +179,6 @@ export const en = {
   },
 
   appliances: {
-    title: 'Appliances',
-    description: "These appliances are what the site's consumption forecast is built from.",
     new: 'New appliance',
     empty: 'No appliances configured for this site yet.',
 
@@ -253,8 +247,6 @@ export const en = {
   },
 
   devices: {
-    title: 'Devices',
-    description: 'Device parameters feed the generation forecast and the optimisation.',
     add_pv: 'Add PV array',
     add_battery: 'Add battery',
     empty: 'No devices configured for this site yet.',
@@ -369,14 +361,11 @@ export const en = {
 
   my_sites: {
     title: 'My Sites',
-    description: 'Sites you have access to. Pick one to open its dashboard.',
     empty_title: 'You have not been assigned to any site yet.',
     empty_description: 'Ask an administrator to add you to one.',
   },
 
   settings: {
-    title: 'Settings',
-    description: 'Settings of this site.',
     save: 'Save',
     saving: 'Saving…',
     details_title: 'General',

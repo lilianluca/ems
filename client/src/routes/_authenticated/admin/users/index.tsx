@@ -18,8 +18,20 @@ export const Route = createFileRoute('/_authenticated/admin/users/')({
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
   loader: ({ context, deps }) =>
     context.queryClient.query({ ...usersQueryOptions(deps.page), staleTime: 'static' }),
+  staticData: { headerActions: UsersActions },
   component: UsersPage,
 });
+
+function UsersActions() {
+  const { t } = useTranslation();
+
+  return (
+    <Button size="sm" render={<Link to="/admin/users/new" />}>
+      <UserPlusIcon />
+      {t('users.new')}
+    </Button>
+  );
+}
 
 function UsersPage() {
   const { t } = useTranslation();
@@ -39,17 +51,6 @@ function UsersPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="text-lg font-semibold">{t('users.title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('users.description')}</p>
-        </div>
-        <Button render={<Link to="/admin/users/new" />}>
-          <UserPlusIcon />
-          {t('users.new')}
-        </Button>
-      </div>
-
       <UsersTable users={data?.items ?? []} isLoading={isPending} />
 
       <div className="flex flex-wrap items-center justify-between gap-2">

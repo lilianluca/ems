@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { CreateUserForm } from '@/features/users/components/create-user-form';
 
 export const Route = createFileRoute('/_authenticated/admin/users/new')({
+  staticData: { breadcrumb: 'users.create_title' },
   component: NewUserPage,
 });
 

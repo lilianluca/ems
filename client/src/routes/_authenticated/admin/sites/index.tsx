@@ -18,8 +18,20 @@ export const Route = createFileRoute('/_authenticated/admin/sites/')({
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
   loader: ({ context, deps }) =>
     context.queryClient.query({ ...adminSitesQueryOptions(deps.page), staleTime: 'static' }),
+  staticData: { headerActions: AdminSitesActions },
   component: AdminSitesPage,
 });
+
+function AdminSitesActions() {
+  const { t } = useTranslation();
+
+  return (
+    <Button size="sm" render={<Link to="/admin/sites/new" />}>
+      <MapPinPlusIcon />
+      {t('sites.new')}
+    </Button>
+  );
+}
 
 function AdminSitesPage() {
   const { t } = useTranslation();
@@ -39,17 +51,6 @@ function AdminSitesPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="text-lg font-semibold">{t('sites.title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('sites.description')}</p>
-        </div>
-        <Button render={<Link to="/admin/sites/new" />}>
-          <MapPinPlusIcon />
-          {t('sites.new')}
-        </Button>
-      </div>
-
       <AdminSitesTable sites={data?.items ?? []} isLoading={isPending} />
 
       <div className="flex flex-wrap items-center justify-between gap-2">

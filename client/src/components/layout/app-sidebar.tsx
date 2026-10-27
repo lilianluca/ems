@@ -20,6 +20,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from '@/components/ui/sidebar';
 import { useAuthStore } from '@/features/auth/store';
 
@@ -157,6 +158,8 @@ export function AppSidebar() {
       <SidebarFooter>
         <UserMenu />
       </SidebarFooter>
+
+      <SidebarRail />
     </Sidebar>
   );
 }

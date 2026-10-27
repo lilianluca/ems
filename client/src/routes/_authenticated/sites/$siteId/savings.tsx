@@ -5,6 +5,7 @@ import { SavingsHistory } from '@/features/savings/components/savings-history';
 import { pragueMonth } from '@/lib/datetime';
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/savings')({
+  staticData: { breadcrumb: 'nav.savings' },
   loader: ({ context, params }) =>
     Promise.all([
       context.queryClient.query({

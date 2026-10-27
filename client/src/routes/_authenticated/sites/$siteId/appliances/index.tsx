@@ -10,8 +10,21 @@ import { ApplianceCard } from '@/features/appliances/components/appliance-card';
 export const Route = createFileRoute('/_authenticated/sites/$siteId/appliances/')({
   loader: ({ context, params }) =>
     context.queryClient.query({ ...appliancesQueryOptions(params.siteId), staleTime: 'static' }),
+  staticData: { headerActions: AppliancesActions },
   component: AppliancesPage,
 });
+
+function AppliancesActions() {
+  const { t } = useTranslation();
+  const { siteId } = Route.useParams();
+
+  return (
+    <Button size="sm" render={<Link to="/sites/$siteId/appliances/new" params={{ siteId }} />}>
+      <PlusIcon />
+      {t('appliances.new')}
+    </Button>
+  );
+}
 
 function AppliancesPage() {
   const { t } = useTranslation();
@@ -20,17 +33,6 @@ function AppliancesPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="text-lg font-semibold">{t('appliances.title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('appliances.description')}</p>
-        </div>
-        <Button render={<Link to="/sites/$siteId/appliances/new" params={{ siteId }} />}>
-          <PlusIcon />
-          {t('appliances.new')}
-        </Button>
-      </div>
-
       {isPending && <Skeleton className="h-40 w-full" />}
 
       {!isPending && (appliances?.length ?? 0) === 0 && (

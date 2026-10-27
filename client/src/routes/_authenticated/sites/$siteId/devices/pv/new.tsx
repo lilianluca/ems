@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { PVDeviceForm } from '@/features/devices/components/pv-device-form';
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/devices/pv/new')({
+  staticData: { breadcrumb: 'devices.pv_create_title' },
   component: NewPVDevicePage,
 });
 

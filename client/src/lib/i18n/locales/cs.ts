@@ -93,8 +93,6 @@ export const cs = {
   },
 
   users: {
-    title: 'Uživatelé',
-    description: 'Účty se zakládají zde — systém nemá veřejnou registraci.',
     new: 'Nový uživatel',
     empty: 'Zatím tu nejsou žádní uživatelé.',
     pagination: '{{from}}–{{to}} z {{total}}',
@@ -126,8 +124,6 @@ export const cs = {
   },
 
   sites: {
-    title: 'Lokality',
-    description: 'Lokality zakládá správce a přiřazuje jim vlastníka.',
     new: 'Nová lokalita',
     empty: 'Zatím tu nejsou žádné lokality.',
     pagination: '{{from}}–{{to}} z {{total}}',
@@ -182,8 +178,6 @@ export const cs = {
   },
 
   appliances: {
-    title: 'Spotřebiče',
-    description: 'Z těchto spotřebičů se počítá predikce spotřeby lokality.',
     new: 'Nový spotřebič',
     empty: 'Pro tuto lokalitu zatím nejsou zadané žádné spotřebiče.',
 
@@ -250,8 +244,6 @@ export const cs = {
   },
 
   devices: {
-    title: 'Zařízení',
-    description: 'Parametry zařízení vstupují do predikce výroby a do optimalizace.',
     add_pv: 'Přidat FVE',
     add_battery: 'Přidat baterii',
     empty: 'Pro tuto lokalitu zatím nejsou zadaná žádná zařízení.',
@@ -366,14 +358,11 @@ export const cs = {
 
   my_sites: {
     title: 'Moje lokality',
-    description: 'Lokality, ke kterým máte přístup. Vyberte jednu a zobrazí se její přehled.',
     empty_title: 'Zatím nemáte přiřazenou žádnou lokalitu.',
     empty_description: 'Požádejte správce, aby vás k lokalitě přidal.',
   },
 
   settings: {
-    title: 'Nastavení',
-    description: 'Nastavení této lokality.',
     save: 'Uložit',
     saving: 'Ukládám…',
     details_title: 'Obecné',
