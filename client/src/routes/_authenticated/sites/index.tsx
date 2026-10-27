@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { sitesQueryOptions, useSites } from '@/features/sites/api';
 
 export const Route = createFileRoute('/_authenticated/sites/')({
+  staticData: { breadcrumb: 'my_sites.title' },
   loader: ({ context }) =>
     context.queryClient.query({ ...sitesQueryOptions(), staleTime: 'static' }),
   component: MySitesPage,
@@ -23,11 +24,6 @@ function MySitesPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-lg font-semibold">{t('my_sites.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('my_sites.description')}</p>
-      </div>
-
       {isPending && <Skeleton className="h-24 w-full" />}
 
       {!isPending && (sites?.length ?? 0) === 0 && (

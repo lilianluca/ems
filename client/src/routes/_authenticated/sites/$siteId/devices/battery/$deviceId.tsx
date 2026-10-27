@@ -8,6 +8,7 @@ import { BatteryDeviceForm } from '@/features/devices/components/battery-device-
 const deviceIdSchema = z.coerce.number().int().positive();
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/devices/battery/$deviceId')({
+  staticData: { breadcrumb: 'devices.battery_edit_title' },
   params: {
     parse: (params) => {
       // A non-numeric segment is a bad URL, not a crash: 404 rather than throw.

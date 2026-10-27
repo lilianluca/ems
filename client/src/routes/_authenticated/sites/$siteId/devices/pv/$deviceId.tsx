@@ -8,6 +8,7 @@ import { PVDeviceForm } from '@/features/devices/components/pv-device-form';
 const deviceIdSchema = z.coerce.number().int().positive();
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/devices/pv/$deviceId')({
+  staticData: { breadcrumb: 'devices.pv_edit_title' },
   params: {
     parse: (params) => {
       // A non-numeric segment is a bad URL, not a crash: 404 rather than throw.

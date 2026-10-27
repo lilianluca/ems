@@ -8,6 +8,7 @@ import { ApplianceForm } from '@/features/appliances/components/appliance-form';
 const applianceIdSchema = z.coerce.number().int().positive();
 
 export const Route = createFileRoute('/_authenticated/sites/$siteId/appliances/$applianceId')({
+  staticData: { breadcrumb: 'appliances.edit_title' },
   params: {
     parse: (params) => {
       // A non-numeric segment is a bad URL, not a crash: 404 rather than throw.

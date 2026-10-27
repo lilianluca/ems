@@ -14,6 +14,8 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AuthenticatedAdminSitesRouteRouteImport } from './routes/_authenticated/admin/sites/route'
+import { Route as AuthenticatedAdminUsersRouteRouteImport } from './routes/_authenticated/admin/users/route'
 import { Route as AuthenticatedSitesIndexRouteImport } from './routes/_authenticated/sites/index'
 import { Route as AuthenticatedSitesSiteIdRouteRouteImport } from './routes/_authenticated/sites/$siteId/route'
 import { Route as AuthenticatedAdminSitesIndexRouteImport } from './routes/_authenticated/admin/sites/index'
@@ -21,7 +23,9 @@ import { Route as AuthenticatedAdminSitesNewRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminUsersIndexRouteImport } from './routes/_authenticated/admin/users/index'
 import { Route as AuthenticatedAdminUsersNewRouteImport } from './routes/_authenticated/admin/users/new'
 import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated/sites/$siteId/index'
+import { Route as AuthenticatedSitesSiteIdAppliancesRouteRouteImport } from './routes/_authenticated/sites/$siteId/appliances/route'
 import { Route as AuthenticatedSitesSiteIdDashboardRouteImport } from './routes/_authenticated/sites/$siteId/dashboard'
+import { Route as AuthenticatedSitesSiteIdDevicesRouteRouteImport } from './routes/_authenticated/sites/$siteId/devices/route'
 import { Route as AuthenticatedSitesSiteIdSavingsRouteImport } from './routes/_authenticated/sites/$siteId/savings'
 import { Route as AuthenticatedSitesSiteIdSettingsRouteImport } from './routes/_authenticated/sites/$siteId/settings'
 import { Route as AuthenticatedSitesSiteIdAppliancesIndexRouteImport } from './routes/_authenticated/sites/$siteId/appliances/index'
@@ -56,6 +60,18 @@ const PublicLoginRoute = PublicLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => PublicRoute,
 } as any)
+const AuthenticatedAdminSitesRouteRoute =
+  AuthenticatedAdminSitesRouteRouteImport.update({
+    id: '/sites',
+    path: '/sites',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminUsersRouteRoute =
+  AuthenticatedAdminUsersRouteRouteImport.update({
+    id: '/users',
+    path: '/users',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedSitesIndexRoute = AuthenticatedSitesIndexRouteImport.update({
   id: '/sites/',
   path: '/sites/',
@@ -69,27 +85,27 @@ const AuthenticatedSitesSiteIdRouteRoute =
   } as any)
 const AuthenticatedAdminSitesIndexRoute =
   AuthenticatedAdminSitesIndexRouteImport.update({
-    id: '/sites/',
-    path: '/sites/',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminSitesRouteRoute,
   } as any)
 const AuthenticatedAdminSitesNewRoute =
   AuthenticatedAdminSitesNewRouteImport.update({
-    id: '/sites/new',
-    path: '/sites/new',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminSitesRouteRoute,
   } as any)
 const AuthenticatedAdminUsersIndexRoute =
   AuthenticatedAdminUsersIndexRouteImport.update({
-    id: '/users/',
-    path: '/users/',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminUsersRouteRoute,
   } as any)
 const AuthenticatedAdminUsersNewRoute =
   AuthenticatedAdminUsersNewRouteImport.update({
-    id: '/users/new',
-    path: '/users/new',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminUsersRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdIndexRoute =
   AuthenticatedSitesSiteIdIndexRouteImport.update({
@@ -97,10 +113,22 @@ const AuthenticatedSitesSiteIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
   } as any)
+const AuthenticatedSitesSiteIdAppliancesRouteRoute =
+  AuthenticatedSitesSiteIdAppliancesRouteRouteImport.update({
+    id: '/appliances',
+    path: '/appliances',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
 const AuthenticatedSitesSiteIdDashboardRoute =
   AuthenticatedSitesSiteIdDashboardRouteImport.update({
     id: '/dashboard',
     path: '/dashboard',
+    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesRouteRoute =
+  AuthenticatedSitesSiteIdDevicesRouteRouteImport.update({
+    id: '/devices',
+    path: '/devices',
     getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdSavingsRoute =
@@ -117,59 +145,63 @@ const AuthenticatedSitesSiteIdSettingsRoute =
   } as any)
 const AuthenticatedSitesSiteIdAppliancesIndexRoute =
   AuthenticatedSitesSiteIdAppliancesIndexRouteImport.update({
-    id: '/appliances/',
-    path: '/appliances/',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSitesSiteIdAppliancesRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdAppliancesApplianceIdRoute =
   AuthenticatedSitesSiteIdAppliancesApplianceIdRouteImport.update({
-    id: '/appliances/$applianceId',
-    path: '/appliances/$applianceId',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/$applianceId',
+    path: '/$applianceId',
+    getParentRoute: () => AuthenticatedSitesSiteIdAppliancesRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdAppliancesNewRoute =
   AuthenticatedSitesSiteIdAppliancesNewRouteImport.update({
-    id: '/appliances/new',
-    path: '/appliances/new',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedSitesSiteIdAppliancesRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdDevicesIndexRoute =
   AuthenticatedSitesSiteIdDevicesIndexRouteImport.update({
-    id: '/devices/',
-    path: '/devices/',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute =
   AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRouteImport.update({
-    id: '/devices/battery/$deviceId',
-    path: '/devices/battery/$deviceId',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/battery/$deviceId',
+    path: '/battery/$deviceId',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdDevicesBatteryNewRoute =
   AuthenticatedSitesSiteIdDevicesBatteryNewRouteImport.update({
-    id: '/devices/battery/new',
-    path: '/devices/battery/new',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/battery/new',
+    path: '/battery/new',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute =
   AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport.update({
-    id: '/devices/pv/$deviceId',
-    path: '/devices/pv/$deviceId',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/pv/$deviceId',
+    path: '/pv/$deviceId',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
   } as any)
 const AuthenticatedSitesSiteIdDevicesPvNewRoute =
   AuthenticatedSitesSiteIdDevicesPvNewRouteImport.update({
-    id: '/devices/pv/new',
-    path: '/devices/pv/new',
-    getParentRoute: () => AuthenticatedSitesSiteIdRouteRoute,
+    id: '/pv/new',
+    path: '/pv/new',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
+  '/admin/sites': typeof AuthenticatedAdminSitesRouteRouteWithChildren
+  '/admin/users': typeof AuthenticatedAdminUsersRouteRouteWithChildren
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
   '/sites/': typeof AuthenticatedSitesIndexRoute
+  '/sites/$siteId/appliances': typeof AuthenticatedSitesSiteIdAppliancesRouteRouteWithChildren
+  '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRouteRouteWithChildren
   '/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
@@ -216,8 +248,12 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/admin/sites': typeof AuthenticatedAdminSitesRouteRouteWithChildren
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRouteRouteWithChildren
   '/_authenticated/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteRouteWithChildren
   '/_authenticated/sites/': typeof AuthenticatedSitesIndexRoute
+  '/_authenticated/sites/$siteId/appliances': typeof AuthenticatedSitesSiteIdAppliancesRouteRouteWithChildren
+  '/_authenticated/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesRouteRouteWithChildren
   '/_authenticated/admin/sites/new': typeof AuthenticatedAdminSitesNewRoute
   '/_authenticated/admin/users/new': typeof AuthenticatedAdminUsersNewRoute
   '/_authenticated/sites/$siteId/dashboard': typeof AuthenticatedSitesSiteIdDashboardRoute
@@ -241,8 +277,12 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/login'
+    | '/admin/sites'
+    | '/admin/users'
     | '/sites/$siteId'
     | '/sites/'
+    | '/sites/$siteId/appliances'
+    | '/sites/$siteId/devices'
     | '/admin/sites/new'
     | '/admin/users/new'
     | '/sites/$siteId/dashboard'
@@ -288,8 +328,12 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_public/login'
     | '/_authenticated/'
+    | '/_authenticated/admin/sites'
+    | '/_authenticated/admin/users'
     | '/_authenticated/sites/$siteId'
     | '/_authenticated/sites/'
+    | '/_authenticated/sites/$siteId/appliances'
+    | '/_authenticated/sites/$siteId/devices'
     | '/_authenticated/admin/sites/new'
     | '/_authenticated/admin/users/new'
     | '/_authenticated/sites/$siteId/dashboard'
@@ -350,6 +394,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicLoginRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_authenticated/admin/sites': {
+      id: '/_authenticated/admin/sites'
+      path: '/sites'
+      fullPath: '/admin/sites'
+      preLoaderRoute: typeof AuthenticatedAdminSitesRouteRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/sites/': {
       id: '/_authenticated/sites/'
       path: '/sites'
@@ -366,31 +424,31 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/sites/': {
       id: '/_authenticated/admin/sites/'
-      path: '/sites'
+      path: '/'
       fullPath: '/admin/sites/'
       preLoaderRoute: typeof AuthenticatedAdminSitesIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
+      parentRoute: typeof AuthenticatedAdminSitesRouteRoute
     }
     '/_authenticated/admin/sites/new': {
       id: '/_authenticated/admin/sites/new'
-      path: '/sites/new'
+      path: '/new'
       fullPath: '/admin/sites/new'
       preLoaderRoute: typeof AuthenticatedAdminSitesNewRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
+      parentRoute: typeof AuthenticatedAdminSitesRouteRoute
     }
     '/_authenticated/admin/users/': {
       id: '/_authenticated/admin/users/'
-      path: '/users'
+      path: '/'
       fullPath: '/admin/users/'
       preLoaderRoute: typeof AuthenticatedAdminUsersIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
+      parentRoute: typeof AuthenticatedAdminUsersRouteRoute
     }
     '/_authenticated/admin/users/new': {
       id: '/_authenticated/admin/users/new'
-      path: '/users/new'
+      path: '/new'
       fullPath: '/admin/users/new'
       preLoaderRoute: typeof AuthenticatedAdminUsersNewRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
+      parentRoute: typeof AuthenticatedAdminUsersRouteRoute
     }
     '/_authenticated/sites/$siteId/': {
       id: '/_authenticated/sites/$siteId/'
@@ -399,11 +457,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdIndexRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
     }
+    '/_authenticated/sites/$siteId/appliances': {
+      id: '/_authenticated/sites/$siteId/appliances'
+      path: '/appliances'
+      fullPath: '/sites/$siteId/appliances'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdAppliancesRouteRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
     '/_authenticated/sites/$siteId/dashboard': {
       id: '/_authenticated/sites/$siteId/dashboard'
       path: '/dashboard'
       fullPath: '/sites/$siteId/dashboard'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDashboardRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices': {
+      id: '/_authenticated/sites/$siteId/devices'
+      path: '/devices'
+      fullPath: '/sites/$siteId/devices'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
     }
     '/_authenticated/sites/$siteId/savings': {
@@ -422,76 +494,106 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/sites/$siteId/appliances/': {
       id: '/_authenticated/sites/$siteId/appliances/'
-      path: '/appliances'
+      path: '/'
       fullPath: '/sites/$siteId/appliances/'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdAppliancesIndexRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdAppliancesRouteRoute
     }
     '/_authenticated/sites/$siteId/appliances/$applianceId': {
       id: '/_authenticated/sites/$siteId/appliances/$applianceId'
-      path: '/appliances/$applianceId'
+      path: '/$applianceId'
       fullPath: '/sites/$siteId/appliances/$applianceId'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdAppliancesApplianceIdRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdAppliancesRouteRoute
     }
     '/_authenticated/sites/$siteId/appliances/new': {
       id: '/_authenticated/sites/$siteId/appliances/new'
-      path: '/appliances/new'
+      path: '/new'
       fullPath: '/sites/$siteId/appliances/new'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdAppliancesNewRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdAppliancesRouteRoute
     }
     '/_authenticated/sites/$siteId/devices/': {
       id: '/_authenticated/sites/$siteId/devices/'
-      path: '/devices'
+      path: '/'
       fullPath: '/sites/$siteId/devices/'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesIndexRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
     }
     '/_authenticated/sites/$siteId/devices/battery/$deviceId': {
       id: '/_authenticated/sites/$siteId/devices/battery/$deviceId'
-      path: '/devices/battery/$deviceId'
+      path: '/battery/$deviceId'
       fullPath: '/sites/$siteId/devices/battery/$deviceId'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
     }
     '/_authenticated/sites/$siteId/devices/battery/new': {
       id: '/_authenticated/sites/$siteId/devices/battery/new'
-      path: '/devices/battery/new'
+      path: '/battery/new'
       fullPath: '/sites/$siteId/devices/battery/new'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryNewRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
     }
     '/_authenticated/sites/$siteId/devices/pv/$deviceId': {
       id: '/_authenticated/sites/$siteId/devices/pv/$deviceId'
-      path: '/devices/pv/$deviceId'
+      path: '/pv/$deviceId'
       fullPath: '/sites/$siteId/devices/pv/$deviceId'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
     }
     '/_authenticated/sites/$siteId/devices/pv/new': {
       id: '/_authenticated/sites/$siteId/devices/pv/new'
-      path: '/devices/pv/new'
+      path: '/pv/new'
       fullPath: '/sites/$siteId/devices/pv/new'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesPvNewRouteImport
-      parentRoute: typeof AuthenticatedSitesSiteIdRouteRoute
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
     }
   }
 }
 
-interface AuthenticatedAdminRouteRouteChildren {
+interface AuthenticatedAdminSitesRouteRouteChildren {
   AuthenticatedAdminSitesNewRoute: typeof AuthenticatedAdminSitesNewRoute
-  AuthenticatedAdminUsersNewRoute: typeof AuthenticatedAdminUsersNewRoute
   AuthenticatedAdminSitesIndexRoute: typeof AuthenticatedAdminSitesIndexRoute
+}
+
+const AuthenticatedAdminSitesRouteRouteChildren: AuthenticatedAdminSitesRouteRouteChildren =
+  {
+    AuthenticatedAdminSitesNewRoute: AuthenticatedAdminSitesNewRoute,
+    AuthenticatedAdminSitesIndexRoute: AuthenticatedAdminSitesIndexRoute,
+  }
+
+const AuthenticatedAdminSitesRouteRouteWithChildren =
+  AuthenticatedAdminSitesRouteRoute._addFileChildren(
+    AuthenticatedAdminSitesRouteRouteChildren,
+  )
+
+interface AuthenticatedAdminUsersRouteRouteChildren {
+  AuthenticatedAdminUsersNewRoute: typeof AuthenticatedAdminUsersNewRoute
   AuthenticatedAdminUsersIndexRoute: typeof AuthenticatedAdminUsersIndexRoute
+}
+
+const AuthenticatedAdminUsersRouteRouteChildren: AuthenticatedAdminUsersRouteRouteChildren =
+  {
+    AuthenticatedAdminUsersNewRoute: AuthenticatedAdminUsersNewRoute,
+    AuthenticatedAdminUsersIndexRoute: AuthenticatedAdminUsersIndexRoute,
+  }
+
+const AuthenticatedAdminUsersRouteRouteWithChildren =
+  AuthenticatedAdminUsersRouteRoute._addFileChildren(
+    AuthenticatedAdminUsersRouteRouteChildren,
+  )
+
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminSitesRouteRoute: typeof AuthenticatedAdminSitesRouteRouteWithChildren
+  AuthenticatedAdminUsersRouteRoute: typeof AuthenticatedAdminUsersRouteRouteWithChildren
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
-    AuthenticatedAdminSitesNewRoute: AuthenticatedAdminSitesNewRoute,
-    AuthenticatedAdminUsersNewRoute: AuthenticatedAdminUsersNewRoute,
-    AuthenticatedAdminSitesIndexRoute: AuthenticatedAdminSitesIndexRoute,
-    AuthenticatedAdminUsersIndexRoute: AuthenticatedAdminUsersIndexRoute,
+    AuthenticatedAdminSitesRouteRoute:
+      AuthenticatedAdminSitesRouteRouteWithChildren,
+    AuthenticatedAdminUsersRouteRoute:
+      AuthenticatedAdminUsersRouteRouteWithChildren,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =
@@ -499,14 +601,28 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
-interface AuthenticatedSitesSiteIdRouteRouteChildren {
-  AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
-  AuthenticatedSitesSiteIdSavingsRoute: typeof AuthenticatedSitesSiteIdSavingsRoute
-  AuthenticatedSitesSiteIdSettingsRoute: typeof AuthenticatedSitesSiteIdSettingsRoute
-  AuthenticatedSitesSiteIdIndexRoute: typeof AuthenticatedSitesSiteIdIndexRoute
+interface AuthenticatedSitesSiteIdAppliancesRouteRouteChildren {
   AuthenticatedSitesSiteIdAppliancesApplianceIdRoute: typeof AuthenticatedSitesSiteIdAppliancesApplianceIdRoute
   AuthenticatedSitesSiteIdAppliancesNewRoute: typeof AuthenticatedSitesSiteIdAppliancesNewRoute
   AuthenticatedSitesSiteIdAppliancesIndexRoute: typeof AuthenticatedSitesSiteIdAppliancesIndexRoute
+}
+
+const AuthenticatedSitesSiteIdAppliancesRouteRouteChildren: AuthenticatedSitesSiteIdAppliancesRouteRouteChildren =
+  {
+    AuthenticatedSitesSiteIdAppliancesApplianceIdRoute:
+      AuthenticatedSitesSiteIdAppliancesApplianceIdRoute,
+    AuthenticatedSitesSiteIdAppliancesNewRoute:
+      AuthenticatedSitesSiteIdAppliancesNewRoute,
+    AuthenticatedSitesSiteIdAppliancesIndexRoute:
+      AuthenticatedSitesSiteIdAppliancesIndexRoute,
+  }
+
+const AuthenticatedSitesSiteIdAppliancesRouteRouteWithChildren =
+  AuthenticatedSitesSiteIdAppliancesRouteRoute._addFileChildren(
+    AuthenticatedSitesSiteIdAppliancesRouteRouteChildren,
+  )
+
+interface AuthenticatedSitesSiteIdDevicesRouteRouteChildren {
   AuthenticatedSitesSiteIdDevicesIndexRoute: typeof AuthenticatedSitesSiteIdDevicesIndexRoute
   AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
   AuthenticatedSitesSiteIdDevicesBatteryNewRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
@@ -514,20 +630,8 @@ interface AuthenticatedSitesSiteIdRouteRouteChildren {
   AuthenticatedSitesSiteIdDevicesPvNewRoute: typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
 
-const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteRouteChildren =
+const AuthenticatedSitesSiteIdDevicesRouteRouteChildren: AuthenticatedSitesSiteIdDevicesRouteRouteChildren =
   {
-    AuthenticatedSitesSiteIdDashboardRoute:
-      AuthenticatedSitesSiteIdDashboardRoute,
-    AuthenticatedSitesSiteIdSavingsRoute: AuthenticatedSitesSiteIdSavingsRoute,
-    AuthenticatedSitesSiteIdSettingsRoute:
-      AuthenticatedSitesSiteIdSettingsRoute,
-    AuthenticatedSitesSiteIdIndexRoute: AuthenticatedSitesSiteIdIndexRoute,
-    AuthenticatedSitesSiteIdAppliancesApplianceIdRoute:
-      AuthenticatedSitesSiteIdAppliancesApplianceIdRoute,
-    AuthenticatedSitesSiteIdAppliancesNewRoute:
-      AuthenticatedSitesSiteIdAppliancesNewRoute,
-    AuthenticatedSitesSiteIdAppliancesIndexRoute:
-      AuthenticatedSitesSiteIdAppliancesIndexRoute,
     AuthenticatedSitesSiteIdDevicesIndexRoute:
       AuthenticatedSitesSiteIdDevicesIndexRoute,
     AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute:
@@ -538,6 +642,34 @@ const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteR
       AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute,
     AuthenticatedSitesSiteIdDevicesPvNewRoute:
       AuthenticatedSitesSiteIdDevicesPvNewRoute,
+  }
+
+const AuthenticatedSitesSiteIdDevicesRouteRouteWithChildren =
+  AuthenticatedSitesSiteIdDevicesRouteRoute._addFileChildren(
+    AuthenticatedSitesSiteIdDevicesRouteRouteChildren,
+  )
+
+interface AuthenticatedSitesSiteIdRouteRouteChildren {
+  AuthenticatedSitesSiteIdAppliancesRouteRoute: typeof AuthenticatedSitesSiteIdAppliancesRouteRouteWithChildren
+  AuthenticatedSitesSiteIdDevicesRouteRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRouteWithChildren
+  AuthenticatedSitesSiteIdDashboardRoute: typeof AuthenticatedSitesSiteIdDashboardRoute
+  AuthenticatedSitesSiteIdSavingsRoute: typeof AuthenticatedSitesSiteIdSavingsRoute
+  AuthenticatedSitesSiteIdSettingsRoute: typeof AuthenticatedSitesSiteIdSettingsRoute
+  AuthenticatedSitesSiteIdIndexRoute: typeof AuthenticatedSitesSiteIdIndexRoute
+}
+
+const AuthenticatedSitesSiteIdRouteRouteChildren: AuthenticatedSitesSiteIdRouteRouteChildren =
+  {
+    AuthenticatedSitesSiteIdAppliancesRouteRoute:
+      AuthenticatedSitesSiteIdAppliancesRouteRouteWithChildren,
+    AuthenticatedSitesSiteIdDevicesRouteRoute:
+      AuthenticatedSitesSiteIdDevicesRouteRouteWithChildren,
+    AuthenticatedSitesSiteIdDashboardRoute:
+      AuthenticatedSitesSiteIdDashboardRoute,
+    AuthenticatedSitesSiteIdSavingsRoute: AuthenticatedSitesSiteIdSavingsRoute,
+    AuthenticatedSitesSiteIdSettingsRoute:
+      AuthenticatedSitesSiteIdSettingsRoute,
+    AuthenticatedSitesSiteIdIndexRoute: AuthenticatedSitesSiteIdIndexRoute,
   }
 
 const AuthenticatedSitesSiteIdRouteRouteWithChildren =
