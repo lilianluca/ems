@@ -78,6 +78,9 @@ export const cs = {
     window_bounds_equal: 'Začátek a konec okna se musí lišit.',
     window_required: 'Přidejte alespoň jedno časové okno.',
     lighting_power_max: 'Zadejte nejvýše 10 000 W.',
+    temperature_invalid: 'Zadejte platnou teplotu.',
+    heating_temperatures_range: 'Vnitřní teplota musí být vyšší než výpočtová venkovní.',
+    cop_invalid: 'Zadejte kladné číslo z technického listu.',
     uses_invalid: 'Zadejte alespoň jedno spuštění.',
     state_of_charge_range: 'Maximální nabití musí být vyšší než minimální.',
   },
@@ -246,14 +249,26 @@ export const cs = {
   devices: {
     add_pv: 'Přidat FVE',
     add_battery: 'Přidat baterii',
+    add_heat_pump: 'Přidat čerpadlo',
     empty: 'Pro tuto lokalitu zatím nejsou zadaná žádná zařízení.',
 
     type_pv: 'Fotovoltaika',
     type_battery: 'Baterie',
+    type_heat_pump: 'Tepelné čerpadlo',
 
     name: 'Název',
     pv_name_placeholder: 'Střecha jih',
     battery_name_placeholder: 'Domácí baterie',
+    heat_pump_name_placeholder: 'Tepelné čerpadlo obývák',
+
+    cop_at_minus_7: 'COP při −7 °C',
+    cop_at_2: 'COP při 2 °C',
+    cop_at_7: 'COP při 7 °C',
+    cop_at_12: 'COP při 12 °C',
+    max_heat_power: 'Max. tepelný výkon',
+    hint_cop:
+      'Z technického listu: řádky „Tj = −7 °C“ až „Tj = 12 °C“, hodnota COPd pro průměrné klima.',
+    hint_max_heat_power: 'Z technického listu: řádek „Tj = operating limit“, hodnota Pdh.',
 
     installed_power: 'Výkon panelů',
     inverter_power: 'Výkon střídače',
@@ -293,6 +308,10 @@ export const cs = {
     battery_create_title: 'Nová baterie',
     battery_edit_title: 'Úprava baterie',
     battery_description: 'Kapacita je v kWh, výkony v kW.',
+    heat_pump_create_title: 'Nové tepelné čerpadlo',
+    heat_pump_edit_title: 'Úprava tepelného čerpadla',
+    heat_pump_description:
+      'Čerpadlo vzduch-vzduch, často prodávané jako klimatizace s funkcí topení. Do predikce spotřeby se započítá jen první čerpadlo lokality a tepelná ztráta nastavená v kartě Dům na stránce Nastavení.',
 
     edit: 'Upravit',
     delete: 'Smazat',
@@ -380,6 +399,12 @@ export const cs = {
     house_saved: 'Nastavení domu bylo uloženo. Predikce spotřeby je přepočítaná.',
     lighting_power: 'Výkon osvětlení (W)',
     lighting_power_hint: 'Součet příkonů světel, která večer obvykle svítí zároveň.',
+    heating_title: 'Vytápění tepelným čerpadlem',
+    heating_hint:
+      'Tepelnou ztrátu uvádí výpočet od projektanta nebo topenáře. Zadejte jen část domu, kterou čerpadlo vytápí. Nula znamená, že se čerpadlo nepočítá. Samotné čerpadlo přidáte na stránce Zařízení.',
+    heat_loss: 'Tepelná ztráta (kW)',
+    design_outdoor_temp: 'Výpočtová venkovní teplota (°C)',
+    indoor_temp: 'Vnitřní teplota (°C)',
     occupancy: 'Kdy je někdo doma',
     occupancy_hint:
       'Hodiny, kdy je někdo doma a vzhůru, stejné pro všechny dny. Okno může přecházet přes půlnoc, například 22 až 1.',

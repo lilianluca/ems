@@ -78,6 +78,9 @@ export const en = {
     window_bounds_equal: 'The start and end of the window must differ.',
     window_required: 'Add at least one time window.',
     lighting_power_max: 'Enter at most 10,000 W.',
+    temperature_invalid: 'Enter a valid temperature.',
+    heating_temperatures_range: 'The indoor temperature must be above the design outdoor one.',
+    cop_invalid: 'Enter a positive number from the datasheet.',
     uses_invalid: 'Enter at least one run.',
     state_of_charge_range: 'Maximum charge must be higher than minimum charge.',
   },
@@ -249,14 +252,26 @@ export const en = {
   devices: {
     add_pv: 'Add PV array',
     add_battery: 'Add battery',
+    add_heat_pump: 'Add heat pump',
     empty: 'No devices configured for this site yet.',
 
     type_pv: 'Photovoltaics',
     type_battery: 'Battery',
+    type_heat_pump: 'Heat pump',
 
     name: 'Name',
     pv_name_placeholder: 'South roof',
     battery_name_placeholder: 'Home battery',
+    heat_pump_name_placeholder: 'Living room heat pump',
+
+    cop_at_minus_7: 'COP at −7 °C',
+    cop_at_2: 'COP at 2 °C',
+    cop_at_7: 'COP at 7 °C',
+    cop_at_12: 'COP at 12 °C',
+    max_heat_power: 'Max. heat output',
+    hint_cop:
+      'From the datasheet: rows "Tj = −7 °C" to "Tj = 12 °C", COPd value for average climate.',
+    hint_max_heat_power: 'From the datasheet: row "Tj = operating limit", Pdh value.',
 
     installed_power: 'Panel power',
     inverter_power: 'Inverter power',
@@ -296,6 +311,10 @@ export const en = {
     battery_create_title: 'New battery',
     battery_edit_title: 'Edit battery',
     battery_description: 'Capacity is in kWh, power limits are in kW.',
+    heat_pump_create_title: 'New heat pump',
+    heat_pump_edit_title: 'Edit heat pump',
+    heat_pump_description:
+      "An air-to-air heat pump, often sold as an air conditioner that can heat. The consumption forecast counts only the site's first pump, with the heat loss set in the House card on the Settings page.",
 
     edit: 'Edit',
     delete: 'Delete',
@@ -385,6 +404,12 @@ export const en = {
     lighting_power: 'Lighting power (W)',
     lighting_power_hint:
       'The total power of the lights that are usually on together in the evening.',
+    heating_title: 'Heating by heat pump',
+    heating_hint:
+      'The heat loss comes from a calculation by a designer or heating engineer. Enter only the part of the house the pump heats. Zero leaves the pump out. Add the pump itself on the Devices page.',
+    heat_loss: 'Heat loss (kW)',
+    design_outdoor_temp: 'Design outdoor temperature (°C)',
+    indoor_temp: 'Indoor temperature (°C)',
     occupancy: 'When someone is home',
     occupancy_hint:
       'Hours when someone is home and awake, the same every day. A window may wrap past midnight, for example 22 to 1.',

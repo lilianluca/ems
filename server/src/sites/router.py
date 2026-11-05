@@ -53,6 +53,9 @@ async def update_site(
         saving_mode=payload.saving_mode,
         lighting_power_w=payload.lighting_power_w,
         occupancy_windows=payload.occupancy_windows,
+        heat_loss_kw=payload.heat_loss_kw,
+        design_outdoor_temp_c=payload.design_outdoor_temp_c,
+        indoor_temp_c=payload.indoor_temp_c,
     )
 
 

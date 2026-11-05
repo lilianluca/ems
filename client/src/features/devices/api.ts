@@ -4,13 +4,16 @@ import { api } from '@/api/client';
 import { AppError } from '@/api/errors';
 import type { components } from '@/api/schema';
 import { forecastKeys } from '@/features/forecasts/api';
+import { optimizationKeys } from '@/features/optimization/api';
 
 export type PVDevice = components['schemas']['PVDeviceRead'];
 export type BatteryDevice = components['schemas']['BatteryDeviceRead'];
-export type Device = PVDevice | BatteryDevice;
+export type HeatPumpDevice = components['schemas']['HeatPumpDeviceRead'];
+export type Device = PVDevice | BatteryDevice | HeatPumpDevice;
 
 export type PVDeviceInput = components['schemas']['PVDeviceCreate'];
 export type BatteryDeviceInput = components['schemas']['BatteryDeviceCreate'];
+export type HeatPumpDeviceInput = components['schemas']['HeatPumpDeviceCreate'];
 
 export type BatteryState = components['schemas']['BatteryStateRead'];
 export type BatteryHealth = components['schemas']['BatteryHealthRead'];
@@ -68,6 +71,14 @@ export function useBatteryDevice(siteId: number, deviceId: number) {
   return { data: device, isPending: query.isPending, isError: query.isError };
 }
 
+export function useHeatPumpDevice(siteId: number, deviceId: number) {
+  const query = useDevices(siteId);
+  const device = query.data?.find(
+    (item): item is HeatPumpDevice => item.id === deviceId && item.type === 'heat_pump',
+  );
+  return { data: device, isPending: query.isPending, isError: query.isError };
+}
+
 /**
  * A new state lands at most once a step, so polling every minute shows it soon
  * after it is recorded at a load not worth worrying about.
@@ -117,7 +128,8 @@ export function useBatteryHealth(siteId: number, deviceId: number) {
 /**
  * Device parameters feed the PV simulation, so a change invalidates the stored
  * forecast as well — it was computed from the values that just changed. The
- * battery state goes too, because its percentage is taken of the capacity.
+ * battery state goes too, because its percentage is taken of the capacity, and
+ * so does the plan, because a heat pump changes the consumption it is made from.
  */
 function useDeviceInvalidation(siteId: number) {
   const queryClient = useQueryClient();
@@ -125,6 +137,7 @@ function useDeviceInvalidation(siteId: number) {
     void queryClient.invalidateQueries({ queryKey: deviceKeys.list(siteId) });
     void queryClient.invalidateQueries({ queryKey: deviceKeys.batteryStates(siteId) });
     void queryClient.invalidateQueries({ queryKey: forecastKeys.site(siteId) });
+    void queryClient.invalidateQueries({ queryKey: optimizationKeys.site(siteId) });
   };
 }
 
@@ -183,6 +196,38 @@ export function useUpdateBatteryDevice(siteId: number, deviceId: number) {
     mutationFn: async (input: BatteryDeviceInput) => {
       const { data, error, response } = await api.PATCH(
         '/api/v1/sites/{site_id}/devices/battery/{device_id}',
+        { params: { path: { site_id: siteId, device_id: deviceId } }, body: input },
+      );
+      if (error) throw new AppError(response.status, error);
+      return data;
+    },
+    onSuccess: invalidate,
+  });
+}
+
+export function useCreateHeatPumpDevice(siteId: number) {
+  const invalidate = useDeviceInvalidation(siteId);
+
+  return useMutation({
+    mutationFn: async (input: HeatPumpDeviceInput) => {
+      const { data, error, response } = await api.POST(
+        '/api/v1/sites/{site_id}/devices/heat-pump',
+        { params: { path: { site_id: siteId } }, body: input },
+      );
+      if (error) throw new AppError(response.status, error);
+      return data;
+    },
+    onSuccess: invalidate,
+  });
+}
+
+export function useUpdateHeatPumpDevice(siteId: number, deviceId: number) {
+  const invalidate = useDeviceInvalidation(siteId);
+
+  return useMutation({
+    mutationFn: async (input: HeatPumpDeviceInput) => {
+      const { data, error, response } = await api.PATCH(
+        '/api/v1/sites/{site_id}/devices/heat-pump/{device_id}',
         { params: { path: { site_id: siteId, device_id: deviceId } }, body: input },
       );
       if (error) throw new AppError(response.status, error);

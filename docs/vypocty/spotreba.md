@@ -188,8 +188,13 @@ stejnou hodnotu, protože všechny parametry modelu jsou po hodinách.
 
 K součtu se přičte [osvětlení](osvetleni.md) domu. Do neomezené spotřeby vždy,
 do omezené jen v režimech, které svícení nechávají, tedy ve všech kromě
-extrémního. Osvětlení jako jediné mění hodnotu i uvnitř hodiny, protože se řídí
-soumrakem.
+extrémního. Osvětlení mění hodnotu i uvnitř hodiny, protože se řídí soumrakem.
+
+### Krok 4: tepelné čerpadlo
+
+K součtu se přičte elektřina na vytápění [tepelným čerpadlem](tepelne-cerpadlo.md).
+Do obou řad, protože ho žádný režim úspor nevypíná. Mění se s předpovědí venkovní
+teploty, tedy také po čtvrthodinách.
 
 ## Příklad: domácnost se čtyřmi spotřebiči
 
@@ -216,7 +221,8 @@ táhne bojler, večer myčka, přes den skoro nic.
 ## Kdy se predikce počítá
 
 - **Každou hodinu v :15** pro všechny lokality.
-- **Hned po změně režimu úspor**, nastavení domu nebo souřadnic lokality.
+- **Hned po změně režimu úspor**, nastavení domu, tepelného čerpadla nebo souřadnic
+  lokality.
 - **Ručně** tlačítkem pro přepočet predikcí.
 
 Pokaždé se spočítá 48 hodin od aktuální čtvrthodiny a přepíše předchozí hodnoty
@@ -233,20 +239,21 @@ pro tytéž čtvrthodiny. Ukládá se do tabulky `load_forecast`, sloupce `load_
 | Součet za lokalitu                      | `generate_load_forecast` tamtéž                                                                                  |
 | Výběr podle režimu úspor                | `appliances_running_in` tamtéž                                                                                   |
 | Osvětlení                               | `generate_lighting_forecast` v [appliances/lighting.py](../../server/src/appliances/lighting.py)                 |
+| Tepelné čerpadlo                        | `generate_heat_pump_forecast` v [appliances/heat_pump.py](../../server/src/appliances/heat_pump.py)              |
 | Výpočet a uložení                       | `ApplianceService.generate_and_store_forecast` v [appliances/service.py](../../server/src/appliances/service.py) |
 | Pravidelné spouštění                    | `forecast-load` v [core/celery_app.py](../../server/src/core/celery_app.py)                                      |
 | Parametry chování                       | [appliances/schemas.py](../../server/src/appliances/schemas.py)                                                  |
 
 Výpočet příkonu spotřebičů zatím nemá vlastní testy. Testovaný je výběr
-spotřebičů podle režimu úspor a osvětlení.
+spotřebičů podle režimu úspor, osvětlení a tepelné čerpadlo.
 
 ## Předpoklady a omezení
 
 - **Spotřeba je jen tak dobrá, jak dobře jsou zadané spotřebiče.** Co uživatel
   nezadá, v predikci není. Typicky drobné spotřebiče, které nikdo nepočítá.
 - **Spotřebiče neznají roční období ani počasí.** Spotřebič odebírá v lednu
-  stejně jako v červenci. Roční období zná jen [osvětlení](osvetleni.md); topení
-  zatím chybí úplně.
+  stejně jako v červenci. Roční období znají jen [osvětlení](osvetleni.md) a
+  [tepelné čerpadlo](tepelne-cerpadlo.md).
 - **Víkend ovlivňuje jen cyklické spotřebiče**, a to jen tím, že mají jiné hodiny
   špiček. Plánované spotřebiče a spotřebiče na vyžádání mají stejná okna každý
   den.

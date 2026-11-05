@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.devices.models import BatteryDevice, Device, PVDevice
+from src.devices.models import BatteryDevice, Device, HeatPumpDevice, PVDevice
 
 
 class DeviceRepository:
@@ -77,6 +77,45 @@ class DeviceRepository:
             max_state_of_charge=max_state_of_charge,
             round_trip_efficiency=round_trip_efficiency,
             cycle_life=cycle_life,
+        )
+        self.db.add(device)
+        await self.db.flush()
+        return device
+
+    async def get_heat_pump_device_by_id(self, device_id: int) -> HeatPumpDevice | None:
+        """Retrieve a heat pump device by its ID."""
+        result = await self.db.execute(select(HeatPumpDevice).where(HeatPumpDevice.id == device_id))
+        return result.scalar_one_or_none()
+
+    async def get_first_heat_pump_for_site(self, site_id: int) -> HeatPumpDevice | None:
+        """Retrieve the heat pump a site's forecast counts: one, like its battery."""
+        result = await self.db.execute(
+            select(HeatPumpDevice)
+            .where(HeatPumpDevice.site_id == site_id)
+            .order_by(HeatPumpDevice.id)
+            .limit(1)
+        )
+        return result.scalar_one_or_none()
+
+    async def create_heat_pump_device(
+        self,
+        site_id: int,
+        name: str,
+        cop_at_minus_7c: float,
+        cop_at_2c: float,
+        cop_at_7c: float,
+        cop_at_12c: float,
+        max_heat_power_kw: float,
+    ) -> HeatPumpDevice:
+        """Create a new heat pump device."""
+        device = HeatPumpDevice(
+            site_id=site_id,
+            name=name,
+            cop_at_minus_7c=cop_at_minus_7c,
+            cop_at_2c=cop_at_2c,
+            cop_at_7c=cop_at_7c,
+            cop_at_12c=cop_at_12c,
+            max_heat_power_kw=max_heat_power_kw,
         )
         self.db.add(device)
         await self.db.flush()

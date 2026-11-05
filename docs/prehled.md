@@ -15,7 +15,8 @@ Pojmy, které se v dokumentaci opakují, jsou vysvětlené ve
 
 1. **Zjistí, co ho čeká.** Stáhne předpověď počasí a ceny elektřiny na dnešek a
    zítřek. Z počasí spočítá, kolik vyrobí fotovoltaika. Ze seznamu spotřebičů
-   a z toho, kdy je doma a kdy je tma, odhadne, kolik domácnost spotřebuje.
+   a z toho, kdy je doma, kdy je tma a jak je venku chladno, odhadne, kolik
+   domácnost spotřebuje.
 2. **Naplánuje baterii.** Pro každou čtvrthodinu rozhodne, jestli má baterie
    nabíjet, vybíjet, nebo stát.
 3. **Plán provede a vyúčtuje.** Každou čtvrthodinu vezme první krok plánu,
@@ -69,7 +70,8 @@ flowchart TD
     subgraph nastaveni["Nastavení lokality"]
         fve["Fotovoltaika<br/>výkon, sklon, orientace"]
         spotrebice["Spotřebiče<br/>příkon, kdy běží"]
-        dum["Dům<br/>osvětlení, kdy je doma"]
+        dum["Dům<br/>osvětlení, kdy je doma, tepelná ztráta"]
+        cerpadlo["Tepelné čerpadlo<br/>topný faktor, výkon"]
         baterie["Baterie<br/>kapacita, výkony, účinnost"]
     end
 
@@ -77,6 +79,8 @@ flowchart TD
     fve --> vyroba
     spotrebice --> spotreba["Predikce spotřeby"]
     dum --> spotreba
+    cerpadlo --> spotreba
+    meteo --> spotreba
     ote --> ceny["Nákupní a prodejní cena"]
 
     vyroba --> plan["Plán baterie"]
@@ -123,19 +127,20 @@ dnešek a zítřek, takže zmeškaný den už zpětně získat nejde.
 Dokumenty ve složce `vypocty/` jdou za sebou ve stejném pořadí, v jakém data
 tečou systémem.
 
-| Výpočet                          | Dokument                                         | Kód                                                                                |
-| -------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| Nákupní a prodejní cena ze spotu | [ceny.md](vypocty/ceny.md)                       | [optimization/service.py](../server/src/optimization/service.py)                   |
-| Predikce výroby fotovoltaiky     | [fve-vyroba.md](vypocty/fve-vyroba.md)           | [simulation/pv_model.py](../server/src/simulation/pv_model.py)                     |
-| Predikce spotřeby                | [spotreba.md](vypocty/spotreba.md)               | [appliances/forecast.py](../server/src/appliances/forecast.py)                     |
-| Osvětlení                        | [osvetleni.md](vypocty/osvetleni.md)             | [appliances/lighting.py](../server/src/appliances/lighting.py)                     |
-| Režim úspor                      | [rezim-uspor.md](vypocty/rezim-uspor.md)         | [sites/enums.py](../server/src/sites/enums.py)                                     |
-| Model baterie                    | [model-baterie.md](vypocty/model-baterie.md)     | [simulation/battery_model.py](../server/src/simulation/battery_model.py)           |
-| Plán podle pravidel              | [plan-rule-based.md](vypocty/plan-rule-based.md) | [optimization/rule_based.py](../server/src/optimization/rule_based.py)             |
-| Plán optimalizací                | [plan-lp.md](vypocty/plan-lp.md)                 | [optimization/model.py](../server/src/optimization/model.py)                       |
-| Simulace baterie                 | [simulace.md](vypocty/simulace.md)               | [simulation/battery_simulation.py](../server/src/simulation/battery_simulation.py) |
-| Bilance a úspory                 | [uspory.md](vypocty/uspory.md)                   | [savings/balance.py](../server/src/savings/balance.py)                             |
-| Zdraví baterie                   | [zdravi-baterie.md](vypocty/zdravi-baterie.md)   | [devices/battery_health.py](../server/src/devices/battery_health.py)               |
+| Výpočet                          | Dokument                                           | Kód                                                                                |
+| -------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Nákupní a prodejní cena ze spotu | [ceny.md](vypocty/ceny.md)                         | [optimization/service.py](../server/src/optimization/service.py)                   |
+| Predikce výroby fotovoltaiky     | [fve-vyroba.md](vypocty/fve-vyroba.md)             | [simulation/pv_model.py](../server/src/simulation/pv_model.py)                     |
+| Predikce spotřeby                | [spotreba.md](vypocty/spotreba.md)                 | [appliances/forecast.py](../server/src/appliances/forecast.py)                     |
+| Osvětlení                        | [osvetleni.md](vypocty/osvetleni.md)               | [appliances/lighting.py](../server/src/appliances/lighting.py)                     |
+| Tepelné čerpadlo                 | [tepelne-cerpadlo.md](vypocty/tepelne-cerpadlo.md) | [appliances/heat_pump.py](../server/src/appliances/heat_pump.py)                   |
+| Režim úspor                      | [rezim-uspor.md](vypocty/rezim-uspor.md)           | [sites/enums.py](../server/src/sites/enums.py)                                     |
+| Model baterie                    | [model-baterie.md](vypocty/model-baterie.md)       | [simulation/battery_model.py](../server/src/simulation/battery_model.py)           |
+| Plán podle pravidel              | [plan-rule-based.md](vypocty/plan-rule-based.md)   | [optimization/rule_based.py](../server/src/optimization/rule_based.py)             |
+| Plán optimalizací                | [plan-lp.md](vypocty/plan-lp.md)                   | [optimization/model.py](../server/src/optimization/model.py)                       |
+| Simulace baterie                 | [simulace.md](vypocty/simulace.md)                 | [simulation/battery_simulation.py](../server/src/simulation/battery_simulation.py) |
+| Bilance a úspory                 | [uspory.md](vypocty/uspory.md)                     | [savings/balance.py](../server/src/savings/balance.py)                             |
+| Zdraví baterie                   | [zdravi-baterie.md](vypocty/zdravi-baterie.md)     | [devices/battery_health.py](../server/src/devices/battery_health.py)               |
 
 Dva z nich zatím nejsou napsané a obsahují jen poznámku TODO: predikce výroby a
 plán optimalizací. U nich platí kód a jeho komentáře.
@@ -208,6 +213,8 @@ Tato omezení ovlivňují, jak číst všechna čísla v aplikaci:
   by baterie ušetřila, kdyby predikce vyšly přesně.
 - **Baterie je simulovaná.** Systém nepřipojuje žádný střídač. Stav nabití se
   počítá z plánu, ne čte ze zařízení.
+- **Tepelné čerpadlo plán neřídí.** Systém předpovídá jeho spotřebu, ale neumí
+  dům vytopit do zásoby, když je elektřina levná.
 - **Jedna baterie na lokalitu.** Má-li lokalita víc baterií, plánuje se jen
   první.
 - **Poplatky jsou nastavené pro celý systém**, ne pro každou lokalitu zvlášť.

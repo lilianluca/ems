@@ -256,6 +256,46 @@ export interface paths {
         patch: operations["devices-update_battery_device-patch"];
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/devices/heat-pump": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Heat Pump Device
+         * @description Create a new heat pump device for a specific site.
+         */
+        post: operations["devices-create_heat_pump_device-post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/{site_id}/devices/heat-pump/{device_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Heat Pump Device
+         * @description Update an existing heat pump device for a specific site.
+         */
+        patch: operations["devices-update_heat_pump_device-patch"];
+        trace?: never;
+    };
     "/api/v1/sites/{site_id}/devices/battery/{device_id}/state": {
         parameters: {
             query?: never;
@@ -1031,6 +1071,74 @@ export interface components {
             detail?: components["schemas"]["ValidationError"][];
         };
         /**
+         * HeatPumpDeviceCreate
+         * @description Heat pump device creation schema.
+         */
+        HeatPumpDeviceCreate: {
+            /** Name */
+            name: string;
+            /** Copatminus7C */
+            copAtMinus7C: number;
+            /** Copat2C */
+            copAt2C: number;
+            /** Copat7C */
+            copAt7C: number;
+            /** Copat12C */
+            copAt12C: number;
+            /** Maxheatpowerkw */
+            maxHeatPowerKw: number;
+        };
+        /**
+         * HeatPumpDeviceRead
+         * @description Heat pump device read schema.
+         */
+        HeatPumpDeviceRead: {
+            /** Id */
+            id: number;
+            /** Siteid */
+            siteId: number;
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "heat_pump";
+            /** Copatminus7C */
+            copAtMinus7C: number;
+            /** Copat2C */
+            copAt2C: number;
+            /** Copat7C */
+            copAt7C: number;
+            /** Copat12C */
+            copAt12C: number;
+            /** Maxheatpowerkw */
+            maxHeatPowerKw: number;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+        };
+        /**
+         * HeatPumpDeviceUpdate
+         * @description Heat pump device update schema.
+         */
+        HeatPumpDeviceUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Copatminus7C */
+            copAtMinus7C?: number | null;
+            /** Copat2C */
+            copAt2C?: number | null;
+            /** Copat7C */
+            copAt7C?: number | null;
+            /** Copat12C */
+            copAt12C?: number | null;
+            /** Maxheatpowerkw */
+            maxHeatPowerKw?: number | null;
+        };
+        /**
          * LoginRequest
          * @description Credentials for the login endpoint.
          */
@@ -1370,6 +1478,12 @@ export interface components {
             lightingPowerW: number;
             /** Occupancywindows */
             occupancyWindows: components["schemas"]["OccupancyWindow"][];
+            /** Heatlosskw */
+            heatLossKw: number;
+            /** Designoutdoortempc */
+            designOutdoorTempC: number;
+            /** Indoortempc */
+            indoorTempC: number;
             /**
              * Createdat
              * Format: date-time
@@ -1398,6 +1512,12 @@ export interface components {
             lightingPowerW?: number | null;
             /** Occupancywindows */
             occupancyWindows?: components["schemas"]["OccupancyWindow"][] | null;
+            /** Heatlosskw */
+            heatLossKw?: number | null;
+            /** Designoutdoortempc */
+            designOutdoorTempC?: number | null;
+            /** Indoortempc */
+            indoorTempC?: number | null;
         };
         /**
          * TimeWindow
@@ -2180,6 +2300,140 @@ export interface operations {
             };
         };
     };
+    "devices-create_heat_pump_device-post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HeatPumpDeviceCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HeatPumpDeviceRead"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "devices-update_heat_pump_device-patch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+                device_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HeatPumpDeviceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HeatPumpDeviceRead"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     "devices-get_battery_state-get": {
         parameters: {
             query?: never;
@@ -2333,7 +2587,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": (components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"])[];
+                    "application/json": (components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"] | components["schemas"]["HeatPumpDeviceRead"])[];
                 };
             };
             /** @description Not authenticated */
@@ -2392,7 +2646,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"];
+                    "application/json": components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"] | components["schemas"]["HeatPumpDeviceRead"];
                 };
             };
             /** @description Not authenticated */

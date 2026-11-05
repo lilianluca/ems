@@ -19,7 +19,7 @@ interface HouseFormProps {
   site: Site;
 }
 
-/** Lighting: on while someone is home and it is dark, see docs/vypocty/osvetleni.md. */
+/** What the forecast needs of the house itself: see docs/vypocty/osvetleni.md and tepelne-cerpadlo.md. */
 export function HouseForm({ site }: HouseFormProps) {
   const { t } = useTranslation();
   const updateSite = useUpdateSite(site.id);
@@ -29,6 +29,9 @@ export function HouseForm({ site }: HouseFormProps) {
     defaultValues: {
       lightingPowerW: site.lightingPowerW,
       occupancyWindows: site.occupancyWindows,
+      heatLossKw: site.heatLossKw,
+      designOutdoorTempC: site.designOutdoorTempC,
+      indoorTempC: site.indoorTempC,
     },
   });
   const { fields, append, remove } = useFieldArray({ control, name: 'occupancyWindows' });
@@ -45,6 +48,35 @@ export function HouseForm({ site }: HouseFormProps) {
       },
     });
   };
+
+  const heatingField = (
+    name: 'heatLossKw' | 'designOutdoorTempC' | 'indoorTempC',
+    label: string,
+  ) => (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <Field data-invalid={fieldState.invalid}>
+          <FieldLabel htmlFor={name}>{label}</FieldLabel>
+          <Input
+            {...field}
+            value={toInputValue(field.value)}
+            onChange={(event) => {
+              field.onChange(numberFromInput(event));
+            }}
+            id={name}
+            type="number"
+            step="any"
+            aria-invalid={fieldState.invalid}
+          />
+          {fieldState.error && (
+            <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
+          )}
+        </Field>
+      )}
+    />
+  );
 
   return (
     <Card>
@@ -133,6 +165,18 @@ export function HouseForm({ site }: HouseFormProps) {
                 <PlusIcon />
                 {t('appliances.add_window')}
               </Button>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-sm font-medium">{t('settings.heating_title')}</p>
+                <p className="text-xs text-muted-foreground">{t('settings.heating_hint')}</p>
+              </div>
+              <div className="grid items-start gap-5 sm:grid-cols-3">
+                {heatingField('heatLossKw', t('settings.heat_loss'))}
+                {heatingField('designOutdoorTempC', t('settings.design_outdoor_temp'))}
+                {heatingField('indoorTempC', t('settings.indoor_temp'))}
+              </div>
             </div>
 
             {formState.errors.root && (

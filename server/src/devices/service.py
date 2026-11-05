@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.appliances.service import ApplianceService
 from src.core.timerange import UTC_TZ
 from src.devices.battery_health import years_to_end_of_life
 from src.devices.battery_state import (
@@ -11,12 +12,13 @@ from src.devices.battery_state import (
     read_first_recorded_at,
     read_latest_battery_state,
 )
+from src.devices.enums import DeviceType
 from src.devices.exceptions import (
     DeviceNotFoundError,
     DeviceTypeMismatchError,
     InvalidStateOfChargeRangeError,
 )
-from src.devices.models import BatteryDevice, Device, PVDevice
+from src.devices.models import BatteryDevice, Device, HeatPumpDevice, PVDevice
 from src.devices.repository import DeviceRepository
 from src.devices.schemas import BatteryHealthRead, BatteryStateRead
 from src.sites.exceptions import SiteNotFoundError
@@ -207,6 +209,76 @@ class DeviceService:
         logger.info(f"Battery device with ID {device_id} updated.")
         return device
 
+    async def create_heat_pump_device(
+        self,
+        site_id: int,
+        name: str,
+        cop_at_minus_7c: float,
+        cop_at_2c: float,
+        cop_at_7c: float,
+        cop_at_12c: float,
+        max_heat_power_kw: float,
+    ) -> HeatPumpDevice:
+        """Create a new heat pump device and count it in the load forecast straight away."""
+        logger.info(f"Creating heat pump device '{name}' for site with ID {site_id}.")
+        await self._ensure_site_exists(site_id)
+        device = await self.device_repo.create_heat_pump_device(
+            site_id=site_id,
+            name=name,
+            cop_at_minus_7c=cop_at_minus_7c,
+            cop_at_2c=cop_at_2c,
+            cop_at_7c=cop_at_7c,
+            cop_at_12c=cop_at_12c,
+            max_heat_power_kw=max_heat_power_kw,
+        )
+        await self.db.commit()
+        await ApplianceService(self.db).generate_and_store_forecast(site_id)
+        logger.info(
+            f"Heat pump device '{name}' with ID {device.id} created for site with ID {site_id}."
+        )
+        return device
+
+    async def update_heat_pump_device(
+        self,
+        site_id: int,
+        device_id: int,
+        name: str | None,
+        cop_at_minus_7c: float | None,
+        cop_at_2c: float | None,
+        cop_at_7c: float | None,
+        cop_at_12c: float | None,
+        max_heat_power_kw: float | None,
+    ) -> HeatPumpDevice:
+        """Update a heat pump device and rebuild the load forecast it feeds."""
+        logger.info(f"Updating heat pump device with ID {device_id}.")
+        device = await self.device_repo.get_heat_pump_device_by_id(device_id)
+        if device is None:
+            if await self.device_repo.get_by_id(device_id) is None:
+                raise DeviceNotFoundError(device_id)
+            raise DeviceTypeMismatchError(device_id, "heat_pump")
+        if device.site_id != site_id:
+            logger.warning(f"Device with ID {device_id} does not belong to site {site_id}.")
+            raise DeviceNotFoundError(device_id)
+
+        if name is not None:
+            device.name = name
+        if cop_at_minus_7c is not None:
+            device.cop_at_minus_7c = cop_at_minus_7c
+        if cop_at_2c is not None:
+            device.cop_at_2c = cop_at_2c
+        if cop_at_7c is not None:
+            device.cop_at_7c = cop_at_7c
+        if cop_at_12c is not None:
+            device.cop_at_12c = cop_at_12c
+        if max_heat_power_kw is not None:
+            device.max_heat_power_kw = max_heat_power_kw
+
+        await self.db.commit()
+        await self.db.refresh(device)
+        await ApplianceService(self.db).generate_and_store_forecast(site_id)
+        logger.info(f"Heat pump device with ID {device_id} updated.")
+        return device
+
     async def get_battery_state(self, site_id: int, device_id: int) -> BatteryStateRead | None:
         """Read the most recent state of charge of a battery.
 
@@ -294,8 +366,12 @@ class DeviceService:
         """Delete a device by its ID."""
         logger.info(f"Deleting device with ID {device_id}.")
         device = await self.get_device(device_id)
+        site_id = device.site_id
+        feeds_load_forecast = device.type == DeviceType.HEAT_PUMP
         await self.device_repo.delete(device)
         await self.db.commit()
+        if feeds_load_forecast:
+            await ApplianceService(self.db).generate_and_store_forecast(site_id)
         logger.info(f"Device with ID {device_id} deleted.")
 
     async def _ensure_site_exists(self, site_id: int) -> None:

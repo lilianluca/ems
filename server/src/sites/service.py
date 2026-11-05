@@ -5,7 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.appliances.service import ApplianceService
 from src.sites.enums import SavingMode, SiteRole
-from src.sites.exceptions import MembershipNotFoundError, SiteNotFoundError, UserAlreadyMemberError
+from src.sites.exceptions import (
+    InvalidHeatingTemperaturesError,
+    MembershipNotFoundError,
+    SiteNotFoundError,
+    UserAlreadyMemberError,
+)
 from src.sites.models import Site, SiteMembership
 from src.sites.repository import SiteRepository
 from src.sites.schemas import OccupancyWindow
@@ -74,10 +79,23 @@ class SiteService:
         saving_mode: SavingMode | None = None,
         lighting_power_w: int | None = None,
         occupancy_windows: list[OccupancyWindow] | None = None,
+        heat_loss_kw: float | None = None,
+        design_outdoor_temp_c: float | None = None,
+        indoor_temp_c: float | None = None,
     ) -> Site:
         """Update site details, ensuring the site exists."""
         logger.info(f"Updating site with ID {site_id}.")
         site = await self.get_site(site_id)
+
+        # Validated against the merged values and before anything is assigned: a
+        # partial update can invert the pair even with each value in bounds, and
+        # an autoflush would surface the database check constraint as a 500.
+        merged_indoor = site.indoor_temp_c if indoor_temp_c is None else indoor_temp_c
+        merged_design = (
+            site.design_outdoor_temp_c if design_outdoor_temp_c is None else design_outdoor_temp_c
+        )
+        if merged_indoor <= merged_design:
+            raise InvalidHeatingTemperaturesError()
 
         if name is not None:
             site.name = name
@@ -92,10 +110,24 @@ class SiteService:
             site.lighting_power_w = lighting_power_w
         if occupancy_windows is not None:
             site.occupancy_windows = [w.model_dump(mode="json") for w in occupancy_windows]
+        if heat_loss_kw is not None:
+            site.heat_loss_kw = heat_loss_kw
+        if design_outdoor_temp_c is not None:
+            site.design_outdoor_temp_c = design_outdoor_temp_c
+        if indoor_temp_c is not None:
+            site.indoor_temp_c = indoor_temp_c
         # The lighting forecast reads the location too: it sets when it gets dark.
         house_changed = any(
             value is not None
-            for value in (lighting_power_w, occupancy_windows, latitude, longitude)
+            for value in (
+                lighting_power_w,
+                occupancy_windows,
+                heat_loss_kw,
+                design_outdoor_temp_c,
+                indoor_temp_c,
+                latitude,
+                longitude,
+            )
         )
 
         await self.db.commit()
