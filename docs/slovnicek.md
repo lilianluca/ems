@@ -80,8 +80,13 @@ Dokument o [predikci výroby](vypocty/fve-vyroba.md) zatím není napsaný.
 | **Obsazenost**          | Zda je někdo doma a vzhůru. Zadává se jako okna v celých hodinách, stejná pro všechny dny.                                                |
 | **Tma**                 | Číslo od 0 do 1 podle výšky slunce nad obzorem: 0 ve dne, 1 po skončení občanského soumraku. Určuje, jakou část osvětlení svítí.          |
 
-Víc v dokumentech o [predikci spotřeby](vypocty/spotreba.md) a
-[osvětlení](vypocty/osvetleni.md).
+| **Tepelné čerpadlo**    | Zařízení, které topí tak, že přenáší teplo z venkovního vzduchu dovnitř. Z 1 kWh elektřiny dodá několik kWh tepla.                        |
+| **Topný faktor (COP)**  | Kolik tepla dodá tepelné čerpadlo z jedné kilowatthodiny elektřiny. Klesá s venkovní teplotou.                                            |
+| **Tepelná ztráta**      | Výkon, kterým dům ztrácí teplo při výpočtové venkovní teplotě.                                                                            |
+| **Vyrovnávací teplota**  | Venkovní teplota, při které zisky od lidí, spotřebičů a slunce pokryjí ztráty domu. Nad ní se netopí. Počítáme s 15 °C.                   |
+
+Víc v dokumentech o [predikci spotřeby](vypocty/spotreba.md),
+[osvětlení](vypocty/osvetleni.md) a [tepelném čerpadle](vypocty/tepelne-cerpadlo.md).
 
 ## Baterie
 
@@ -199,3 +204,9 @@ jmenuje v kódu a v databázi.
 | výkon osvětlení                     | `lighting_power_w`                              |
 | okna obsazenosti                    | `occupancy_windows`, `OccupancyWindow`          |
 | tma                                 | `darkness`                                      |
+| tepelné čerpadlo                    | `HeatPumpDevice`                                |
+| topný faktor                        | `cop_at`, `cop_at_7c`                           |
+| tepelná ztráta                      | `heat_loss_kw`                                  |
+| výpočtová venkovní teplota          | `design_outdoor_temp_c`                         |
+| vnitřní teplota                     | `indoor_temp_c`                                 |
+| vyrovnávací teplota                 | `BALANCE_TEMPERATURE_C`                         |

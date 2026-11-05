@@ -93,7 +93,46 @@ class BatteryDeviceUpdate(APIBaseModel):
     cycle_life: int | None = Field(default=None, gt=0)
 
 
-DeviceRead = Annotated[PVDeviceRead | BatteryDeviceRead, Field(discriminator="type")]
+class HeatPumpDeviceCreate(APIBaseModel):
+    """Heat pump device creation schema."""
+
+    name: str = Field(min_length=1, max_length=255)
+    cop_at_minus_7c: float = Field(gt=0)
+    cop_at_2c: float = Field(gt=0)
+    cop_at_7c: float = Field(gt=0)
+    cop_at_12c: float = Field(gt=0)
+    max_heat_power_kw: float = Field(gt=0)
+
+
+class HeatPumpDeviceRead(APIBaseModel):
+    """Heat pump device read schema."""
+
+    id: int
+    site_id: int
+    name: str
+    type: Literal[DeviceType.HEAT_PUMP]
+    cop_at_minus_7c: float
+    cop_at_2c: float
+    cop_at_7c: float
+    cop_at_12c: float
+    max_heat_power_kw: float
+    created_at: datetime
+
+
+class HeatPumpDeviceUpdate(APIBaseModel):
+    """Heat pump device update schema."""
+
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    cop_at_minus_7c: float | None = Field(default=None, gt=0)
+    cop_at_2c: float | None = Field(default=None, gt=0)
+    cop_at_7c: float | None = Field(default=None, gt=0)
+    cop_at_12c: float | None = Field(default=None, gt=0)
+    max_heat_power_kw: float | None = Field(default=None, gt=0)
+
+
+DeviceRead = Annotated[
+    PVDeviceRead | BatteryDeviceRead | HeatPumpDeviceRead, Field(discriminator="type")
+]
 
 
 class BatteryStateRead(APIBaseModel):

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.core.responses import errors
 from src.devices.dependencies import DeviceServiceDep
-from src.devices.models import BatteryDevice, Device, PVDevice
+from src.devices.models import BatteryDevice, Device, HeatPumpDevice, PVDevice
 from src.devices.schemas import (
     BatteryDeviceCreate,
     BatteryDeviceRead,
@@ -12,6 +12,9 @@ from src.devices.schemas import (
     BatteryHealthRead,
     BatteryStateRead,
     DeviceRead,
+    HeatPumpDeviceCreate,
+    HeatPumpDeviceRead,
+    HeatPumpDeviceUpdate,
     PVDeviceCreate,
     PVDeviceRead,
     PVDeviceUpdate,
@@ -116,6 +119,55 @@ async def update_battery_device(
         max_state_of_charge=payload.max_state_of_charge,
         round_trip_efficiency=payload.round_trip_efficiency,
         cycle_life=payload.cycle_life,
+    )
+
+
+@router.post(
+    "/heat-pump",
+    response_model=HeatPumpDeviceRead,
+    status_code=status.HTTP_201_CREATED,
+    responses=errors(401, 403, 404, 422),
+)
+async def create_heat_pump_device(
+    site_id: int,
+    payload: HeatPumpDeviceCreate,
+    _member: Annotated[User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER))],
+    device_service: DeviceServiceDep,
+) -> HeatPumpDevice:
+    """Create a new heat pump device for a specific site."""
+    return await device_service.create_heat_pump_device(
+        site_id=site_id,
+        name=payload.name,
+        cop_at_minus_7c=payload.cop_at_minus_7c,
+        cop_at_2c=payload.cop_at_2c,
+        cop_at_7c=payload.cop_at_7c,
+        cop_at_12c=payload.cop_at_12c,
+        max_heat_power_kw=payload.max_heat_power_kw,
+    )
+
+
+@router.patch(
+    "/heat-pump/{device_id}",
+    response_model=HeatPumpDeviceRead,
+    responses=errors(401, 403, 404, 409, 422),
+)
+async def update_heat_pump_device(
+    site_id: int,
+    device_id: int,
+    payload: HeatPumpDeviceUpdate,
+    _member: Annotated[User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER))],
+    device_service: DeviceServiceDep,
+) -> HeatPumpDevice:
+    """Update an existing heat pump device for a specific site."""
+    return await device_service.update_heat_pump_device(
+        site_id=site_id,
+        device_id=device_id,
+        name=payload.name,
+        cop_at_minus_7c=payload.cop_at_minus_7c,
+        cop_at_2c=payload.cop_at_2c,
+        cop_at_7c=payload.cop_at_7c,
+        cop_at_12c=payload.cop_at_12c,
+        max_heat_power_kw=payload.max_heat_power_kw,
     )
 
 

@@ -1,5 +1,7 @@
+from fastapi import status
+
 from src.core.error_codes import ErrorCode
-from src.core.exceptions import ConflictError, ForbiddenError, NotFoundError
+from src.core.exceptions import AppError, ConflictError, ForbiddenError, NotFoundError
 
 
 class SiteNotFoundError(NotFoundError):
@@ -9,6 +11,17 @@ class SiteNotFoundError(NotFoundError):
         super().__init__(
             message=f"Site with ID {site_id} not found",
             code=ErrorCode.SITE_NOT_FOUND,
+        )
+
+
+class InvalidHeatingTemperaturesError(AppError):
+    """Exception raised when a house would lose no heat at its design temperature."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            message="The indoor temperature must be higher than the design outdoor temperature.",
+            code=ErrorCode.VALIDATION_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         )
 
 

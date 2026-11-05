@@ -39,13 +39,29 @@ const occupancyWindowSchema = z
     path: ['endHour'],
   });
 
-export const houseSchema = z.object({
-  lightingPowerW: z
-    .number(vk('validation.power_not_negative'))
-    .int(vk('validation.power_not_negative'))
-    .min(0, vk('validation.power_not_negative'))
-    .max(10_000, vk('validation.lighting_power_max')),
-  occupancyWindows: z.array(occupancyWindowSchema),
-});
+export const houseSchema = z
+  .object({
+    lightingPowerW: z
+      .number(vk('validation.power_not_negative'))
+      .int(vk('validation.power_not_negative'))
+      .min(0, vk('validation.power_not_negative'))
+      .max(10_000, vk('validation.lighting_power_max')),
+    occupancyWindows: z.array(occupancyWindowSchema),
+    heatLossKw: z
+      .number(vk('validation.power_not_negative'))
+      .min(0, vk('validation.power_not_negative')),
+    designOutdoorTempC: z
+      .number(vk('validation.temperature_invalid'))
+      .min(-60, vk('validation.temperature_invalid'))
+      .max(30, vk('validation.temperature_invalid')),
+    indoorTempC: z
+      .number(vk('validation.temperature_invalid'))
+      .min(0, vk('validation.temperature_invalid'))
+      .max(35, vk('validation.temperature_invalid')),
+  })
+  .refine((values) => values.indoorTempC > values.designOutdoorTempC, {
+    message: vk('validation.heating_temperatures_range'),
+    path: ['indoorTempC'],
+  });
 
 export type HouseFormValues = z.infer<typeof houseSchema>;

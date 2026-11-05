@@ -5,16 +5,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.appliances.exceptions import ApplianceNotFoundError
 from src.appliances.forecast import appliances_running_in, generate_load_forecast
+from src.appliances.heat_pump import generate_heat_pump_forecast
 from src.appliances.lighting import generate_lighting_forecast, lighting_runs_in
 from src.appliances.models import Appliance
 from src.appliances.repository import ApplianceRepository
 from src.appliances.schemas import ApplianceCreate, ApplianceUpdate
 from src.core.timerange import STEP_FREQ, STEP_HOURS
 from src.core.timeseries import upsert
+from src.devices.repository import DeviceRepository
 from src.forecasts.models import LoadForecast
 from src.sites.exceptions import SiteNotFoundError
+from src.sites.models import Site
 from src.sites.repository import SiteRepository
 from src.sites.schemas import OccupancyWindow
+from src.weather.repository import WeatherRepository
+
+# How far back a temperature still stands in for steps the weather forecast does
+# not reach. A failed fetch must not leave the heating on a weeks-old temperature.
+TEMPERATURE_LOOKBACK = pd.Timedelta(days=1)
 
 
 class ApplianceService:
@@ -24,6 +32,8 @@ class ApplianceService:
         self.db = db
         self.repo = ApplianceRepository(db)
         self.site_repo = SiteRepository(db)
+        self.device_repo = DeviceRepository(db)
+        self.weather_repo = WeatherRepository(db)
 
     async def create_appliance(self, site_id: int, data: ApplianceCreate) -> Appliance:
         """Create a new appliance for a specific site."""
@@ -118,6 +128,11 @@ class ApplianceService:
             if lighting_runs_in(site.saving_mode):
                 load_kw += lighting_kw
 
+        # Heating counts as essential, so no saving mode leaves it out.
+        heat_pump_kw = await self._heat_pump_forecast(site, times)
+        load_kw += heat_pump_kw
+        unrestricted_load_kw += heat_pump_kw
+
         rows = [
             {
                 "site_id": site_id,
@@ -130,6 +145,32 @@ class ApplianceService:
         written = await upsert(self.db, LoadForecast, rows)
         await self.db.commit()
         return written
+
+    async def _heat_pump_forecast(self, site: Site, times: pd.DatetimeIndex) -> pd.Series:
+        """Electricity the site's heat pump uses over the steps [kW], zero without one."""
+        device = await self.device_repo.get_first_heat_pump_for_site(site.id)
+        if device is None:
+            return pd.Series(0.0, index=times, name="heat_pump_kw")
+
+        rows = await self.weather_repo.read_temperatures(
+            site.id,
+            start=(times[0] - TEMPERATURE_LOOKBACK).to_pydatetime(),
+            end=(times[-1] + pd.Timedelta(STEP_FREQ)).to_pydatetime(),
+        )
+        temperatures = pd.Series(
+            [temperature for _, temperature in rows],
+            index=pd.DatetimeIndex([time for time, _ in rows], tz=UTC),
+            dtype=float,
+        )
+        return generate_heat_pump_forecast(
+            temperatures,
+            times,
+            heat_loss_kw=site.heat_loss_kw,
+            indoor_temp_c=site.indoor_temp_c,
+            design_outdoor_temp_c=site.design_outdoor_temp_c,
+            cops=(device.cop_at_minus_7c, device.cop_at_2c, device.cop_at_7c, device.cop_at_12c),
+            max_heat_power_kw=device.max_heat_power_kw,
+        )
 
     async def _ensure_site_exists(self, site_id: int) -> None:
         """Check if a site exists; raise an error if it does not."""

@@ -90,6 +90,24 @@ class BatteryDevice(Device):
     }
 
 
+class HeatPumpDevice(Device):
+    """Air-to-air heat pump, described by what its datasheet declares."""
+
+    __tablename__ = "heat_pump_devices"
+
+    id: Mapped[int] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"), primary_key=True)
+    # COPd at the outdoor temperatures Regulation (EU) 206/2012 makes a datasheet list.
+    cop_at_minus_7c: Mapped[float] = mapped_column(Float, nullable=False)
+    cop_at_2c: Mapped[float] = mapped_column(Float, nullable=False)
+    cop_at_7c: Mapped[float] = mapped_column(Float, nullable=False)
+    cop_at_12c: Mapped[float] = mapped_column(Float, nullable=False)
+    max_heat_power_kw: Mapped[float] = mapped_column(Float, nullable=False)
+
+    __mapper_args__ = {  # noqa: RUF012
+        "polymorphic_identity": DeviceType.HEAT_PUMP,
+    }
+
+
 class BatteryState(Base):
     """A battery's recorded state at one moment (TimescaleDB hypertable).
 

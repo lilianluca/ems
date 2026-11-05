@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { BatteryChargingIcon, SunIcon } from 'lucide-react';
+import { BatteryChargingIcon, HeaterIcon, SunIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,10 @@ export const Route = createFileRoute('/_authenticated/sites/$siteId/devices/')({
   component: DevicesPage,
 });
 
-/** Two explicit actions rather than one form with a type switch: the two field sets have nothing in common. */
+/**
+ * Explicit actions rather than one form with a type switch: the field sets have
+ * nothing in common. Icons alone on a phone, where three labels overflow the header.
+ */
 function DevicesActions() {
   const { t } = useTranslation();
   const { siteId } = Route.useParams();
@@ -23,7 +26,7 @@ function DevicesActions() {
     <>
       <Button size="sm" render={<Link to="/sites/$siteId/devices/pv/new" params={{ siteId }} />}>
         <SunIcon />
-        {t('devices.add_pv')}
+        <span className="sr-only sm:not-sr-only">{t('devices.add_pv')}</span>
       </Button>
       <Button
         size="sm"
@@ -31,7 +34,15 @@ function DevicesActions() {
         render={<Link to="/sites/$siteId/devices/battery/new" params={{ siteId }} />}
       >
         <BatteryChargingIcon />
-        {t('devices.add_battery')}
+        <span className="sr-only sm:not-sr-only">{t('devices.add_battery')}</span>
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        render={<Link to="/sites/$siteId/devices/heat-pump/new" params={{ siteId }} />}
+      >
+        <HeaterIcon />
+        <span className="sr-only sm:not-sr-only">{t('devices.add_heat_pump')}</span>
       </Button>
     </>
   );

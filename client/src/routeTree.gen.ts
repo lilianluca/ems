@@ -34,6 +34,8 @@ import { Route as AuthenticatedSitesSiteIdAppliancesNewRouteImport } from './rou
 import { Route as AuthenticatedSitesSiteIdDevicesIndexRouteImport } from './routes/_authenticated/sites/$siteId/devices/index'
 import { Route as AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRouteImport } from './routes/_authenticated/sites/$siteId/devices/battery/$deviceId'
 import { Route as AuthenticatedSitesSiteIdDevicesBatteryNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/battery/new'
+import { Route as AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRouteImport } from './routes/_authenticated/sites/$siteId/devices/heat-pump/$deviceId'
+import { Route as AuthenticatedSitesSiteIdDevicesHeatPumpNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/heat-pump/new'
 import { Route as AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport } from './routes/_authenticated/sites/$siteId/devices/pv/$deviceId'
 import { Route as AuthenticatedSitesSiteIdDevicesPvNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/pv/new'
 
@@ -179,6 +181,18 @@ const AuthenticatedSitesSiteIdDevicesBatteryNewRoute =
     path: '/battery/new',
     getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
   } as any)
+const AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute =
+  AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRouteImport.update({
+    id: '/heat-pump/$deviceId',
+    path: '/heat-pump/$deviceId',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute =
+  AuthenticatedSitesSiteIdDevicesHeatPumpNewRouteImport.update({
+    id: '/heat-pump/new',
+    path: '/heat-pump/new',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
+  } as any)
 const AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute =
   AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport.update({
     id: '/pv/$deviceId',
@@ -216,6 +230,8 @@ export interface FileRoutesByFullPath {
   '/sites/$siteId/devices/': typeof AuthenticatedSitesSiteIdDevicesIndexRoute
   '/sites/$siteId/devices/battery/$deviceId': typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
   '/sites/$siteId/devices/battery/new': typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  '/sites/$siteId/devices/heat-pump/$deviceId': typeof AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute
+  '/sites/$siteId/devices/heat-pump/new': typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   '/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   '/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
@@ -238,6 +254,8 @@ export interface FileRoutesByTo {
   '/sites/$siteId/devices': typeof AuthenticatedSitesSiteIdDevicesIndexRoute
   '/sites/$siteId/devices/battery/$deviceId': typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
   '/sites/$siteId/devices/battery/new': typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  '/sites/$siteId/devices/heat-pump/$deviceId': typeof AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute
+  '/sites/$siteId/devices/heat-pump/new': typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   '/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   '/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
@@ -268,6 +286,8 @@ export interface FileRoutesById {
   '/_authenticated/sites/$siteId/devices/': typeof AuthenticatedSitesSiteIdDevicesIndexRoute
   '/_authenticated/sites/$siteId/devices/battery/$deviceId': typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
   '/_authenticated/sites/$siteId/devices/battery/new': typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  '/_authenticated/sites/$siteId/devices/heat-pump/$deviceId': typeof AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute
+  '/_authenticated/sites/$siteId/devices/heat-pump/new': typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   '/_authenticated/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   '/_authenticated/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
@@ -297,6 +317,8 @@ export interface FileRouteTypes {
     | '/sites/$siteId/devices/'
     | '/sites/$siteId/devices/battery/$deviceId'
     | '/sites/$siteId/devices/battery/new'
+    | '/sites/$siteId/devices/heat-pump/$deviceId'
+    | '/sites/$siteId/devices/heat-pump/new'
     | '/sites/$siteId/devices/pv/$deviceId'
     | '/sites/$siteId/devices/pv/new'
   fileRoutesByTo: FileRoutesByTo
@@ -319,6 +341,8 @@ export interface FileRouteTypes {
     | '/sites/$siteId/devices'
     | '/sites/$siteId/devices/battery/$deviceId'
     | '/sites/$siteId/devices/battery/new'
+    | '/sites/$siteId/devices/heat-pump/$deviceId'
+    | '/sites/$siteId/devices/heat-pump/new'
     | '/sites/$siteId/devices/pv/$deviceId'
     | '/sites/$siteId/devices/pv/new'
   id:
@@ -348,6 +372,8 @@ export interface FileRouteTypes {
     | '/_authenticated/sites/$siteId/devices/'
     | '/_authenticated/sites/$siteId/devices/battery/$deviceId'
     | '/_authenticated/sites/$siteId/devices/battery/new'
+    | '/_authenticated/sites/$siteId/devices/heat-pump/$deviceId'
+    | '/_authenticated/sites/$siteId/devices/heat-pump/new'
     | '/_authenticated/sites/$siteId/devices/pv/$deviceId'
     | '/_authenticated/sites/$siteId/devices/pv/new'
   fileRoutesById: FileRoutesById
@@ -534,6 +560,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryNewRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
     }
+    '/_authenticated/sites/$siteId/devices/heat-pump/$deviceId': {
+      id: '/_authenticated/sites/$siteId/devices/heat-pump/$deviceId'
+      path: '/heat-pump/$deviceId'
+      fullPath: '/sites/$siteId/devices/heat-pump/$deviceId'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices/heat-pump/new': {
+      id: '/_authenticated/sites/$siteId/devices/heat-pump/new'
+      path: '/heat-pump/new'
+      fullPath: '/sites/$siteId/devices/heat-pump/new'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
+    }
     '/_authenticated/sites/$siteId/devices/pv/$deviceId': {
       id: '/_authenticated/sites/$siteId/devices/pv/$deviceId'
       path: '/pv/$deviceId'
@@ -626,6 +666,8 @@ interface AuthenticatedSitesSiteIdDevicesRouteRouteChildren {
   AuthenticatedSitesSiteIdDevicesIndexRoute: typeof AuthenticatedSitesSiteIdDevicesIndexRoute
   AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute
   AuthenticatedSitesSiteIdDevicesBatteryNewRoute: typeof AuthenticatedSitesSiteIdDevicesBatteryNewRoute
+  AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute
+  AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute: typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   AuthenticatedSitesSiteIdDevicesPvNewRoute: typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
 }
@@ -638,6 +680,10 @@ const AuthenticatedSitesSiteIdDevicesRouteRouteChildren: AuthenticatedSitesSiteI
       AuthenticatedSitesSiteIdDevicesBatteryDeviceIdRoute,
     AuthenticatedSitesSiteIdDevicesBatteryNewRoute:
       AuthenticatedSitesSiteIdDevicesBatteryNewRoute,
+    AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute:
+      AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRoute,
+    AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute:
+      AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute,
     AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute:
       AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute,
     AuthenticatedSitesSiteIdDevicesPvNewRoute:

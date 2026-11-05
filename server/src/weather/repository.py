@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.weather.models import WeatherFetchLog
+from src.weather.models import WeatherFetchLog, WeatherForecast
 
 
 class WeatherRepository:
@@ -19,6 +21,21 @@ class WeatherRepository:
             .limit(1)
         )
         return result.scalar_one_or_none()
+
+    async def read_temperatures(
+        self, site_id: int, start: datetime, end: datetime
+    ) -> list[tuple[datetime, float]]:
+        """Read a site's forecast outdoor temperature [deg C] within a time range."""
+        result = await self.db.execute(
+            select(WeatherForecast.time, WeatherForecast.temperature_2m)
+            .where(
+                WeatherForecast.site_id == site_id,
+                WeatherForecast.time >= start,
+                WeatherForecast.time < end,
+            )
+            .order_by(WeatherForecast.time)
+        )
+        return [(row.time, row.temperature_2m) for row in result]
 
     async def log_fetch(self, site_id: int, points_written: int) -> WeatherFetchLog:
         """Log a new weather forecast fetch operation."""

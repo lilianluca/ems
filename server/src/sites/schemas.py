@@ -45,6 +45,9 @@ class SiteRead(APIBaseModel):
     saving_mode: SavingMode
     lighting_power_w: int
     occupancy_windows: list[OccupancyWindow]
+    heat_loss_kw: float
+    design_outdoor_temp_c: float
+    indoor_temp_c: float
     created_at: datetime
 
 
@@ -76,6 +79,9 @@ class SiteUpdate(APIBaseModel):
     saving_mode: SavingMode | None = None
     lighting_power_w: int | None = Field(default=None, ge=0, le=10_000)
     occupancy_windows: list[OccupancyWindow] | None = None
+    heat_loss_kw: float | None = Field(default=None, ge=0)
+    design_outdoor_temp_c: float | None = Field(default=None, ge=-60, le=30)
+    indoor_temp_c: float | None = Field(default=None, ge=0, le=35)
 
 
 class SiteMembershipUpdate(APIBaseModel):

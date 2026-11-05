@@ -5,6 +5,7 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     Enum,
+    Float,
     ForeignKey,
     Integer,
     String,
@@ -26,6 +27,8 @@ class Site(Base):
         CheckConstraint("latitude >= -90 AND latitude <= 90", name="chk_site_latitude"),
         CheckConstraint("longitude >= -180 AND longitude <= 180", name="chk_site_longitude"),
         CheckConstraint("lighting_power_w >= 0", name="chk_site_lighting_power"),
+        CheckConstraint("heat_loss_kw >= 0", name="chk_site_heat_loss"),
+        CheckConstraint("indoor_temp_c > design_outdoor_temp_c", name="chk_site_heating_temps"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -50,6 +53,17 @@ class Site(Base):
     )
     occupancy_windows: Mapped[list[dict[str, Any]]] = mapped_column(
         JSONB, nullable=False, default=list, server_default="[]"
+    )
+    # The house's heat loss at the design outdoor temperature, as a heat loss
+    # calculation states it. Zero leaves the heat pump out of the forecast.
+    heat_loss_kw: Mapped[float] = mapped_column(
+        Float, nullable=False, default=0.0, server_default="0"
+    )
+    design_outdoor_temp_c: Mapped[float] = mapped_column(
+        Float, nullable=False, default=-12.0, server_default="-12"
+    )
+    indoor_temp_c: Mapped[float] = mapped_column(
+        Float, nullable=False, default=20.0, server_default="20"
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

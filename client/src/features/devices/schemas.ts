@@ -61,3 +61,18 @@ export const batteryDeviceSchema = z
   });
 
 export type BatteryDeviceFormValues = z.infer<typeof batteryDeviceSchema>;
+
+const copSchema = z.number(vk('validation.cop_invalid')).positive(vk('validation.cop_invalid'));
+
+export const heatPumpDeviceSchema = z.object({
+  name: z.string().trim().min(1, vk('validation.device_name_required')).max(255),
+  copAtMinus7C: copSchema,
+  copAt2C: copSchema,
+  copAt7C: copSchema,
+  copAt12C: copSchema,
+  maxHeatPowerKw: z
+    .number(vk('validation.power_positive'))
+    .positive(vk('validation.power_positive')),
+});
+
+export type HeatPumpDeviceFormValues = z.infer<typeof heatPumpDeviceSchema>;
