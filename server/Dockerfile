@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.13.6-python3.14-trixie-slim
+FROM ghcr.io/astral-sh/uv:0.13.7-python3.14-trixie-slim
 
 # Set environment variables for non-root user
 ARG USER_UID=1000
