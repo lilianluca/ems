@@ -58,7 +58,7 @@ spotových cen od 10. 7. 2026**, takže všechno níž jde udělat bez jediného
       se plánuje nabíjení.
 - [x] Implementovat degradaci baterie
 - [x] Osvětlení
-- [ ] Přidat náhodu do predikce spotřeby (neomezeno žádným řežimem)
+- [x] Přidat náhodu do predikce spotřeby (neomezeno žádným řežimem)
 - [x] Tepelné čerpadlo (vzduch-vzduch), predikce spotřeby (teplo)
 - [ ] Zahrnovat do predikce - topení v krbu
 - [ ] Studovat více jak funguje pod kapotou pvlib

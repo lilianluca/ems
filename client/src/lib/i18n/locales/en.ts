@@ -446,6 +446,7 @@ export const en = {
     split: '{{battery}} by the battery, {{restriction}} by restriction',
     baseline_cost: 'Cost without battery',
     cost: 'Cost with battery',
+    unplanned: 'Unplanned consumption',
     partial_day: 'Incomplete day: {{steps}} of {{total}} quarter-hours',
     partial_note:
       'Lighter bars are days the simulation did not record every quarter-hour of, so their saving is incomplete.',

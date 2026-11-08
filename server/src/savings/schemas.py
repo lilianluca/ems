@@ -19,6 +19,8 @@ class DailySavings(APIBaseModel):
     cost_czk: float
     baseline_cost_czk: float
     unrestricted_baseline_cost_czk: float
+    # Energy the household used that nobody forecast; already in both costs.
+    unplanned_energy_kwh: float
     steps: int
 
 

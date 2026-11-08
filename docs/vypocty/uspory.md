@@ -41,14 +41,14 @@ započítaná právě jednou.
 
 ### Vstupy a výstupy
 
-| Vstup          | Jednotka | Odkud                                                               |
-| -------------- | -------- | ------------------------------------------------------------------- |
-| Výroba         | kW       | [predikce výroby](fve-vyroba.md)                                    |
-| Spotřeba       | kW       | [predikce spotřeby](spotreba.md)                                    |
-| Nabíjecí výkon | kW       | co baterie skutečně provedla, viz [model baterie](model-baterie.md) |
-| Vybíjecí výkon | kW       | tamtéž                                                              |
-| Nákupní cena   | Kč/kWh   | [ceny](ceny.md)                                                     |
-| Prodejní cena  | Kč/kWh   | [ceny](ceny.md)                                                     |
+| Vstup          | Jednotka | Odkud                                                                      |
+| -------------- | -------- | -------------------------------------------------------------------------- |
+| Výroba         | kW       | [predikce výroby](fve-vyroba.md)                                           |
+| Spotřeba       | kW       | [predikce spotřeby](spotreba.md) a [náhodná spotřeba](nahodna-spotreba.md) |
+| Nabíjecí výkon | kW       | co baterie skutečně provedla, viz [model baterie](model-baterie.md)        |
+| Vybíjecí výkon | kW       | tamtéž                                                                     |
+| Nákupní cena   | Kč/kWh   | [ceny](ceny.md)                                                            |
+| Prodejní cena  | Kč/kWh   | [ceny](ceny.md)                                                            |
 
 | Výstup             | Jednotka |
 | ------------------ | -------- |
@@ -294,7 +294,8 @@ popisuje dokument o režimu úspor.
 ## Předpoklady a omezení
 
 - **Úspory jsou ze simulace, ne z měření.** Výroba a spotřeba v bilanci jsou
-  predikce. Úspora říká, co by baterie ušetřila, kdyby predikce vyšly přesně.
+  predikce, ke spotřebě se jen přičítá [náhodná spotřeba](nahodna-spotreba.md).
+  Úspora říká, co by baterie ušetřila, kdyby predikce jinak vyšly přesně.
   Skutečnou úsporu ukáže až měření ze střídače a elektroměru. Struktura tabulky
   na to je připravená: stačí místo predikcí ukládat naměřené hodnoty.
 - **Opotřebení baterie se nepočítá.** Každý cyklus baterii o něco opotřebí, viz

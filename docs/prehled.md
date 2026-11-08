@@ -93,6 +93,7 @@ flowchart TD
     simulace --> stav
     simulace --> bilance["Bilance čtvrthodiny:<br/>náklad s baterií a bez ní"]
     ceny --> bilance
+    nahoda["Náhodná spotřeba"] --> bilance
 
     bilance --> uspory["Úspory<br/>po dnech a měsících"]
     stav --> zdravi["Zdraví baterie"]
@@ -139,6 +140,7 @@ tečou systémem.
 | Plán podle pravidel              | [plan-rule-based.md](vypocty/plan-rule-based.md)   | [optimization/rule_based.py](../server/src/optimization/rule_based.py)             |
 | Plán optimalizací                | [plan-lp.md](vypocty/plan-lp.md)                   | [optimization/model.py](../server/src/optimization/model.py)                       |
 | Simulace baterie                 | [simulace.md](vypocty/simulace.md)                 | [simulation/battery_simulation.py](../server/src/simulation/battery_simulation.py) |
+| Náhodná spotřeba                 | [nahodna-spotreba.md](vypocty/nahodna-spotreba.md) | [simulation/unplanned_load.py](../server/src/simulation/unplanned_load.py)         |
 | Bilance a úspory                 | [uspory.md](vypocty/uspory.md)                     | [savings/balance.py](../server/src/savings/balance.py)                             |
 | Zdraví baterie                   | [zdravi-baterie.md](vypocty/zdravi-baterie.md)     | [devices/battery_health.py](../server/src/devices/battery_health.py)               |
 
@@ -209,8 +211,8 @@ proto se úspory ukazují po dnech a měsících.
 Tato omezení ovlivňují, jak číst všechna čísla v aplikaci:
 
 - **Úspory jsou ze simulace, ne z měření.** Výroba a spotřeba v bilanci jsou
-  predikce. Když se predikce splete, simulace to nepozná. Úspora tedy říká, co
-  by baterie ušetřila, kdyby predikce vyšly přesně.
+  predikce. Jediná odchylka od nich je [náhodná spotřeba](vypocty/nahodna-spotreba.md),
+  o které plán neví. Jiné chyby predikce simulace nepozná.
 - **Baterie je simulovaná.** Systém nepřipojuje žádný střídač. Stav nabití se
   počítá z plánu, ne čte ze zařízení.
 - **Tepelné čerpadlo plán neřídí.** Systém předpovídá jeho spotřebu, ale neumí

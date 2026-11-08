@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Date, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.timerange import PRAGUE_TZ, resolve_range, today_window
+from src.core.timerange import PRAGUE_TZ, STEP_HOURS, resolve_range, today_window
 from src.core.timeseries import upsert
 from src.optimization.enums import PlanStrategy
 from src.savings.balance import StepBalance, step_balance
@@ -31,6 +31,7 @@ class SavingsService:
         pv_kw: float,
         load_kw: float,
         unrestricted_load_kw: float,
+        unplanned_load_kw: float,
         charge_kw: float,
         discharge_kw: float,
         price_import_czk_kwh: float,
@@ -69,6 +70,7 @@ class SavingsService:
                     "baseline_cost_czk": balance.baseline_cost_czk,
                     "unrestricted_load_kw": unrestricted_load_kw,
                     "unrestricted_baseline_cost_czk": balance.unrestricted_baseline_cost_czk,
+                    "unplanned_load_kw": unplanned_load_kw,
                 }
             ],
         )
@@ -133,6 +135,7 @@ class SavingsService:
                 func.sum(SiteEnergyBalance.unrestricted_baseline_cost_czk).label(
                     "unrestricted_baseline_cost_czk"
                 ),
+                func.sum(SiteEnergyBalance.unplanned_load_kw).label("unplanned_load_kw"),
                 func.count().label("steps"),
             )
             .where(
@@ -152,6 +155,8 @@ class SavingsService:
                 cost_czk=row.cost_czk,
                 baseline_cost_czk=row.baseline_cost_czk,
                 unrestricted_baseline_cost_czk=row.unrestricted_baseline_cost_czk,
+                # Each row holds a power over one step, so the sum is in kW·step.
+                unplanned_energy_kwh=row.unplanned_load_kw * STEP_HOURS,
                 steps=row.steps,
             )
             for row in result

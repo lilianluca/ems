@@ -84,9 +84,11 @@ Dokument o [predikci výroby](vypocty/fve-vyroba.md) zatím není napsaný.
 | **Topný faktor (COP)**  | Kolik tepla dodá tepelné čerpadlo z jedné kilowatthodiny elektřiny. Klesá s venkovní teplotou.                                            |
 | **Tepelná ztráta**      | Výkon, kterým dům ztrácí teplo při výpočtové venkovní teplotě.                                                                            |
 | **Vyrovnávací teplota**  | Venkovní teplota, při které zisky od lidí, spotřebičů a slunce pokryjí ztráty domu. Nad ní se netopí. Počítáme s 15 °C.                   |
+| **Náhodná spotřeba**    | Neplánovaná spotřeba, kterou domácnost nemůže odložit. Predikce ani plán o ní nevědí, přičítá ji až simulace.                              |
 
 Víc v dokumentech o [predikci spotřeby](vypocty/spotreba.md),
-[osvětlení](vypocty/osvetleni.md) a [tepelném čerpadle](vypocty/tepelne-cerpadlo.md).
+[osvětlení](vypocty/osvetleni.md), [tepelném čerpadle](vypocty/tepelne-cerpadlo.md) a
+[náhodné spotřebě](vypocty/nahodna-spotreba.md).
 
 ## Baterie
 
@@ -210,3 +212,4 @@ jmenuje v kódu a v databázi.
 | výpočtová venkovní teplota          | `design_outdoor_temp_c`                         |
 | vnitřní teplota                     | `indoor_temp_c`                                 |
 | vyrovnávací teplota                 | `BALANCE_TEMPERATURE_C`                         |
+| náhodná spotřeba                    | `unplanned_load_kw`                             |

@@ -5,9 +5,10 @@ what a real controller would: work out where the battery is, ask for the plan,
 carry out its first step and record the result. The next plan starts from that
 result — model predictive control, with the simulation as the plant.
 
-The simulated battery follows the forecast, not reality: generation and
-consumption are whatever was predicted. It shows what the plan does to the
-battery, not how the plan copes with a wrong forecast.
+The simulated battery follows the forecast: generation and consumption are
+whatever was predicted, except for random unplanned consumption added on top
+when the step is settled. The battery holds its planned setpoint through it,
+and the grid covers the difference.
 """
 
 import logging
@@ -32,6 +33,7 @@ from src.optimization.service import (
 from src.ote.service import OTEService
 from src.savings.service import SavingsService
 from src.simulation.battery_model import BatterySample, feasible_setpoint, state_of_charge_at
+from src.simulation.unplanned_load import unplanned_load_kw
 from src.sites.enums import SavingMode
 
 logger = logging.getLogger(__name__)
@@ -119,7 +121,8 @@ class BatterySimulationService:
     ) -> None:
         """Store what the step costs, so the savings of any period can be summed later.
 
-        Settled against the same forecast the simulated battery follows. Skipped
+        Settled against the forecast the simulated battery follows, plus the
+        unplanned consumption the plan could not know about. Skipped
         when the step has no price or forecast: the battery idles then, and a step
         that cannot be priced would only distort the totals.
         """
@@ -139,14 +142,18 @@ class BatterySimulationService:
         saving_mode = SavingMode.LOW if site is None else site.saving_mode
         load_kw = forecast[0].load_kw or 0.0
         unrestricted_load_kw = forecast[0].unrestricted_load_kw or load_kw
+        # Reality is the forecast plus what nobody forecast. No saving mode
+        # switches it off, so it counts in both, and the plan never saw it.
+        unplanned_kw = unplanned_load_kw(site_id, step_start)
         balance = await self.savings_service.record_step(
             site_id=site_id,
             time=step_start,
             strategy=self.optimization_service.strategy,
             saving_mode=saving_mode,
             pv_kw=forecast[0].pv_generation_kw or 0.0,
-            load_kw=load_kw,
-            unrestricted_load_kw=unrestricted_load_kw,
+            load_kw=load_kw + unplanned_kw,
+            unrestricted_load_kw=unrestricted_load_kw + unplanned_kw,
+            unplanned_load_kw=unplanned_kw,
             charge_kw=charge_kw,
             discharge_kw=discharge_kw,
             price_import_czk_kwh=import_price_czk_kwh(spot),

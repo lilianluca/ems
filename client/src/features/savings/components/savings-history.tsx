@@ -20,7 +20,7 @@ import {
   shiftMonth,
   stepsInPragueDay,
 } from '@/lib/datetime';
-import { formatMoney } from '@/lib/units';
+import { formatMoney, formatWithUnit } from '@/lib/units';
 
 import { type DailySavings, useMonthSavings, useTotalSavings } from '../api';
 
@@ -96,6 +96,7 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
   const monthBattery = recorded.reduce((sum, day) => sum + day.savingsCzk, 0);
   const monthRestriction = recorded.reduce((sum, day) => sum + day.restrictionSavingsCzk, 0);
   const monthTotal = monthBattery + monthRestriction;
+  const monthUnplanned = recorded.reduce((sum, day) => sum + day.unplannedEnergyKwh, 0);
   // A month spent in the normal mode has nothing to split, so it stays one series.
   const hasRestriction = recorded.some((day) => day.restrictionSavingsCzk !== 0);
   const best = recorded.reduce<DailySavings | null>(
@@ -186,6 +187,14 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
               ) : (
                 '–'
               )}
+            </p>
+          </div>
+          {/* Already in the costs above; shown so it is visible that reality did
+              not go exactly as the forecast said. */}
+          <div>
+            <p className="text-xs text-muted-foreground">{t('savings.unplanned')}</p>
+            <p className="tabular-nums">
+              {recorded.length > 0 ? formatWithUnit(monthUnplanned, 'energy', i18n.language) : '–'}
             </p>
           </div>
           {/* Not tied to the month shown: the one figure that answers whether the
@@ -308,6 +317,18 @@ export function SavingsHistory({ siteId }: SavingsHistoryProps) {
                                 </span>
                               </div>
                             ))}
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-muted-foreground">
+                                {t('savings.unplanned')}
+                              </span>
+                              <span className="font-mono font-medium text-foreground tabular-nums">
+                                {formatWithUnit(
+                                  point.record.unplannedEnergyKwh,
+                                  'energy',
+                                  i18n.language,
+                                )}
+                              </span>
+                            </div>
                             {point.partial && (
                               <span className="text-muted-foreground">
                                 {t('savings.partial_day', {

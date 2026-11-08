@@ -251,6 +251,8 @@ spotřebičů podle režimu úspor, osvětlení a tepelné čerpadlo.
 
 - **Spotřeba je jen tak dobrá, jak dobře jsou zadané spotřebiče.** Co uživatel
   nezadá, v predikci není. Typicky drobné spotřebiče, které nikdo nepočítá.
+- **Predikce nezná náhodu.** Neplánovanou spotřebu přičítá až simulace, viz
+  [náhodná spotřeba](nahodna-spotreba.md).
 - **Spotřebiče neznají roční období ani počasí.** Spotřebič odebírá v lednu
   stejně jako v červenci. Roční období znají jen [osvětlení](osvetleni.md) a
   [tepelné čerpadlo](tepelne-cerpadlo.md).

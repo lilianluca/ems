@@ -56,3 +56,8 @@ class SiteEnergyBalance(Base):
     # later; the difference to the baseline is what the saving mode saved.
     unrestricted_load_kw: Mapped[float] = mapped_column(Float, nullable=False)
     unrestricted_baseline_cost_czk: Mapped[float] = mapped_column(Float, nullable=False)
+
+    # The part of both consumptions above that nobody forecast; see
+    # `src.simulation.unplanned_load`. Already included in them, kept apart so
+    # what it cost can be summed later.
+    unplanned_load_kw: Mapped[float] = mapped_column(Float, nullable=False, server_default="0")

@@ -107,6 +107,10 @@ Zapisují se až dva řádky:
 | `battery_state`       | stav baterie na začátku čtvrthodiny a výkon, který během ní poběží | vždy                                              |
 | `site_energy_balance` | náklad čtvrthodiny s baterií a bez ní, viz [úspory](uspory.md)     | jen když je pro čtvrthodinu známá cena i predikce |
 
+Bilance počítá se skutečnou spotřebou: predikcí plus
+[náhodnou spotřebou](nahodna-spotreba.md). Plán ani zapsaný výkon baterie o
+náhodě neví.
+
 Stav baterie se zapíše vždy, i když baterie stojí. Bilance jen tehdy, když jde
 čtvrthodinu ocenit. Přehled všech situací je [níže](#co-když-něco-chybí).
 
@@ -205,8 +209,9 @@ model baterie, plán a bilance.
 ## Předpoklady a omezení
 
 - **Baterie se řídí predikcí, ne skutečností.** Simulace předpokládá, že výroba a
-  spotřeba vyjdou přesně podle predikce. Ukazuje, co plán s baterií dělá, ne jak
-  si poradí s chybnou predikcí.
+  spotřeba vyjdou podle predikce. Jedinou výjimkou je
+  [náhodná spotřeba](nahodna-spotreba.md), kterou bilance přičte navíc. Baterie
+  na ni nereaguje a rozdíl pokryje síť.
 - **Stav baterie není změřený.** Je dopočítaný z plánu. U skutečné baterie by se
   četl ze střídače a od simulovaného by se časem lišil.
 - **Vypadlé čtvrthodiny se nedoplňují.** Když simulace neběží, čtvrthodiny chybí
