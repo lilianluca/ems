@@ -440,6 +440,7 @@ export const cs = {
     split: 'z toho baterií {{battery}}, omezením {{restriction}}',
     baseline_cost: 'Náklad bez baterie',
     cost: 'Náklad s baterií',
+    unplanned: 'Neplánovaná spotřeba',
     partial_day: 'Neúplný den: {{steps}} z {{total}} čtvrthodin',
     partial_note:
       'Světlejší sloupce jsou dny, kdy simulace nezaznamenala všechny čtvrthodiny – jejich úspora je neúplná.',

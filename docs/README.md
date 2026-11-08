@@ -32,6 +32,7 @@ systémem.
 | [Plán podle pravidel](vypocty/plan-rule-based.md)     | Co má baterie dělat, když se řídí jen přebytkem a nedostatkem?    |
 | [Plán optimalizací](vypocty/plan-lp.md)               | Co má baterie dělat, aby vyšla nejlevněji? _(zatím nenapsáno)_    |
 | [Simulace baterie](vypocty/simulace.md)               | Jak se plán každou čtvrthodinu provádí?                           |
+| [Náhodná spotřeba](vypocty/nahodna-spotreba.md)       | Co když domácnost spotřebuje něco, s čím predikce nepočítala?     |
 | [Bilance a úspory](vypocty/uspory.md)                 | Kolik baterie ušetřila?                                           |
 | [Zdraví baterie](vypocty/zdravi-baterie.md)           | Kolik kapacity baterii zbývá?                                     |
 

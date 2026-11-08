@@ -1014,6 +1014,8 @@ export interface components {
             baselineCostCzk: number;
             /** Unrestrictedbaselinecostczk */
             unrestrictedBaselineCostCzk: number;
+            /** Unplannedenergykwh */
+            unplannedEnergyKwh: number;
             /** Steps */
             steps: number;
         };
