@@ -27,6 +27,29 @@ import { useAuthStore } from '@/features/auth/store';
 import { SiteSwitcher } from './site-switcher';
 import { UserMenu } from './user-menu';
 
+const siteNavGroups = [
+  {
+    labelKey: 'nav.group_monitoring',
+    items: [
+      { to: '/sites/$siteId/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboardIcon },
+      { to: '/sites/$siteId/savings', labelKey: 'nav.savings', icon: PiggyBankIcon },
+    ],
+  },
+  {
+    labelKey: 'nav.group_configuration',
+    items: [
+      { to: '/sites/$siteId/devices', labelKey: 'nav.devices', icon: PlugIcon },
+      { to: '/sites/$siteId/appliances', labelKey: 'nav.appliances', icon: WashingMachineIcon },
+      { to: '/sites/$siteId/settings', labelKey: 'nav.settings', icon: SettingsIcon },
+    ],
+  },
+] as const;
+
+const adminNavItems = [
+  { to: '/admin/users', labelKey: 'nav.users', icon: UsersIcon },
+  { to: '/admin/sites', labelKey: 'nav.manage_sites', icon: MapPinIcon },
+] as const;
+
 export function AppSidebar() {
   const { t } = useTranslation();
   const { siteId } = useParams({ strict: false });
@@ -42,114 +65,47 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {siteId && (
-          <>
-            <SidebarGroup>
-              <SidebarGroupLabel>{t('nav.group_monitoring')}</SidebarGroupLabel>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.dashboard')}
-                    isActive={!!matchRoute({ to: '/sites/$siteId/dashboard', params: siteParams })}
-                    render={
-                      <Link to="/sites/$siteId/dashboard" params={siteParams}>
-                        <LayoutDashboardIcon aria-hidden />
-                        <span>{t('nav.dashboard')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.savings')}
-                    isActive={!!matchRoute({ to: '/sites/$siteId/savings', params: siteParams })}
-                    render={
-                      <Link to="/sites/$siteId/savings" params={siteParams}>
-                        <PiggyBankIcon aria-hidden />
-                        <span>{t('nav.savings')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
+        {siteId &&
+          siteNavGroups.map((group) => (
+            <SidebarGroup key={group.labelKey}>
+              <SidebarGroupLabel>{t(group.labelKey)}</SidebarGroupLabel>
+              <SidebarMenu className="gap-1">
+                {group.items.map(({ to, labelKey, icon: Icon }) => (
+                  <SidebarMenuItem key={to}>
+                    <SidebarMenuButton
+                      tooltip={t(labelKey)}
+                      isActive={!!matchRoute({ to, fuzzy: true })}
+                      render={
+                        <Link to={to} params={siteParams}>
+                          <Icon aria-hidden />
+                          <span>{t(labelKey)}</span>
+                        </Link>
+                      }
+                    />
+                  </SidebarMenuItem>
+                ))}
               </SidebarMenu>
             </SidebarGroup>
-
-            <SidebarGroup>
-              <SidebarGroupLabel>{t('nav.group_configuration')}</SidebarGroupLabel>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.devices')}
-                    isActive={!!matchRoute({ to: '/sites/$siteId/devices', params: siteParams })}
-                    render={
-                      <Link to="/sites/$siteId/devices" params={siteParams}>
-                        <PlugIcon aria-hidden />
-                        <span>{t('nav.devices')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.appliances')}
-                    isActive={!!matchRoute({ to: '/sites/$siteId/appliances', params: siteParams })}
-                    render={
-                      <Link to="/sites/$siteId/appliances" params={siteParams}>
-                        <WashingMachineIcon aria-hidden />
-                        <span>{t('nav.appliances')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip={t('nav.settings')}
-                    isActive={!!matchRoute({ to: '/sites/$siteId/settings', params: siteParams })}
-                    render={
-                      <Link to="/sites/$siteId/settings" params={siteParams}>
-                        <SettingsIcon aria-hidden />
-                        <span>{t('nav.settings')}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroup>
-          </>
-        )}
+          ))}
 
         {role === 'admin' && (
           <SidebarGroup>
             <SidebarGroupLabel>{t('nav.group_administration')}</SidebarGroupLabel>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip={t('nav.users')}
-                  isActive={!!matchRoute({ to: '/admin/users' })}
-                  render={
-                    <Link to="/admin/users">
-                      <UsersIcon aria-hidden />
-                      <span>{t('nav.users')}</span>
-                    </Link>
-                  }
-                />
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip={t('nav.manage_sites')}
-                  isActive={!!matchRoute({ to: '/admin/sites' })}
-                  render={
-                    <Link to="/admin/sites">
-                      <MapPinIcon aria-hidden />
-                      <span>{t('nav.manage_sites')}</span>
-                    </Link>
-                  }
-                />
-              </SidebarMenuItem>
+            <SidebarMenu className="gap-1">
+              {adminNavItems.map(({ to, labelKey, icon: Icon }) => (
+                <SidebarMenuItem key={to}>
+                  <SidebarMenuButton
+                    tooltip={t(labelKey)}
+                    isActive={!!matchRoute({ to, fuzzy: true })}
+                    render={
+                      <Link to={to}>
+                        <Icon aria-hidden />
+                        <span>{t(labelKey)}</span>
+                      </Link>
+                    }
+                  />
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroup>
         )}
