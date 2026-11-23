@@ -82,6 +82,7 @@ class SiteService:
         heat_loss_kw: float | None = None,
         design_outdoor_temp_c: float | None = None,
         indoor_temp_c: float | None = None,
+        occupants: int | None = None,
     ) -> Site:
         """Update site details, ensuring the site exists."""
         logger.info(f"Updating site with ID {site_id}.")
@@ -116,6 +117,8 @@ class SiteService:
             site.design_outdoor_temp_c = design_outdoor_temp_c
         if indoor_temp_c is not None:
             site.indoor_temp_c = indoor_temp_c
+        if occupants is not None:
+            site.occupants = occupants
         # The lighting forecast reads the location too: it sets when it gets dark.
         house_changed = any(
             value is not None
@@ -125,6 +128,7 @@ class SiteService:
                 heat_loss_kw,
                 design_outdoor_temp_c,
                 indoor_temp_c,
+                occupants,
                 latitude,
                 longitude,
             )

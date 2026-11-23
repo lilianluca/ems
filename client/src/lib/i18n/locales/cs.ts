@@ -80,6 +80,7 @@ export const cs = {
     lighting_power_max: 'Zadejte nejvýše 10 000 W.',
     temperature_invalid: 'Zadejte platnou teplotu.',
     heating_temperatures_range: 'Vnitřní teplota musí být vyšší než výpočtová venkovní.',
+    occupants_invalid: 'Zadejte celé číslo od 0 do 20.',
     cop_invalid: 'Zadejte kladné číslo z technického listu.',
     uses_invalid: 'Zadejte alespoň jedno spuštění.',
     state_of_charge_range: 'Maximální nabití musí být vyšší než minimální.',
@@ -250,11 +251,13 @@ export const cs = {
     add_pv: 'Přidat FVE',
     add_battery: 'Přidat baterii',
     add_heat_pump: 'Přidat čerpadlo',
+    add_water_heater: 'Přidat bojler',
     empty: 'Pro tuto lokalitu zatím nejsou zadaná žádná zařízení.',
 
     type_pv: 'Fotovoltaika',
     type_battery: 'Baterie',
     type_heat_pump: 'Tepelné čerpadlo',
+    type_water_heater: 'Bojler s tepelným čerpadlem',
 
     name: 'Název',
     pv_name_placeholder: 'Střecha jih',
@@ -269,6 +272,13 @@ export const cs = {
     hint_cop:
       'Z technického listu: řádky „Tj = −7 °C“ až „Tj = 12 °C“, hodnota COPd pro průměrné klima.',
     hint_max_heat_power: 'Z technického listu: řádek „Tj = operating limit“, hodnota Pdh.',
+
+    water_heater_name_placeholder: 'Bojler ve sklepě',
+    water_heater_cop: 'COP',
+    water_heater_heat_power: 'Topný výkon',
+    hint_water_heater_cop:
+      'Z technického listu, podle EN 16147. Vyberte teplotu vzduchu podle místnosti, kde bojler stojí: A15 pro sklep, A20 pro vytápěný prostor.',
+    hint_water_heater_heat_power: 'Z technického listu: tepelný výkon tepelného čerpadla bojleru.',
 
     installed_power: 'Výkon panelů',
     inverter_power: 'Výkon střídače',
@@ -312,6 +322,10 @@ export const cs = {
     heat_pump_edit_title: 'Úprava tepelného čerpadla',
     heat_pump_description:
       'Čerpadlo vzduch-vzduch, často prodávané jako klimatizace s funkcí topení. Do predikce spotřeby se započítá jen první čerpadlo lokality a tepelná ztráta nastavená v kartě Dům na stránce Nastavení.',
+    water_heater_create_title: 'Nový bojler',
+    water_heater_edit_title: 'Úprava bojleru',
+    water_heater_description:
+      'Zásobník teplé vody s tepelným čerpadlem. Spotřeba vody se odvodí z počtu osob v kartě Dům na stránce Nastavení. Do predikce se započítá jen první bojler lokality. Nezadávejte ho zároveň jako spotřebič, jinak se ohřev vody započítá dvakrát.',
 
     edit: 'Upravit',
     delete: 'Smazat',
@@ -405,6 +419,9 @@ export const cs = {
     heat_loss: 'Tepelná ztráta (kW)',
     design_outdoor_temp: 'Výpočtová venkovní teplota (°C)',
     indoor_temp: 'Vnitřní teplota (°C)',
+    occupants: 'Počet osob',
+    occupants_hint:
+      'Kolik lidí v domácnosti žije. Určuje spotřebu teplé vody, pokud má lokalita bojler s tepelným čerpadlem.',
     occupancy: 'Kdy je někdo doma',
     occupancy_hint:
       'Hodiny, kdy je někdo doma a vzhůru, stejné pro všechny dny. Okno může přecházet přes půlnoc, například 22 až 1.',

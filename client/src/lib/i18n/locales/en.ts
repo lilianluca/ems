@@ -80,6 +80,7 @@ export const en = {
     lighting_power_max: 'Enter at most 10,000 W.',
     temperature_invalid: 'Enter a valid temperature.',
     heating_temperatures_range: 'The indoor temperature must be above the design outdoor one.',
+    occupants_invalid: 'Enter a whole number from 0 to 20.',
     cop_invalid: 'Enter a positive number from the datasheet.',
     uses_invalid: 'Enter at least one run.',
     state_of_charge_range: 'Maximum charge must be higher than minimum charge.',
@@ -253,11 +254,13 @@ export const en = {
     add_pv: 'Add PV array',
     add_battery: 'Add battery',
     add_heat_pump: 'Add heat pump',
+    add_water_heater: 'Add water heater',
     empty: 'No devices configured for this site yet.',
 
     type_pv: 'Photovoltaics',
     type_battery: 'Battery',
     type_heat_pump: 'Heat pump',
+    type_water_heater: 'Heat pump water heater',
 
     name: 'Name',
     pv_name_placeholder: 'South roof',
@@ -272,6 +275,13 @@ export const en = {
     hint_cop:
       'From the datasheet: rows "Tj = −7 °C" to "Tj = 12 °C", COPd value for average climate.',
     hint_max_heat_power: 'From the datasheet: row "Tj = operating limit", Pdh value.',
+
+    water_heater_name_placeholder: 'Basement water heater',
+    water_heater_cop: 'COP',
+    water_heater_heat_power: 'Heat output',
+    hint_water_heater_cop:
+      'From the datasheet, according to EN 16147. Pick the air temperature of the room the heater stands in: A15 for a basement, A20 for a heated space.',
+    hint_water_heater_heat_power: "From the datasheet: the heater's heat pump heat output.",
 
     installed_power: 'Panel power',
     inverter_power: 'Inverter power',
@@ -315,6 +325,10 @@ export const en = {
     heat_pump_edit_title: 'Edit heat pump',
     heat_pump_description:
       "An air-to-air heat pump, often sold as an air conditioner that can heat. The consumption forecast counts only the site's first pump, with the heat loss set in the House card on the Settings page.",
+    water_heater_create_title: 'New water heater',
+    water_heater_edit_title: 'Edit water heater',
+    water_heater_description:
+      "A hot water tank with a heat pump. Its water use follows from the number of occupants in the House card on the Settings page. The forecast counts only the site's first water heater. Do not also add it as an appliance, or the water heating counts twice.",
 
     edit: 'Edit',
     delete: 'Delete',
@@ -410,6 +424,9 @@ export const en = {
     heat_loss: 'Heat loss (kW)',
     design_outdoor_temp: 'Design outdoor temperature (°C)',
     indoor_temp: 'Indoor temperature (°C)',
+    occupants: 'Occupants',
+    occupants_hint:
+      'How many people live in the household. Sets the hot water use when the site has a heat pump water heater.',
     occupancy: 'When someone is home',
     occupancy_hint:
       'Hours when someone is home and awake, the same every day. A window may wrap past midnight, for example 22 to 1.',

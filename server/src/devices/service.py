@@ -18,7 +18,13 @@ from src.devices.exceptions import (
     DeviceTypeMismatchError,
     InvalidStateOfChargeRangeError,
 )
-from src.devices.models import BatteryDevice, Device, HeatPumpDevice, PVDevice
+from src.devices.models import (
+    BatteryDevice,
+    Device,
+    HeatPumpDevice,
+    PVDevice,
+    WaterHeaterDevice,
+)
 from src.devices.repository import DeviceRepository
 from src.devices.schemas import BatteryHealthRead, BatteryStateRead
 from src.sites.exceptions import SiteNotFoundError
@@ -279,6 +285,54 @@ class DeviceService:
         logger.info(f"Heat pump device with ID {device_id} updated.")
         return device
 
+    async def create_water_heater_device(
+        self, site_id: int, name: str, cop: float, heat_power_kw: float
+    ) -> WaterHeaterDevice:
+        """Create a new water heater device and count it in the load forecast straight away."""
+        logger.info(f"Creating water heater device '{name}' for site with ID {site_id}.")
+        await self._ensure_site_exists(site_id)
+        device = await self.device_repo.create_water_heater_device(
+            site_id=site_id, name=name, cop=cop, heat_power_kw=heat_power_kw
+        )
+        await self.db.commit()
+        await ApplianceService(self.db).generate_and_store_forecast(site_id)
+        logger.info(
+            f"Water heater device '{name}' with ID {device.id} created for site with ID {site_id}."
+        )
+        return device
+
+    async def update_water_heater_device(
+        self,
+        site_id: int,
+        device_id: int,
+        name: str | None,
+        cop: float | None,
+        heat_power_kw: float | None,
+    ) -> WaterHeaterDevice:
+        """Update a water heater device and rebuild the load forecast it feeds."""
+        logger.info(f"Updating water heater device with ID {device_id}.")
+        device = await self.device_repo.get_water_heater_device_by_id(device_id)
+        if device is None:
+            if await self.device_repo.get_by_id(device_id) is None:
+                raise DeviceNotFoundError(device_id)
+            raise DeviceTypeMismatchError(device_id, "water_heater")
+        if device.site_id != site_id:
+            logger.warning(f"Device with ID {device_id} does not belong to site {site_id}.")
+            raise DeviceNotFoundError(device_id)
+
+        if name is not None:
+            device.name = name
+        if cop is not None:
+            device.cop = cop
+        if heat_power_kw is not None:
+            device.heat_power_kw = heat_power_kw
+
+        await self.db.commit()
+        await self.db.refresh(device)
+        await ApplianceService(self.db).generate_and_store_forecast(site_id)
+        logger.info(f"Water heater device with ID {device_id} updated.")
+        return device
+
     async def get_battery_state(self, site_id: int, device_id: int) -> BatteryStateRead | None:
         """Read the most recent state of charge of a battery.
 
@@ -367,7 +421,7 @@ class DeviceService:
         logger.info(f"Deleting device with ID {device_id}.")
         device = await self.get_device(device_id)
         site_id = device.site_id
-        feeds_load_forecast = device.type == DeviceType.HEAT_PUMP
+        feeds_load_forecast = device.type in (DeviceType.HEAT_PUMP, DeviceType.WATER_HEATER)
         await self.device_repo.delete(device)
         await self.db.commit()
         if feeds_load_forecast:

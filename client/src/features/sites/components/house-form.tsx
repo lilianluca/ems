@@ -19,7 +19,10 @@ interface HouseFormProps {
   site: Site;
 }
 
-/** What the forecast needs of the house itself: see docs/vypocty/osvetleni.md and tepelne-cerpadlo.md. */
+/**
+ * What the forecast needs of the house itself: see docs/vypocty/osvetleni.md,
+ * tepelne-cerpadlo.md and ohrev-vody.md.
+ */
 export function HouseForm({ site }: HouseFormProps) {
   const { t } = useTranslation();
   const updateSite = useUpdateSite(site.id);
@@ -32,6 +35,7 @@ export function HouseForm({ site }: HouseFormProps) {
       heatLossKw: site.heatLossKw,
       designOutdoorTempC: site.designOutdoorTempC,
       indoorTempC: site.indoorTempC,
+      occupants: site.occupants,
     },
   });
   const { fields, append, remove } = useFieldArray({ control, name: 'occupancyWindows' });
@@ -178,6 +182,33 @@ export function HouseForm({ site }: HouseFormProps) {
                 {heatingField('indoorTempC', t('settings.indoor_temp'))}
               </div>
             </div>
+
+            <Controller
+              control={control}
+              name="occupants"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="occupants">{t('settings.occupants')}</FieldLabel>
+                  <Input
+                    {...field}
+                    value={toInputValue(field.value)}
+                    onChange={(event) => {
+                      field.onChange(numberFromInput(event));
+                    }}
+                    id="occupants"
+                    type="number"
+                    step="1"
+                    min="0"
+                    className="sm:max-w-60"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldDescription>{t('settings.occupants_hint')}</FieldDescription>
+                  {fieldState.error && (
+                    <FieldError>{t(fieldState.error.message as ValidationKey)}</FieldError>
+                  )}
+                </Field>
+              )}
+            />
 
             {formState.errors.root && (
               <p role="alert" className="text-sm text-destructive">

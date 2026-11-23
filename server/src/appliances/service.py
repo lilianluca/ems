@@ -10,6 +10,7 @@ from src.appliances.lighting import generate_lighting_forecast, lighting_runs_in
 from src.appliances.models import Appliance
 from src.appliances.repository import ApplianceRepository
 from src.appliances.schemas import ApplianceCreate, ApplianceUpdate
+from src.appliances.water_heater import generate_water_heater_forecast
 from src.core.timerange import STEP_FREQ, STEP_HOURS
 from src.core.timeseries import upsert
 from src.devices.repository import DeviceRepository
@@ -133,6 +134,11 @@ class ApplianceService:
         load_kw += heat_pump_kw
         unrestricted_load_kw += heat_pump_kw
 
+        # Hot water for washing counts as essential too.
+        water_heater_kw = await self._water_heater_forecast(site, times)
+        load_kw += water_heater_kw
+        unrestricted_load_kw += water_heater_kw
+
         rows = [
             {
                 "site_id": site_id,
@@ -170,6 +176,20 @@ class ApplianceService:
             design_outdoor_temp_c=site.design_outdoor_temp_c,
             cops=(device.cop_at_minus_7c, device.cop_at_2c, device.cop_at_7c, device.cop_at_12c),
             max_heat_power_kw=device.max_heat_power_kw,
+        )
+
+    async def _water_heater_forecast(self, site: Site, times: pd.DatetimeIndex) -> pd.Series:
+        """Electricity the site's water heater uses over the steps [kW], zero without one."""
+        device = await self.device_repo.get_first_water_heater_for_site(site.id)
+        if device is None:
+            return pd.Series(0.0, index=times, name="water_heater_kw")
+
+        return generate_water_heater_forecast(
+            times,
+            occupants=site.occupants,
+            cop=device.cop,
+            heat_power_kw=device.heat_power_kw,
+            step=pd.Timedelta(STEP_FREQ),
         )
 
     async def _ensure_site_exists(self, site_id: int) -> None:

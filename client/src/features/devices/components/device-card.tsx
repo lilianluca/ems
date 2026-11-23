@@ -73,6 +73,15 @@ export function DeviceCard({ siteId, device }: DeviceCardProps) {
       ];
     }
     const cop = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 2 });
+    if (item.type === 'water_heater') {
+      return [
+        { label: t('devices.water_heater_cop'), value: cop.format(item.cop) },
+        {
+          label: t('devices.water_heater_heat_power'),
+          value: formatWithUnit(item.heatPowerKw, 'power', i18n.language),
+        },
+      ];
+    }
     return [
       { label: t('devices.cop_at_minus_7'), value: cop.format(item.copAtMinus7C) },
       { label: t('devices.cop_at_2'), value: cop.format(item.copAt2C) },
@@ -96,6 +105,14 @@ export function DeviceCard({ siteId, device }: DeviceCardProps) {
       return (
         <Link
           to="/sites/$siteId/devices/battery/$deviceId"
+          params={{ siteId, deviceId: device.id }}
+        />
+      );
+    }
+    if (device.type === 'water_heater') {
+      return (
+        <Link
+          to="/sites/$siteId/devices/water-heater/$deviceId"
           params={{ siteId, deviceId: device.id }}
         />
       );

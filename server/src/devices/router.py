@@ -4,7 +4,13 @@ from fastapi import APIRouter, Depends, status
 
 from src.core.responses import errors
 from src.devices.dependencies import DeviceServiceDep
-from src.devices.models import BatteryDevice, Device, HeatPumpDevice, PVDevice
+from src.devices.models import (
+    BatteryDevice,
+    Device,
+    HeatPumpDevice,
+    PVDevice,
+    WaterHeaterDevice,
+)
 from src.devices.schemas import (
     BatteryDeviceCreate,
     BatteryDeviceRead,
@@ -18,6 +24,9 @@ from src.devices.schemas import (
     PVDeviceCreate,
     PVDeviceRead,
     PVDeviceUpdate,
+    WaterHeaterDeviceCreate,
+    WaterHeaterDeviceRead,
+    WaterHeaterDeviceUpdate,
 )
 from src.sites.dependencies import require_site_role
 from src.sites.enums import SiteRole
@@ -168,6 +177,49 @@ async def update_heat_pump_device(
         cop_at_7c=payload.cop_at_7c,
         cop_at_12c=payload.cop_at_12c,
         max_heat_power_kw=payload.max_heat_power_kw,
+    )
+
+
+@router.post(
+    "/water-heater",
+    response_model=WaterHeaterDeviceRead,
+    status_code=status.HTTP_201_CREATED,
+    responses=errors(401, 403, 404, 422),
+)
+async def create_water_heater_device(
+    site_id: int,
+    payload: WaterHeaterDeviceCreate,
+    _member: Annotated[User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER))],
+    device_service: DeviceServiceDep,
+) -> WaterHeaterDevice:
+    """Create a new heat pump water heater for a specific site."""
+    return await device_service.create_water_heater_device(
+        site_id=site_id,
+        name=payload.name,
+        cop=payload.cop,
+        heat_power_kw=payload.heat_power_kw,
+    )
+
+
+@router.patch(
+    "/water-heater/{device_id}",
+    response_model=WaterHeaterDeviceRead,
+    responses=errors(401, 403, 404, 409, 422),
+)
+async def update_water_heater_device(
+    site_id: int,
+    device_id: int,
+    payload: WaterHeaterDeviceUpdate,
+    _member: Annotated[User, Depends(require_site_role(SiteRole.OWNER, SiteRole.MANAGER))],
+    device_service: DeviceServiceDep,
+) -> WaterHeaterDevice:
+    """Update an existing heat pump water heater for a specific site."""
+    return await device_service.update_water_heater_device(
+        site_id=site_id,
+        device_id=device_id,
+        name=payload.name,
+        cop=payload.cop,
+        heat_power_kw=payload.heat_power_kw,
     )
 
 

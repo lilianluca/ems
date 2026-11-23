@@ -130,8 +130,37 @@ class HeatPumpDeviceUpdate(APIBaseModel):
     max_heat_power_kw: float | None = Field(default=None, gt=0)
 
 
+class WaterHeaterDeviceCreate(APIBaseModel):
+    """Water heater device creation schema."""
+
+    name: str = Field(min_length=1, max_length=255)
+    cop: float = Field(gt=0)
+    heat_power_kw: float = Field(gt=0)
+
+
+class WaterHeaterDeviceRead(APIBaseModel):
+    """Water heater device read schema."""
+
+    id: int
+    site_id: int
+    name: str
+    type: Literal[DeviceType.WATER_HEATER]
+    cop: float
+    heat_power_kw: float
+    created_at: datetime
+
+
+class WaterHeaterDeviceUpdate(APIBaseModel):
+    """Water heater device update schema."""
+
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    cop: float | None = Field(default=None, gt=0)
+    heat_power_kw: float | None = Field(default=None, gt=0)
+
+
 DeviceRead = Annotated[
-    PVDeviceRead | BatteryDeviceRead | HeatPumpDeviceRead, Field(discriminator="type")
+    PVDeviceRead | BatteryDeviceRead | HeatPumpDeviceRead | WaterHeaterDeviceRead,
+    Field(discriminator="type"),
 ]
 
 

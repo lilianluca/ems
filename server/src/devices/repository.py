@@ -1,7 +1,13 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.devices.models import BatteryDevice, Device, HeatPumpDevice, PVDevice
+from src.devices.models import (
+    BatteryDevice,
+    Device,
+    HeatPumpDevice,
+    PVDevice,
+    WaterHeaterDevice,
+)
 
 
 class DeviceRepository:
@@ -117,6 +123,32 @@ class DeviceRepository:
             cop_at_12c=cop_at_12c,
             max_heat_power_kw=max_heat_power_kw,
         )
+        self.db.add(device)
+        await self.db.flush()
+        return device
+
+    async def get_water_heater_device_by_id(self, device_id: int) -> WaterHeaterDevice | None:
+        """Retrieve a water heater device by its ID."""
+        result = await self.db.execute(
+            select(WaterHeaterDevice).where(WaterHeaterDevice.id == device_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_first_water_heater_for_site(self, site_id: int) -> WaterHeaterDevice | None:
+        """Retrieve the water heater a site's forecast counts: one, like its heat pump."""
+        result = await self.db.execute(
+            select(WaterHeaterDevice)
+            .where(WaterHeaterDevice.site_id == site_id)
+            .order_by(WaterHeaterDevice.id)
+            .limit(1)
+        )
+        return result.scalar_one_or_none()
+
+    async def create_water_heater_device(
+        self, site_id: int, name: str, cop: float, heat_power_kw: float
+    ) -> WaterHeaterDevice:
+        """Create a new water heater device."""
+        device = WaterHeaterDevice(site_id=site_id, name=name, cop=cop, heat_power_kw=heat_power_kw)
         self.db.add(device)
         await self.db.flush()
         return device

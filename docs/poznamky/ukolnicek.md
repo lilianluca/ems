@@ -60,5 +60,6 @@ spotových cen od 10. 7. 2026**, takže všechno níž jde udělat bez jediného
 - [x] Osvětlení
 - [x] Přidat náhodu do predikce spotřeby (neomezeno žádným řežimem)
 - [x] Tepelné čerpadlo (vzduch-vzduch), predikce spotřeby (teplo)
+- [x] Tepelné čerpadlo pro ohřev vody (bojler s TČ), predikce spotřeby
 - [ ] Zahrnovat do predikce - topení v krbu
 - [ ] Studovat více jak funguje pod kapotou pvlib

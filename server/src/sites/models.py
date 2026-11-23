@@ -29,6 +29,7 @@ class Site(Base):
         CheckConstraint("lighting_power_w >= 0", name="chk_site_lighting_power"),
         CheckConstraint("heat_loss_kw >= 0", name="chk_site_heat_loss"),
         CheckConstraint("indoor_temp_c > design_outdoor_temp_c", name="chk_site_heating_temps"),
+        CheckConstraint("occupants >= 0", name="chk_site_occupants"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -65,6 +66,8 @@ class Site(Base):
     indoor_temp_c: Mapped[float] = mapped_column(
         Float, nullable=False, default=20.0, server_default="20"
     )
+    # How many people live in the house; sets how much hot water it uses.
+    occupants: Mapped[int] = mapped_column(Integer, nullable=False, default=2, server_default="2")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
