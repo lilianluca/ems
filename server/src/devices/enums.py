@@ -7,3 +7,4 @@ class DeviceType(enum.StrEnum):
     PV = "pv"
     BATTERY = "battery"
     HEAT_PUMP = "heat_pump"
+    WATER_HEATER = "water_heater"

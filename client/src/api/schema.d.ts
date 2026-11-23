@@ -296,6 +296,46 @@ export interface paths {
         patch: operations["devices-update_heat_pump_device-patch"];
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/devices/water-heater": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Water Heater Device
+         * @description Create a new heat pump water heater for a specific site.
+         */
+        post: operations["devices-create_water_heater_device-post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/{site_id}/devices/water-heater/{device_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Water Heater Device
+         * @description Update an existing heat pump water heater for a specific site.
+         */
+        patch: operations["devices-update_water_heater_device-patch"];
+        trace?: never;
+    };
     "/api/v1/sites/{site_id}/devices/battery/{device_id}/state": {
         parameters: {
             query?: never;
@@ -1486,6 +1526,8 @@ export interface components {
             designOutdoorTempC: number;
             /** Indoortempc */
             indoorTempC: number;
+            /** Occupants */
+            occupants: number;
             /**
              * Createdat
              * Format: date-time
@@ -1520,6 +1562,8 @@ export interface components {
             designOutdoorTempC?: number | null;
             /** Indoortempc */
             indoorTempC?: number | null;
+            /** Occupants */
+            occupants?: number | null;
         };
         /**
          * TimeWindow
@@ -1630,6 +1674,56 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /**
+         * WaterHeaterDeviceCreate
+         * @description Water heater device creation schema.
+         */
+        WaterHeaterDeviceCreate: {
+            /** Name */
+            name: string;
+            /** Cop */
+            cop: number;
+            /** Heatpowerkw */
+            heatPowerKw: number;
+        };
+        /**
+         * WaterHeaterDeviceRead
+         * @description Water heater device read schema.
+         */
+        WaterHeaterDeviceRead: {
+            /** Id */
+            id: number;
+            /** Siteid */
+            siteId: number;
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "water_heater";
+            /** Cop */
+            cop: number;
+            /** Heatpowerkw */
+            heatPowerKw: number;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+        };
+        /**
+         * WaterHeaterDeviceUpdate
+         * @description Water heater device update schema.
+         */
+        WaterHeaterDeviceUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Cop */
+            cop?: number | null;
+            /** Heatpowerkw */
+            heatPowerKw?: number | null;
         };
     };
     responses: never;
@@ -2436,6 +2530,140 @@ export interface operations {
             };
         };
     };
+    "devices-create_water_heater_device-post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WaterHeaterDeviceCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaterHeaterDeviceRead"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    "devices-update_water_heater_device-patch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+                device_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WaterHeaterDeviceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaterHeaterDeviceRead"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     "devices-get_battery_state-get": {
         parameters: {
             query?: never;
@@ -2589,7 +2817,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": (components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"] | components["schemas"]["HeatPumpDeviceRead"])[];
+                    "application/json": (components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"] | components["schemas"]["HeatPumpDeviceRead"] | components["schemas"]["WaterHeaterDeviceRead"])[];
                 };
             };
             /** @description Not authenticated */
@@ -2648,7 +2876,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"] | components["schemas"]["HeatPumpDeviceRead"];
+                    "application/json": components["schemas"]["PVDeviceRead"] | components["schemas"]["BatteryDeviceRead"] | components["schemas"]["HeatPumpDeviceRead"] | components["schemas"]["WaterHeaterDeviceRead"];
                 };
             };
             /** @description Not authenticated */

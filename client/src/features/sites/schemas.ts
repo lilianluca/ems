@@ -58,6 +58,11 @@ export const houseSchema = z
       .number(vk('validation.temperature_invalid'))
       .min(0, vk('validation.temperature_invalid'))
       .max(35, vk('validation.temperature_invalid')),
+    occupants: z
+      .number(vk('validation.occupants_invalid'))
+      .int(vk('validation.occupants_invalid'))
+      .min(0, vk('validation.occupants_invalid'))
+      .max(20, vk('validation.occupants_invalid')),
   })
   .refine((values) => values.indoorTempC > values.designOutdoorTempC, {
     message: vk('validation.heating_temperatures_range'),

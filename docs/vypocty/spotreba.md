@@ -196,6 +196,12 @@ K součtu se přičte elektřina na vytápění [tepelným čerpadlem](tepelne-c
 Do obou řad, protože ho žádný režim úspor nevypíná. Mění se s předpovědí venkovní
 teploty, tedy také po čtvrthodinách.
 
+### Krok 5: ohřev vody
+
+K součtu se přičte elektřina na [ohřev vody](ohrev-vody.md) bojlerem s tepelným
+čerpadlem. Také do obou řad, protože teplou vodu žádný režim úspor nevypíná.
+Řídí se počtem osob a normovým rozložením odběrů během dne.
+
 ## Příklad: domácnost se čtyřmi spotřebiči
 
 Lednice, router, bojler a myčka z příkladů výše, všední den. Hodnoty jsou v
@@ -240,12 +246,13 @@ pro tytéž čtvrthodiny. Ukládá se do tabulky `load_forecast`, sloupce `load_
 | Výběr podle režimu úspor                | `appliances_running_in` tamtéž                                                                                   |
 | Osvětlení                               | `generate_lighting_forecast` v [appliances/lighting.py](../../server/src/appliances/lighting.py)                 |
 | Tepelné čerpadlo                        | `generate_heat_pump_forecast` v [appliances/heat_pump.py](../../server/src/appliances/heat_pump.py)              |
+| Ohřev vody                              | `generate_water_heater_forecast` v [appliances/water_heater.py](../../server/src/appliances/water_heater.py)     |
 | Výpočet a uložení                       | `ApplianceService.generate_and_store_forecast` v [appliances/service.py](../../server/src/appliances/service.py) |
 | Pravidelné spouštění                    | `forecast-load` v [core/celery_app.py](../../server/src/core/celery_app.py)                                      |
 | Parametry chování                       | [appliances/schemas.py](../../server/src/appliances/schemas.py)                                                  |
 
 Výpočet příkonu spotřebičů zatím nemá vlastní testy. Testovaný je výběr
-spotřebičů podle režimu úspor, osvětlení a tepelné čerpadlo.
+spotřebičů podle režimu úspor, osvětlení, tepelné čerpadlo a ohřev vody.
 
 ## Předpoklady a omezení
 

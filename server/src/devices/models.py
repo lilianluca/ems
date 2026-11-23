@@ -108,6 +108,22 @@ class HeatPumpDevice(Device):
     }
 
 
+class WaterHeaterDevice(Device):
+    """Heat pump water heater, described by what its datasheet declares."""
+
+    __tablename__ = "water_heater_devices"
+
+    id: Mapped[int] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"), primary_key=True)
+    # COP measured over a whole tapping day according to EN 16147.
+    cop: Mapped[float] = mapped_column(Float, nullable=False)
+    # Heat its heat pump delivers while it runs.
+    heat_power_kw: Mapped[float] = mapped_column(Float, nullable=False)
+
+    __mapper_args__ = {  # noqa: RUF012
+        "polymorphic_identity": DeviceType.WATER_HEATER,
+    }
+
+
 class BatteryState(Base):
     """A battery's recorded state at one moment (TimescaleDB hypertable).
 

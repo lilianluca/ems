@@ -38,6 +38,8 @@ import { Route as AuthenticatedSitesSiteIdDevicesHeatPumpDeviceIdRouteImport } f
 import { Route as AuthenticatedSitesSiteIdDevicesHeatPumpNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/heat-pump/new'
 import { Route as AuthenticatedSitesSiteIdDevicesPvDeviceIdRouteImport } from './routes/_authenticated/sites/$siteId/devices/pv/$deviceId'
 import { Route as AuthenticatedSitesSiteIdDevicesPvNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/pv/new'
+import { Route as AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRouteImport } from './routes/_authenticated/sites/$siteId/devices/water-heater/$deviceId'
+import { Route as AuthenticatedSitesSiteIdDevicesWaterHeaterNewRouteImport } from './routes/_authenticated/sites/$siteId/devices/water-heater/new'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -205,6 +207,18 @@ const AuthenticatedSitesSiteIdDevicesPvNewRoute =
     path: '/pv/new',
     getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
   } as any)
+const AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute =
+  AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRouteImport.update({
+    id: '/water-heater/$deviceId',
+    path: '/water-heater/$deviceId',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
+  } as any)
+const AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute =
+  AuthenticatedSitesSiteIdDevicesWaterHeaterNewRouteImport.update({
+    id: '/water-heater/new',
+    path: '/water-heater/new',
+    getParentRoute: () => AuthenticatedSitesSiteIdDevicesRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -234,6 +248,8 @@ export interface FileRoutesByFullPath {
   '/sites/$siteId/devices/heat-pump/new': typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   '/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   '/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
+  '/sites/$siteId/devices/water-heater/$deviceId': typeof AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute
+  '/sites/$siteId/devices/water-heater/new': typeof AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -258,6 +274,8 @@ export interface FileRoutesByTo {
   '/sites/$siteId/devices/heat-pump/new': typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   '/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   '/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
+  '/sites/$siteId/devices/water-heater/$deviceId': typeof AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute
+  '/sites/$siteId/devices/water-heater/new': typeof AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -290,6 +308,8 @@ export interface FileRoutesById {
   '/_authenticated/sites/$siteId/devices/heat-pump/new': typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   '/_authenticated/sites/$siteId/devices/pv/$deviceId': typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   '/_authenticated/sites/$siteId/devices/pv/new': typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
+  '/_authenticated/sites/$siteId/devices/water-heater/$deviceId': typeof AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute
+  '/_authenticated/sites/$siteId/devices/water-heater/new': typeof AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -321,6 +341,8 @@ export interface FileRouteTypes {
     | '/sites/$siteId/devices/heat-pump/new'
     | '/sites/$siteId/devices/pv/$deviceId'
     | '/sites/$siteId/devices/pv/new'
+    | '/sites/$siteId/devices/water-heater/$deviceId'
+    | '/sites/$siteId/devices/water-heater/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -345,6 +367,8 @@ export interface FileRouteTypes {
     | '/sites/$siteId/devices/heat-pump/new'
     | '/sites/$siteId/devices/pv/$deviceId'
     | '/sites/$siteId/devices/pv/new'
+    | '/sites/$siteId/devices/water-heater/$deviceId'
+    | '/sites/$siteId/devices/water-heater/new'
   id:
     | '__root__'
     | '/_authenticated'
@@ -376,6 +400,8 @@ export interface FileRouteTypes {
     | '/_authenticated/sites/$siteId/devices/heat-pump/new'
     | '/_authenticated/sites/$siteId/devices/pv/$deviceId'
     | '/_authenticated/sites/$siteId/devices/pv/new'
+    | '/_authenticated/sites/$siteId/devices/water-heater/$deviceId'
+    | '/_authenticated/sites/$siteId/devices/water-heater/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -588,6 +614,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesPvNewRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
     }
+    '/_authenticated/sites/$siteId/devices/water-heater/$deviceId': {
+      id: '/_authenticated/sites/$siteId/devices/water-heater/$deviceId'
+      path: '/water-heater/$deviceId'
+      fullPath: '/sites/$siteId/devices/water-heater/$deviceId'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
+    }
+    '/_authenticated/sites/$siteId/devices/water-heater/new': {
+      id: '/_authenticated/sites/$siteId/devices/water-heater/new'
+      path: '/water-heater/new'
+      fullPath: '/sites/$siteId/devices/water-heater/new'
+      preLoaderRoute: typeof AuthenticatedSitesSiteIdDevicesWaterHeaterNewRouteImport
+      parentRoute: typeof AuthenticatedSitesSiteIdDevicesRouteRoute
+    }
   }
 }
 
@@ -670,6 +710,8 @@ interface AuthenticatedSitesSiteIdDevicesRouteRouteChildren {
   AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute: typeof AuthenticatedSitesSiteIdDevicesHeatPumpNewRoute
   AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute
   AuthenticatedSitesSiteIdDevicesPvNewRoute: typeof AuthenticatedSitesSiteIdDevicesPvNewRoute
+  AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute: typeof AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute
+  AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute: typeof AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute
 }
 
 const AuthenticatedSitesSiteIdDevicesRouteRouteChildren: AuthenticatedSitesSiteIdDevicesRouteRouteChildren =
@@ -688,6 +730,10 @@ const AuthenticatedSitesSiteIdDevicesRouteRouteChildren: AuthenticatedSitesSiteI
       AuthenticatedSitesSiteIdDevicesPvDeviceIdRoute,
     AuthenticatedSitesSiteIdDevicesPvNewRoute:
       AuthenticatedSitesSiteIdDevicesPvNewRoute,
+    AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute:
+      AuthenticatedSitesSiteIdDevicesWaterHeaterDeviceIdRoute,
+    AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute:
+      AuthenticatedSitesSiteIdDevicesWaterHeaterNewRoute,
   }
 
 const AuthenticatedSitesSiteIdDevicesRouteRouteWithChildren =

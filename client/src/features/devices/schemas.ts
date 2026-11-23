@@ -76,3 +76,11 @@ export const heatPumpDeviceSchema = z.object({
 });
 
 export type HeatPumpDeviceFormValues = z.infer<typeof heatPumpDeviceSchema>;
+
+export const waterHeaterDeviceSchema = z.object({
+  name: z.string().trim().min(1, vk('validation.device_name_required')).max(255),
+  cop: copSchema,
+  heatPowerKw: z.number(vk('validation.power_positive')).positive(vk('validation.power_positive')),
+});
+
+export type WaterHeaterDeviceFormValues = z.infer<typeof waterHeaterDeviceSchema>;
