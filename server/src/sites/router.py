@@ -56,6 +56,7 @@ async def update_site(
         heat_loss_kw=payload.heat_loss_kw,
         design_outdoor_temp_c=payload.design_outdoor_temp_c,
         indoor_temp_c=payload.indoor_temp_c,
+        fireplace_heating=payload.fireplace_heating,
         occupants=payload.occupants,
     )
 

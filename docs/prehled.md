@@ -70,7 +70,7 @@ flowchart TD
     subgraph nastaveni["Nastavení lokality"]
         fve["Fotovoltaika<br/>výkon, sklon, orientace"]
         spotrebice["Spotřebiče<br/>příkon, kdy běží"]
-        dum["Dům<br/>osvětlení, kdy je doma, tepelná ztráta, počet osob"]
+        dum["Dům<br/>osvětlení, kdy je doma, tepelná ztráta, krb, počet osob"]
         cerpadlo["Tepelné čerpadlo<br/>topný faktor, výkon"]
         bojler["Bojler s tepelným čerpadlem<br/>topný faktor, výkon"]
         baterie["Baterie<br/>kapacita, výkony, účinnost"]
@@ -137,6 +137,7 @@ tečou systémem.
 | Predikce spotřeby                | [spotreba.md](vypocty/spotreba.md)                 | [appliances/forecast.py](../server/src/appliances/forecast.py)                     |
 | Osvětlení                        | [osvetleni.md](vypocty/osvetleni.md)               | [appliances/lighting.py](../server/src/appliances/lighting.py)                     |
 | Tepelné čerpadlo                 | [tepelne-cerpadlo.md](vypocty/tepelne-cerpadlo.md) | [appliances/heat_pump.py](../server/src/appliances/heat_pump.py)                   |
+| Topení krbem                     | [krb.md](vypocty/krb.md)                           | [appliances/service.py](../server/src/appliances/service.py)                       |
 | Ohřev vody                       | [ohrev-vody.md](vypocty/ohrev-vody.md)             | [appliances/water_heater.py](../server/src/appliances/water_heater.py)             |
 | Režim úspor                      | [rezim-uspor.md](vypocty/rezim-uspor.md)           | [sites/enums.py](../server/src/sites/enums.py)                                     |
 | Model baterie                    | [model-baterie.md](vypocty/model-baterie.md)       | [simulation/battery_model.py](../server/src/simulation/battery_model.py)           |

@@ -1526,6 +1526,8 @@ export interface components {
             designOutdoorTempC: number;
             /** Indoortempc */
             indoorTempC: number;
+            /** Fireplaceheating */
+            fireplaceHeating: boolean;
             /** Occupants */
             occupants: number;
             /**
@@ -1562,6 +1564,8 @@ export interface components {
             designOutdoorTempC?: number | null;
             /** Indoortempc */
             indoorTempC?: number | null;
+            /** Fireplaceheating */
+            fireplaceHeating?: boolean | null;
             /** Occupants */
             occupants?: number | null;
         };

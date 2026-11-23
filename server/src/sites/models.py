@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Any
 
 from sqlalchemy import (
+    Boolean,
     CheckConstraint,
     DateTime,
     Enum,
@@ -10,6 +11,7 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    false,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -65,6 +67,11 @@ class Site(Base):
     )
     indoor_temp_c: Mapped[float] = mapped_column(
         Float, nullable=False, default=20.0, server_default="20"
+    )
+    # The house is heated by its fireplace instead of the heat pump, for example
+    # while the pump is broken. It stays on until someone switches it off.
+    fireplace_heating: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=false()
     )
     # How many people live in the house; sets how much hot water it uses.
     occupants: Mapped[int] = mapped_column(Integer, nullable=False, default=2, server_default="2")

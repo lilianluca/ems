@@ -82,6 +82,7 @@ class SiteService:
         heat_loss_kw: float | None = None,
         design_outdoor_temp_c: float | None = None,
         indoor_temp_c: float | None = None,
+        fireplace_heating: bool | None = None,
         occupants: int | None = None,
     ) -> Site:
         """Update site details, ensuring the site exists."""
@@ -117,6 +118,8 @@ class SiteService:
             site.design_outdoor_temp_c = design_outdoor_temp_c
         if indoor_temp_c is not None:
             site.indoor_temp_c = indoor_temp_c
+        if fireplace_heating is not None:
+            site.fireplace_heating = fireplace_heating
         if occupants is not None:
             site.occupants = occupants
         # The lighting forecast reads the location too: it sets when it gets dark.
@@ -128,6 +131,7 @@ class SiteService:
                 heat_loss_kw,
                 design_outdoor_temp_c,
                 indoor_temp_c,
+                fireplace_heating,
                 occupants,
                 latitude,
                 longitude,

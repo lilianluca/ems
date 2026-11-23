@@ -424,6 +424,9 @@ export const en = {
     heat_loss: 'Heat loss (kW)',
     design_outdoor_temp: 'Design outdoor temperature (°C)',
     indoor_temp: 'Indoor temperature (°C)',
+    fireplace_heating: 'Heating with the fireplace',
+    fireplace_heating_hint:
+      'For example while the heat pump is broken. While it is on, the consumption forecast leaves the pump out. Firewood is not counted in the costs.',
     occupants: 'Occupants',
     occupants_hint:
       'How many people live in the household. Sets the hot water use when the site has a heat pump water heater.',

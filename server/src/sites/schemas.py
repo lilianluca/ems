@@ -48,6 +48,7 @@ class SiteRead(APIBaseModel):
     heat_loss_kw: float
     design_outdoor_temp_c: float
     indoor_temp_c: float
+    fireplace_heating: bool
     occupants: int
     created_at: datetime
 
@@ -83,6 +84,7 @@ class SiteUpdate(APIBaseModel):
     heat_loss_kw: float | None = Field(default=None, ge=0)
     design_outdoor_temp_c: float | None = Field(default=None, ge=-60, le=30)
     indoor_temp_c: float | None = Field(default=None, ge=0, le=35)
+    fireplace_heating: bool | None = None
     occupants: int | None = Field(default=None, ge=0, le=20)
 
 
