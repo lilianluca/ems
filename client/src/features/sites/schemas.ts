@@ -58,6 +58,7 @@ export const houseSchema = z
       .number(vk('validation.temperature_invalid'))
       .min(0, vk('validation.temperature_invalid'))
       .max(35, vk('validation.temperature_invalid')),
+    fireplaceHeating: z.boolean(),
     occupants: z
       .number(vk('validation.occupants_invalid'))
       .int(vk('validation.occupants_invalid'))

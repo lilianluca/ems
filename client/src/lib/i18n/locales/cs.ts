@@ -419,6 +419,9 @@ export const cs = {
     heat_loss: 'Tepelná ztráta (kW)',
     design_outdoor_temp: 'Výpočtová venkovní teplota (°C)',
     indoor_temp: 'Vnitřní teplota (°C)',
+    fireplace_heating: 'Topí se krbem',
+    fireplace_heating_hint:
+      'Například když tepelné čerpadlo nefunguje. Dokud je zapnuté, čerpadlo se do predikce spotřeby nepočítá. Dřevo se do nákladů nezapočítává.',
     occupants: 'Počet osob',
     occupants_hint:
       'Kolik lidí v domácnosti žije. Určuje spotřebu teplé vody, pokud má lokalita bojler s tepelným čerpadlem.',

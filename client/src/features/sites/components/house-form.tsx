@@ -7,8 +7,16 @@ import { toast } from 'sonner';
 import { translateError } from '@/api/errors';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { numberFromInput, toInputValue } from '@/lib/form';
 import type { ValidationKey } from '@/lib/i18n/keys';
 
@@ -21,7 +29,7 @@ interface HouseFormProps {
 
 /**
  * What the forecast needs of the house itself: see docs/vypocty/osvetleni.md,
- * tepelne-cerpadlo.md and ohrev-vody.md.
+ * tepelne-cerpadlo.md, krb.md and ohrev-vody.md.
  */
 export function HouseForm({ site }: HouseFormProps) {
   const { t } = useTranslation();
@@ -35,6 +43,7 @@ export function HouseForm({ site }: HouseFormProps) {
       heatLossKw: site.heatLossKw,
       designOutdoorTempC: site.designOutdoorTempC,
       indoorTempC: site.indoorTempC,
+      fireplaceHeating: site.fireplaceHeating,
       occupants: site.occupants,
     },
   });
@@ -181,6 +190,25 @@ export function HouseForm({ site }: HouseFormProps) {
                 {heatingField('designOutdoorTempC', t('settings.design_outdoor_temp'))}
                 {heatingField('indoorTempC', t('settings.indoor_temp'))}
               </div>
+              <Controller
+                control={control}
+                name="fireplaceHeating"
+                render={({ field }) => (
+                  <Field orientation="horizontal">
+                    <Switch
+                      id="fireplaceHeating"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <FieldContent>
+                      <FieldLabel htmlFor="fireplaceHeating">
+                        {t('settings.fireplace_heating')}
+                      </FieldLabel>
+                      <FieldDescription>{t('settings.fireplace_heating_hint')}</FieldDescription>
+                    </FieldContent>
+                  </Field>
+                )}
+              />
             </div>
 
             <Controller

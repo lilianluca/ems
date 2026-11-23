@@ -76,12 +76,13 @@ Dokument o [predikci výroby](vypocty/fve-vyroba.md) zatím není napsaný.
 | **Vlastní spotřeba**    | Část vyrobené elektřiny, kterou domácnost sama spotřebuje, místo aby ji prodala.                                                          |
 | **Priorita spotřebiče** | Jak moc je spotřebič pro domácnost důležitý, od 1 (nezbytný) po 4 (komfortní). Podle ní režim úspor rozhoduje, co vypne.                  |
 | **Režim úspor**         | Jak moc je domácnost ochotná omezit spotřebu: běžný, úsporný, velmi úsporný, nebo extrémní. Vedoucí práce ho označuje jako úrovně rizika. |
-| **Dům**                 | Nastavení lokality, které nepatří k žádnému spotřebiči: výkon osvětlení, doba, kdy je někdo doma, tepelná ztráta a počet osob.            |
+| **Dům**                 | Nastavení lokality, které nepatří k žádnému spotřebiči: osvětlení, kdy je někdo doma, tepelná ztráta, topení krbem a počet osob.          |
 | **Obsazenost**          | Zda je někdo doma a vzhůru. Zadává se jako okna v celých hodinách, stejná pro všechny dny.                                                |
 | **Tma**                 | Číslo od 0 do 1 podle výšky slunce nad obzorem: 0 ve dne, 1 po skončení občanského soumraku. Určuje, jakou část osvětlení svítí.          |
 | **Tepelné čerpadlo**    | Zařízení, které topí tak, že přenáší teplo z venkovního vzduchu dovnitř. Z 1 kWh elektřiny dodá několik kWh tepla.                        |
 | **Topný faktor (COP)**  | Kolik tepla dodá tepelné čerpadlo z jedné kilowatthodiny elektřiny. Klesá s venkovní teplotou.                                            |
 | **Tepelná ztráta**      | Výkon, kterým dům ztrácí teplo při výpočtové venkovní teplotě.                                                                            |
+| **Topení krbem**        | Dům vytápí krb místo tepelného čerpadla, třeba při jeho poruše. Čerpadlo pak v predikci nespotřebovává nic.                               |
 | **Vyrovnávací teplota** | Venkovní teplota, při které zisky od lidí, spotřebičů a slunce pokryjí ztráty domu. Nad ní se netopí. Počítáme s 15 °C.                   |
 | **Náhodná spotřeba**    | Neplánovaná spotřeba, kterou domácnost nemůže odložit. Predikce ani plán o ní nevědí, přičítá ji až simulace.                             |
 | **Bojler s TČ**         | Zásobník teplé vody s malým tepelným čerpadlem, které bere teplo ze vzduchu v místnosti. Samostatné zařízení, nezávislé na vytápění.      |
@@ -89,6 +90,7 @@ Dokument o [predikci výroby](vypocty/fve-vyroba.md) zatím není napsaný.
 
 Víc v dokumentech o [predikci spotřeby](vypocty/spotreba.md),
 [osvětlení](vypocty/osvetleni.md), [tepelném čerpadle](vypocty/tepelne-cerpadlo.md),
+[topení krbem](vypocty/krb.md),
 [ohřevu vody](vypocty/ohrev-vody.md) a [náhodné spotřebě](vypocty/nahodna-spotreba.md).
 
 ## Baterie
@@ -216,4 +218,5 @@ jmenuje v kódu a v databázi.
 | náhodná spotřeba                    | `unplanned_load_kw`                             |
 | bojler s tepelným čerpadlem         | `WaterHeaterDevice`                             |
 | počet osob                          | `occupants`                                     |
+| topení krbem                        | `fireplace_heating`                             |
 | odběrový profil M                   | `PROFILE_M`                                     |

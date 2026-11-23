@@ -203,8 +203,9 @@ Predikce se přepočítá hned po uložení domu a po přidání, úpravě nebo 
 - **Maximální výkon je stálý.** Hodnota z listu platí pro nejnižší provozní
   teplotu, za tepla bývá skutečný výkon jiný. Limit se tak použije jen v mrazech.
 - **Odmrazování a pohotovostní příkon** samostatně nepočítáme.
-- **Jiné zdroje tepla se nepočítají.** Krb ani jiné topení potřebu tepla
-  nesnižují.
+- **Jiné zdroje tepla se s čerpadlem nekombinují.** Krb jde zapnout jen místo
+  čerpadla, viz [topení krbem](krb.md). Přitápění, které by potřebu tepla
+  čerpadla jen snížilo, model nezná.
 
 ## Zdroje
 

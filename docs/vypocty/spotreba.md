@@ -194,7 +194,8 @@ extrémního. Osvětlení mění hodnotu i uvnitř hodiny, protože se řídí s
 
 K součtu se přičte elektřina na vytápění [tepelným čerpadlem](tepelne-cerpadlo.md).
 Do obou řad, protože ho žádný režim úspor nevypíná. Mění se s předpovědí venkovní
-teploty, tedy také po čtvrthodinách.
+teploty, tedy také po čtvrthodinách. Když domácnost [topí krbem](krb.md),
+čerpadlo se nepřičítá.
 
 ### Krok 5: ohřev vody
 

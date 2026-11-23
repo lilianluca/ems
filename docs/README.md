@@ -27,6 +27,7 @@ systémem.
 | [Predikce spotřeby](vypocty/spotreba.md)              | Kolik domácnost spotřebuje?                                       |
 | [Osvětlení](vypocty/osvetleni.md)                     | Kolik domácnost prosvítí v zimě a kolik v létě?                   |
 | [Tepelné čerpadlo](vypocty/tepelne-cerpadlo.md)       | Kolik elektřiny spotřebuje vytápění při dané venkovní teplotě?    |
+| [Topení krbem](vypocty/krb.md)                        | Co se stane, když dům místo čerpadla vytápí krb?                  |
 | [Ohřev vody](vypocty/ohrev-vody.md)                   | Kolik elektřiny spotřebuje bojler s tepelným čerpadlem?           |
 | [Režim úspor](vypocty/rezim-uspor.md)                 | Co se stane, když domácnost omezí spotřebiče?                     |
 | [Model baterie](vypocty/model-baterie.md)             | Kolik energie bude v baterii za čtvrthodinu?                      |

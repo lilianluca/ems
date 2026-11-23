@@ -153,7 +153,13 @@ class ApplianceService:
         return written
 
     async def _heat_pump_forecast(self, site: Site, times: pd.DatetimeIndex) -> pd.Series:
-        """Electricity the site's heat pump uses over the steps [kW], zero without one."""
+        """Electricity the site's heat pump uses over the steps [kW].
+
+        Zero without a pump, and zero while the fireplace heats the house instead:
+        the fireplace burns wood, so it takes over the heat without any electricity.
+        """
+        if site.fireplace_heating:
+            return pd.Series(0.0, index=times, name="heat_pump_kw")
         device = await self.device_repo.get_first_heat_pump_for_site(site.id)
         if device is None:
             return pd.Series(0.0, index=times, name="heat_pump_kw")
